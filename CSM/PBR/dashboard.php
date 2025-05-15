@@ -1,4 +1,5 @@
 <?php
+// hi guys
 // Sample data (you can replace these with database values)
 $user = "sumber manusia";
 $stats = [
