@@ -109,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="col-md-6">
                 <label class="form-label">Kad Pengenalan</label>
-                <input type="text" class="form-control" placeholder="Nombor IC" name="icNo" required>
+                <input type="text" class="form-control" placeholder="Nombor IC" name="icNo" maxlength="14" required>
             </div>
 
             <div class="col-md-6">

@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['admin_phoneNo'] = $phoneNo;           
             // Redirect based on role
             if ($role === 'PBR CSM') {
-                header("Location: CSM/PBR/dashboard.php");
+                header("Location: role/CSM/PBR/dashboard.php");
                 exit();
             } else {
                 echo "<script>alert('Akses ditolak untuk peranan: $role'); window.location.href='login.php';</script>";

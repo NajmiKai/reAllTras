@@ -23,7 +23,7 @@ $admin_phoneNo = $_SESSION['admin_phoneNo'];
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../assets/css/adminStyle.css">
+    <link rel="stylesheet" href="../../../assets/css/adminStyle.css">
 
 </head>
 <body>
@@ -40,7 +40,7 @@ $admin_phoneNo = $_SESSION['admin_phoneNo'];
             <span class="nav-link fw-semibold"><?= htmlspecialchars($admin_name) ?> (<?= htmlspecialchars($admin_role) ?>)</span>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
-            <a href="../../logout.php" class="nav-link text-danger">
+            <a href="../../../logout.php" class="nav-link text-danger">
                 <i class="fas fa-sign-out-alt me-1"></i> Log Keluar
             </a>
         </li>
@@ -50,13 +50,13 @@ $admin_phoneNo = $_SESSION['admin_phoneNo'];
 <div class="main-container">
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
-        <h6><img src="../../assets/ALLTRAS.png" alt="ALLTRAS" width="140" style="margin-left: 20px;"><br>ALL REGION TRAVELLING SYSTEM</h6><br>
+        <h6><img src="../../../assets/ALLTRAS.png" alt="ALLTRAS" width="140" style="margin-left: 20px;"><br>ALL REGION TRAVELLING SYSTEM</h6><br>
         <a href="dashboard.php"> <i class="fas fa-home me-2"></i>Laman Utama</a>
         <h6 class="text mt-4">BORANG PERMOHONAN</h6>
         <a href="wilayahAsal.php" class="active"><i class="fas fa-map-marker-alt me-2"></i>Wilayah Asal</a>
-        <a href="#"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a>
+        <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a>
         <a href="profile.php"><i class="fas fa-user me-2"></i>Paparan Profil</a>
-        <a href="../../logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
+        <a href="../../../logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
     </div>
 
     <!-- Main Content -->
@@ -87,12 +87,15 @@ $admin_phoneNo = $_SESSION['admin_phoneNo'];
                     </table>
                 </div>
             </div>
-            <script>
+
+
+<script>
+    
     document.querySelector('.toggle-sidebar').addEventListener('click', function (e) {
         e.preventDefault();
         document.getElementById('sidebar').classList.toggle('hidden');
     });
 
-    </script>
-    </body>
-    </html>
+</script>
+</body>
+</html>
