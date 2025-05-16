@@ -1,4 +1,3 @@
-
     body {
         font-family: 'Inter', sans-serif;
         background-color: #f5f7fa;
@@ -72,5 +71,49 @@
         color: #6c757d; 
         pointer-events: none; /* Prevent clicking */
         user-select: none;    /* Prevent text selection */
+    }
+    
+    /* File Upload Styles */
+    .drop-zone {
+        border: 2px dashed #ccc;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        background-color: #f8f9fa;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .drop-zone.highlight {
+        border-color: #d89d2e;
+        background-color: #fff3cd;
+    }
+
+    .file-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px;
+        margin: 5px 0;
+        background-color: #f8f9fa;
+        border-radius: 4px;
+    }
+
+    .file-item button {
+        margin-left: 10px;
+    }
+
+    #fileList {
+        margin-top: 15px;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .upload-container {
+        margin: 20px 0;
+        padding: 20px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     

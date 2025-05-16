@@ -80,9 +80,41 @@ $admin_phoneNo = $_SESSION['admin_phoneNo'];
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td colspan="8" class="text-center text-muted">Tiada rekod dijumpai</td>
-                            </tr>
+                            <?php
+                            // Fetch applications
+                            $sql = "SELECT wa.*, u.nama_first, u.nama_last, u.phone, u.jawatan_gred 
+                                   FROM wilayah_asal wa 
+                                   JOIN user u ON wa.user_kp = u.kp 
+                                   ORDER BY wa.created_at DESC";
+                            $result = $conn->query($sql);
+
+                            if ($result && $result->num_rows > 0) {
+                                while ($row = $result->fetch_assoc()) {
+                                    echo "<tr>";
+                                    echo "<td>" . htmlspecialchars($row['id']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row['nama_first'] . ' ' . $row['nama_last']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row['jawatan_gred']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row['phone']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row['negeri_menetap']) . "</td>";
+                                    echo "<td>" . date('d/m/Y', strtotime($row['created_at'])) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row['status_permohonan']) . "</td>";
+                                    echo "<td>
+                                            <a href='../../upload_documents_page.php?id=" . $row['id'] . "' class='btn btn-sm btn-primary me-1'>
+                                                <i class='fas fa-file-upload'></i>
+                                            </a>
+                                            <button class='btn btn-sm btn-info me-1'>
+                                                <i class='fas fa-eye'></i>
+                                            </button>
+                                            <button class='btn btn-sm btn-success'>
+                                                <i class='fas fa-check'></i>
+                                            </button>
+                                          </td>";
+                                    echo "</tr>";
+                                }
+                            } else {
+                                echo "<tr><td colspan='8' class='text-center text-muted'>Tiada rekod dijumpai</td></tr>";
+                            }
+                            ?>
                         </tbody>
                     </table>
                 </div>
