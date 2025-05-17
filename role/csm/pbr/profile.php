@@ -6,6 +6,12 @@ if (!isset($_SESSION['admin_id'])) {
     header("Location: login.php");
     exit();
 }
+
+$currentPage = basename($_SERVER['PHP_SELF']);
+$submenuOpen = in_array($currentPage, ['perrmohonanPengguna.php', 'permohonanIbuPejabat.php']);
+$submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'perrmohonanIbuPejabat.php']);
+
+
 $admin_id = $_SESSION['admin_id'];
 $admin_name = $_SESSION['admin_name'];
 $admin_role = $_SESSION['admin_role'];
@@ -88,12 +94,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </nav>
 
 <div class="main-container">
+ 
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <h6><img src="../../../assets/ALLTRAS.png" alt="ALLTRAS" width="140" style="margin-left: 20px;"><br>ALL REGION TRAVELLING SYSTEM</h6><br>
         <a href="dashboard.php"> <i class="fas fa-home me-2"></i>Laman Utama</a>
         <h6 class="text mt-4">BORANG PERMOHONAN</h6>
-        <a href="wilayahAsal.php" ><i class="fas fa-map-marker-alt me-2"></i>Wilayah Asal</a>
+
+        <a href="javascript:void(0);" onclick="toggleSubMenu()" class="<?= $submenuOpen ? 'active' : '' ?>">
+            <i class="fas fa-map-marker-alt me-2"></i>Wilayah Asal
+            <i class="fas fa-chevron-down" style="float: right; margin-right: 10px;"></i>
+        </a>
+        
+        <!-- Submenu -->
+        <div id="wilayahSubmenu" class="submenu" style="display: <?= $submenuOpen ? 'block' : 'none' ?>;">
+            <a href="permohonanPengguna.php">Permohonan Pengguna</a>
+            <a href="permohonanIbuPejabat.php">Permohonan Ibu Pejabat</a>
+        </div>
+
         <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a>
         <a href="profile.php" class="active"><i class="fas fa-user me-2"></i>Paparan Profil</a>
         <a href="../../../logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
@@ -160,6 +178,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         e.preventDefault();
         document.getElementById('sidebar').classList.toggle('hidden');
     });
+
+    function toggleSubMenu() {
+        const submenu = document.getElementById("wilayahSubmenu");
+        submenu.style.display = submenu.style.display === "block" ? "none" : "block";
+    }
 
     document.getElementById("profileForm").addEventListener("submit", function(event) {
         const confirmSubmit = confirm("Adakah anda pasti mahu mengemaskini profil anda?");

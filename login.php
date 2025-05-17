@@ -28,6 +28,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($role === 'PBR CSM') {
                 header("Location: role/CSM/PBR/dashboard.php");
                 exit();
+            } else if ($role === 'Pegawai Sulit CSM') {
+                header("Location: role/CSM/pegawaiSulit/dashboard.php");
+                exit();
+            } else if ($role === 'Pengesah CSM') {
+                header("Location: role/CSM/pengesah/dashboard.php");
+                exit();
             } else {
                 echo "<script>alert('Akses ditolak untuk peranan: $role'); window.location.href='login.php';</script>";
                 exit();
