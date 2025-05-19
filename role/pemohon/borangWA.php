@@ -67,98 +67,127 @@ $stats = [
 
     <!-- Main Content -->
     <div class="col p-4">
-        <h3 class="mb-3">Laman Utama</h3>
-
-        <div class="greeting-box">
-            <?php  
-                $time = date('H');
-                if ($time < 12) {
-                    $greeting = 'Selamat Pagi';
-                } elseif ($time < 15) {
-                    $greeting = 'Selamat Tengah Hari';
-                } elseif ($time < 19) {
-                    $greeting = 'Selamat Petang';    
-                } else {
-                    $greeting = 'Selamat Malam';
-                }
-            ?>
-            <strong>Hi, <?= $greeting ?>!</strong> <?= $admin_name ?>
-        </div>
-
-        <div class="row g-4 mb-4">
-            <div class="col-md-3">
-                <div class="card-box bg-primary">
-                    <i class="fas fa-user-plus"></i>
-                    <h6>Jumlah Permohonan</h6>
-                    <p>Wilayah Asal: <?= $stats['total']['Wilayah Asal'] ?></p>
-                    <p>Tugas Rasmi: <?= $stats['total']['Tugas Rasmi'] ?></p>
+        <h3 class="mb-3">Borang Permohonan Wilayah Asal</h3>
+        
+        <form action="../../functions/process_borangWA.php" method="POST" class="needs-validation" novalidate>
+            <!-- Personal Information -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header" style="background-color: #d59e3e; color: white;">
+                    <h5 class="mb-0">Maklumat Pegawai</h5>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card-box bg-success">
-                    <i class="fas fa-spinner"></i>
-                    <h6>Sedang Diproses</h6>
-                    <p>Wilayah Asal: <?= $stats['processing']['Wilayah Asal'] ?></p>
-                    <p>Tugas Rasmi: <?= $stats['processing']['Tugas Rasmi'] ?></p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card-box bg-warning">
-                    <i class="fas fa-check-circle"></i>
-                    <h6>Berjaya Diproses</h6>
-                    <p>Wilayah Asal: <?= $stats['approved']['Wilayah Asal'] ?></p>
-                    <p>Tugas Rasmi: <?= $stats['approved']['Tugas Rasmi'] ?></p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card-box bg-danger">
-                    <i class="fas fa-times-circle"></i>
-                    <h6>Permohonan Gagal</h6>
-                    <p>Wilayah Asal: <?= $stats['rejected']['Wilayah Asal'] ?></p>
-                    <p>Tugas Rasmi: <?= $stats['rejected']['Tugas Rasmi'] ?></p>
-                </div>
-            </div>
-        </div>
-
-        <div class="container my-4">
-            <div class="row g-4">
-                <div class="col-md-6">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">Carta Aliran Permohonan</h5>
-                            <h6 class="text-primary mb-3">Wilayah Asal</h6>
-                            <img src="../../assets/flowchart-wilayah.jpg" alt="Carta Aliran Wilayah Asal" class="img-fluid rounded clickable-image" style="cursor:pointer;">
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Nama Pegawai</label>
+                            <input type="text" class="form-control" name="nama_pegawai" value="<?= htmlspecialchars($admin_name) ?>" readonly required>
                         </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">Carta Aliran Permohonan</h5>
-                            <h6 class="text-danger mb-3">Tugas Rasmi / Kursus</h6>
-                            <img src="../../assets/flowchart-tugasrasmi.jpg" alt="Carta Aliran Wilayah Asal" class="img-fluid rounded clickable-image" style="cursor:pointer;">
+                        <div class="col-md-6">
+                            <label class="form-label">No. Kad Pengenalan</label>
+                            <input type="text" class="form-control" name="user_kp" value="<?= htmlspecialchars($admin_icNo) ?>" readonly required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Jawatan & Gred</label>
+                            <input type="text" class="form-control" name="jawatan_gred" required>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Image Modal -->
-        <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-            <div class="modal-body p-0">
-                <img src="" id="modalImage" class="img-fluid rounded" alt="Expanded Image">
+            <!-- Alamat Menetap -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header" style="background-color: #d59e3e; color: white;">
+                    <h5 class="mb-0">Alamat Menetap</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Alamat 1</label>
+                            <input type="text" class="form-control" name="alamat_menetap_1" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Alamat 2</label>
+                            <input type="text" class="form-control" name="alamat_menetap_2" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Poskod</label>
+                            <input type="text" class="form-control" name="poskod_menetap" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Bandar</label>
+                            <input type="text" class="form-control" name="bandar_menetap" required>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label">Negeri</label>
+                            <input type="text" class="form-control" name="negeri_menetap" required>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="modal-footer p-2">
-                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-            </div>
-            </div>
-        </div>
-        </div>
 
+            <!-- Alamat Berkhidmat -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header" style="background-color: #d59e3e; color: white;">
+                    <h5 class="mb-0">Alamat Berkhidmat</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Alamat 1</label>
+                            <input type="text" class="form-control" name="alamat_berkhidmat_1" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Alamat 2</label>
+                            <input type="text" class="form-control" name="alamat_berkhidmat_2" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Poskod</label>
+                            <input type="text" class="form-control" name="poskod_berkhidmat" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Bandar</label>
+                            <input type="text" class="form-control" name="bandar_berkhidmat" required>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label">Negeri</label>
+                            <input type="text" class="form-control" name="negeri_berkhidmat" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
+            <!-- Maklumat Tambahan -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header" style="background-color: #d59e3e; color: white;">
+                    <h5 class="mb-0">Maklumat Tambahan</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Tarikh Lapor Diri</label>
+                            <input type="date" class="form-control" name="tarikh_lapor_diri" required>
+                        </div>
+                        <div></div>
+                        <div class="col-md-6">
+                            <label class="form-label">Pernah Menggunakan Perkhidmatan Sebelum Ini?</label>
+                            <select class="form-select" name="pernah_guna" id="pernah_guna" required onchange="toggleLastServiceDate()">
+                                <option value="">Pilih Jawapan</option>
+                                <option value="ya">Ya</option>
+                                <option value="tidak">Tidak</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Tarikh Terakhir Menggunakan Perkhidmatan</label>
+                            <input type="date" class="form-control" name="tarikh_terakhir_kemudahan" id="tarikh_terakhir" disabled>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="submit" class="btn btn-primary">Seterusnya</button>
+                <button type="reset" class="btn btn-secondary">Set Semula</button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -170,6 +199,20 @@ $stats = [
         document.getElementById('sidebar').classList.toggle('hidden');
     });
 
+    // Function to toggle last service date field
+    function toggleLastServiceDate() {
+        const pernahGuna = document.getElementById('pernah_guna');
+        const tarikhTerakhir = document.getElementById('tarikh_terakhir');
+        
+        if (pernahGuna.value === 'ya') {
+            tarikhTerakhir.disabled = false;
+            tarikhTerakhir.required = true;
+        } else {
+            tarikhTerakhir.disabled = true;
+            tarikhTerakhir.required = false;
+            tarikhTerakhir.value = '';
+        }
+    }
 
     // Image Modal
     const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
@@ -177,8 +220,8 @@ $stats = [
 
     document.querySelectorAll('.clickable-image').forEach(img => {
         img.addEventListener('click', () => {
-        modalImage.src = img.src;
-        imageModal.show();
+            modalImage.src = img.src;
+            imageModal.show();
         });
     });
 </script>
