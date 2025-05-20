@@ -3,7 +3,7 @@ session_start();
 include '../../connection.php';
 
 // Check if required session data exists
-if (!isset($_SESSION['borangWA_data'])) {
+if (!isset($_SESSION['borangWA_data']) || !isset($_SESSION['parent_info'])) {
     header("Location: borangWA.php");
     exit();
 }
@@ -32,7 +32,7 @@ $admin_phoneNo = $user_data['phone_no'];
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
-    <title>ALLTRAS - Borang Wilayah Asal (Bahagian 2)</title>
+    <title>ALLTRAS - Borang Wilayah Asal (Bahagian 3)</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -102,6 +102,24 @@ $admin_phoneNo = $user_data['phone_no'];
             position: relative;
             top: -25px;
         }
+
+        .follower-card {
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background-color: #f8f9fa;
+        }
+
+        .remove-follower {
+            color: #dc3545;
+            cursor: pointer;
+            font-size: 1.25rem;
+        }
+
+        .remove-follower:hover {
+            color: #bb2d3b;
+        }
     </style>
 </head>
 <body>
@@ -140,7 +158,7 @@ $admin_phoneNo = $user_data['phone_no'];
 
     <!-- Main Content -->
     <div class="col p-4">
-        <h3 class="mb-3">Borang Permohonan Wilayah Asal (Bahagian 2)</h3>
+        <h3 class="mb-3">Borang Permohonan Wilayah Asal (Bahagian 3)</h3>
         
         <!-- Multi-step Indicator -->
         <div class="multi-step-indicator mb-4">
@@ -151,14 +169,14 @@ $admin_phoneNo = $user_data['phone_no'];
                 <div class="step-label">Maklumat Pegawai</div>
             </div>
             <div class="step-line"></div>
-            <div class="step active">
+            <div class="step completed">
                 <div class="step-icon">
                     <i class="fas fa-users"></i>
                 </div>
                 <div class="step-label">Maklumat Ibu Bapa</div>
             </div>
             <div class="step-line"></div>
-            <div class="step">
+            <div class="step active">
                 <div class="step-icon">
                     <i class="fas fa-plane"></i>
                 </div>
@@ -173,105 +191,51 @@ $admin_phoneNo = $user_data['phone_no'];
             </div>
         </div>
 
-        <form action="../../functions/process_borangWA2.php" method="POST" class="needs-validation" novalidate>
-            <!-- Maklumat Bapa -->
+        <form action="../../functions/process_borangWA3.php" method="POST" class="needs-validation" novalidate>
+            <!-- Flight Information -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header" style="background-color: #d59e3e; color: white;">
-                    <h5 class="mb-0">Maklumat Bapa</h5>
+                    <h5 class="mb-0">Maklumat Penerbangan</h5>
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label">Nama Bapa</label>
-                            <input type="text" class="form-control" name="nama_bapa" required>
+                            <label class="form-label">Tarikh Penerbangan Pergi</label>
+                            <input type="date" class="form-control" name="tarikh_penerbangan_pergi" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">No. Kad Pengenalan</label>
-                            <input type="text" class="form-control" name="no_kp_bapa" pattern="[0-9]{6}-[0-9]{2}-[0-9]{4}" placeholder="Contoh: 123456-78-9012" required>
-                            <div class="form-text">Format: XXXXXX-XX-XXXX</div>
+                            <label class="form-label">Tarikh Penerbangan Balik</label>
+                            <input type="date" class="form-control" name="tarikh_penerbangan_balik" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Wilayah Menetap</label>
-                            <input type="text" class="form-control" name="wilayah_menetap_bapa" required>
+                            <label class="form-label">Lapangan Terbang Berlepas</label>
+                            <input type="text" class="form-control" name="start_point" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Alamat 1</label>
-                            <input type="text" class="form-control" name="alamat_menetap_1_bapa" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Alamat 2</label>
-                            <input type="text" class="form-control" name="alamat_menetap_2_bapa" required>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Poskod</label>
-                            <input type="text" class="form-control" name="poskod_menetap_bapa" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Bandar</label>
-                            <input type="text" class="form-control" name="bandar_menetap_bapa" required>
-                        </div>
-                        <div class="col-md-5">
-                            <label class="form-label">Negeri</label>
-                            <input type="text" class="form-control" name="negeri_menetap_bapa" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Ibu Negeri/Bandar Dituju</label>
-                            <input type="text" class="form-control" name="ibu_negeri_bandar_dituju_bapa" required>
+                            <label class="form-label">Lapangan Terbang Tiba</label>
+                            <input type="text" class="form-control" name="end_point" required>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Maklumat Ibu -->
+            <!-- Accompanying Persons -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header" style="background-color: #d59e3e; color: white;">
-                    <h5 class="mb-0">Maklumat Ibu</h5>
+                    <h5 class="mb-0">Maklumat Pengikut</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Nama Ibu</label>
-                            <input type="text" class="form-control" name="nama_ibu" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">No. Kad Pengenalan</label>
-                            <input type="text" class="form-control" name="no_kp_ibu" pattern="[0-9]{6}-[0-9]{2}-[0-9]{4}" placeholder="Contoh: 123456-78-9012" required>
-                            <div class="form-text">Format: XXXXXX-XX-XXXX</div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Wilayah Menetap</label>
-                            <input type="text" class="form-control" name="wilayah_menetap_ibu" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Alamat 1</label>
-                            <input type="text" class="form-control" name="alamat_menetap_1_ibu" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Alamat 2</label>
-                            <input type="text" class="form-control" name="alamat_menetap_2_ibu" required>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Poskod</label>
-                            <input type="text" class="form-control" name="poskod_menetap_ibu" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Bandar</label>
-                            <input type="text" class="form-control" name="bandar_menetap_ibu" required>
-                        </div>
-                        <div class="col-md-5">
-                            <label class="form-label">Negeri</label>
-                            <input type="text" class="form-control" name="negeri_menetap_ibu" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Ibu Negeri/Bandar Dituju</label>
-                            <input type="text" class="form-control" name="ibu_negeri_bandar_dituju_ibu" required>
-                        </div>
+                    <div id="followers-container">
+                        <!-- Followers will be added here dynamically -->
                     </div>
+                    <button type="button" class="btn btn-outline-primary mt-3" onclick="addFollower()">
+                        <i class="fas fa-plus me-2"></i>Tambah Pengikut
+                    </button>
                 </div>
             </div>
 
             <div class="d-flex justify-content-between mt-4">
-                <a href="borangWA.php" class="btn btn-secondary">
+                <a href="borangWA2.php" class="btn btn-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Kembali
                 </a>
                 <button type="submit" class="btn btn-primary">
@@ -298,6 +262,58 @@ $admin_phoneNo = $user_data['phone_no'];
             }, false)
         })
     })()
+
+    // Follower management
+    let followerCount = 0;
+
+    function addFollower() {
+        const container = document.getElementById('followers-container');
+        const followerDiv = document.createElement('div');
+        followerDiv.className = 'follower-card';
+        followerDiv.innerHTML = `
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="mb-0">Pengikut ${followerCount + 1}</h6>
+                <i class="fas fa-times remove-follower" onclick="removeFollower(this)"></i>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Nama Depan</label>
+                    <input type="text" class="form-control" name="pengikut[${followerCount}][nama_depan]" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Nama Belakang</label>
+                    <input type="text" class="form-control" name="pengikut[${followerCount}][nama_belakang]" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">No. Kad Pengenalan</label>
+                    <input type="text" class="form-control" name="pengikut[${followerCount}][no_kp]" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Tarikh Lahir</label>
+                    <input type="date" class="form-control" name="pengikut[${followerCount}][tarikh_lahir]" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Tarikh Penerbangan Pergi</label>
+                    <input type="date" class="form-control" name="pengikut[${followerCount}][tarikh_penerbangan_pergi]" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Tarikh Penerbangan Balik</label>
+                    <input type="date" class="form-control" name="pengikut[${followerCount}][tarikh_penerbangan_balik]" required>
+                </div>
+            </div>
+        `;
+        container.appendChild(followerDiv);
+        followerCount++;
+    }
+
+    function removeFollower(element) {
+        element.closest('.follower-card').remove();
+    }
+
+    document.querySelector('.toggle-sidebar').addEventListener('click', function (e) {
+        e.preventDefault();
+        document.getElementById('sidebar').classList.toggle('hidden');
+    });
 </script>
 </body>
 </html> 

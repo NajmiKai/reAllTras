@@ -8,7 +8,6 @@ CREATE TABLE IF NOT EXISTS user (
     kp VARCHAR(20) NOT NULL UNIQUE,
     bahagian VARCHAR(50) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    role ENUM('admin', 'user', 'pengesah', 'pelulus', 'pembantu_tadbir', 'pembantu_tadbir_rahsia', 'penyedia_kemudahan', 'penyemak_baki', 'ketua_jabatan_cawangan') DEFAULT 'user',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );

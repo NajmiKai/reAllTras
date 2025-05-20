@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         'tarikh_terakhir_kemudahan' => $_POST['pernah_guna'] === 'ya' ? $_POST['tarikh_terakhir_kemudahan'] : null
     ];
 
-    // Redirect to second form
+    // Redirect to the next form
     header("Location: ../role/pemohon/borangWA2.php");
     exit();
 } else {
