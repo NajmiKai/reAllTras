@@ -2,10 +2,15 @@
 session_start();
 include '../../connection.php';
 
-// Check if required session data exists
-if (!isset($_SESSION['borangWA_data'])) {
+// Check if user has completed the first form
+if (!isset($_SESSION['wilayah_asal_id'])) {
     header("Location: borangWA.php");
     exit();
+}
+
+// Set user ID in session if not set
+if (!isset($_SESSION['user_id'])) {
+    $_SESSION['user_id'] = 1; // Set default user ID to 1
 }
 
 // Fetch user data from database
@@ -22,11 +27,11 @@ if (!$user_data) {
     exit();
 }
 
-$admin_name = $user_data['name'];
-$admin_role = $user_data['role'];
-$admin_icNo = $user_data['ic_no'];
-$admin_email = $user_data['email'];
-$admin_phoneNo = $user_data['phone_no'];
+$user_name = $user_data['nama_first'] . ' ' . $user_data['nama_last'];
+$user_role = $user_data['role'];
+$user_icNo = $user_data['kp'];
+$user_email = $user_data['email'];
+$user_phoneNo = $user_data['phone'];
 ?>
 <!DOCTYPE html>
 <html lang="ms">
@@ -116,7 +121,7 @@ $admin_phoneNo = $user_data['phone_no'];
 
     <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-            <span class="nav-link fw-semibold"><?= htmlspecialchars($admin_name) ?> (<?= htmlspecialchars($admin_role) ?>)</span>
+            <span class="nav-link fw-semibold"><?= htmlspecialchars($user_name) ?> (<?= htmlspecialchars($user_role) ?>)</span>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
             <a href="../../../logout.php" class="nav-link text-danger">
@@ -142,6 +147,16 @@ $admin_phoneNo = $user_data['phone_no'];
     <div class="col p-4">
         <h3 class="mb-3">Borang Permohonan Wilayah Asal (Bahagian 2)</h3>
         
+        <?php if (isset($_SESSION['error'])): ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <?php 
+                    echo $_SESSION['error'];
+                    unset($_SESSION['error']);
+                ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+
         <!-- Multi-step Indicator -->
         <div class="multi-step-indicator mb-4">
             <div class="step completed">
@@ -174,97 +189,89 @@ $admin_phoneNo = $user_data['phone_no'];
         </div>
 
         <form action="../../functions/process_borangWA2.php" method="POST" class="needs-validation" novalidate>
-            <!-- Maklumat Bapa -->
+            <!-- Father's Information -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header" style="background-color: #d59e3e; color: white;">
-                    <h5 class="mb-0">Maklumat Bapa</h5>
+                    <h5 class="mb-0"><i class="fas fa-male me-2"></i>Maklumat Bapa</h5>
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Nama Bapa</label>
-                            <input type="text" class="form-control" name="nama_bapa" required>
+                            <input type="text" class="form-control" name="nama_bapa" maxlength="50">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">No. Kad Pengenalan</label>
-                            <input type="text" class="form-control" name="no_kp_bapa" pattern="[0-9]{6}-[0-9]{2}-[0-9]{4}" placeholder="Contoh: 123456-78-9012" required>
-                            <div class="form-text">Format: XXXXXX-XX-XXXX</div>
+                            <label class="form-label">No. KP Bapa</label>
+                            <input type="text" class="form-control" name="no_kp_bapa" maxlength="20" pattern="[0-9]{6}-[0-9]{2}-[0-9]{4}" title="Format: XXXXXX-XX-XXXX">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Wilayah Menetap</label>
-                            <input type="text" class="form-control" name="wilayah_menetap_bapa" required>
+                            <label class="form-label">Wilayah Menetap Bapa</label>
+                            <input type="text" class="form-control" name="wilayah_menetap_bapa" maxlength="50">
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Alamat 1</label>
-                            <input type="text" class="form-control" name="alamat_menetap_1_bapa" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Alamat 2</label>
-                            <input type="text" class="form-control" name="alamat_menetap_2_bapa" required>
+                        <div class="col-12">
+                            <label class="form-label">Alamat Menetap Bapa</label>
+                            <input type="text" class="form-control mb-2" name="alamat_menetap_1_bapa" placeholder="Alamat 1" maxlength="100">
+                            <input type="text" class="form-control" name="alamat_menetap_2_bapa" placeholder="Alamat 2" maxlength="100">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Poskod</label>
-                            <input type="text" class="form-control" name="poskod_menetap_bapa" required>
+                            <input type="text" class="form-control" name="poskod_menetap_bapa" maxlength="10" pattern="[0-9]{5}" title="5 digit poskod">
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label class="form-label">Bandar</label>
-                            <input type="text" class="form-control" name="bandar_menetap_bapa" required>
+                            <input type="text" class="form-control" name="bandar_menetap_bapa" maxlength="50">
                         </div>
-                        <div class="col-md-5">
+                        <div class="col-md-3">
                             <label class="form-label">Negeri</label>
-                            <input type="text" class="form-control" name="negeri_menetap_bapa" required>
+                            <input type="text" class="form-control" name="negeri_menetap_bapa" maxlength="50">
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label class="form-label">Ibu Negeri/Bandar Dituju</label>
-                            <input type="text" class="form-control" name="ibu_negeri_bandar_dituju_bapa" required>
+                            <input type="text" class="form-control" name="ibu_negeri_bandar_dituju_bapa" maxlength="50">
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Maklumat Ibu -->
+            <!-- Mother's Information -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header" style="background-color: #d59e3e; color: white;">
-                    <h5 class="mb-0">Maklumat Ibu</h5>
+                    <h5 class="mb-0"><i class="fas fa-female me-2"></i>Maklumat Ibu</h5>
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Nama Ibu</label>
-                            <input type="text" class="form-control" name="nama_ibu" required>
+                            <input type="text" class="form-control" name="nama_ibu" maxlength="50">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">No. Kad Pengenalan</label>
-                            <input type="text" class="form-control" name="no_kp_ibu" pattern="[0-9]{6}-[0-9]{2}-[0-9]{4}" placeholder="Contoh: 123456-78-9012" required>
-                            <div class="form-text">Format: XXXXXX-XX-XXXX</div>
+                            <label class="form-label">No. KP Ibu</label>
+                            <input type="text" class="form-control" name="no_kp_ibu" maxlength="20" pattern="[0-9]{6}-[0-9]{2}-[0-9]{4}" title="Format: XXXXXX-XX-XXXX">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Wilayah Menetap</label>
-                            <input type="text" class="form-control" name="wilayah_menetap_ibu" required>
+                            <label class="form-label">Wilayah Menetap Ibu</label>
+                            <input type="text" class="form-control" name="wilayah_menetap_ibu" maxlength="50">
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Alamat 1</label>
-                            <input type="text" class="form-control" name="alamat_menetap_1_ibu" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Alamat 2</label>
-                            <input type="text" class="form-control" name="alamat_menetap_2_ibu" required>
+                        <div class="col-12">
+                            <label class="form-label">Alamat Menetap Ibu</label>
+                            <input type="text" class="form-control mb-2" name="alamat_menetap_1_ibu" placeholder="Alamat 1" maxlength="100">
+                            <input type="text" class="form-control" name="alamat_menetap_2_ibu" placeholder="Alamat 2" maxlength="100">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Poskod</label>
-                            <input type="text" class="form-control" name="poskod_menetap_ibu" required>
+                            <input type="text" class="form-control" name="poskod_menetap_ibu" maxlength="10" pattern="[0-9]{5}" title="5 digit poskod">
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label class="form-label">Bandar</label>
-                            <input type="text" class="form-control" name="bandar_menetap_ibu" required>
+                            <input type="text" class="form-control" name="bandar_menetap_ibu" maxlength="50">
                         </div>
-                        <div class="col-md-5">
+                        <div class="col-md-3">
                             <label class="form-label">Negeri</label>
-                            <input type="text" class="form-control" name="negeri_menetap_ibu" required>
+                            <input type="text" class="form-control" name="negeri_menetap_ibu" maxlength="50">
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label class="form-label">Ibu Negeri/Bandar Dituju</label>
-                            <input type="text" class="form-control" name="ibu_negeri_bandar_dituju_ibu" required>
+                            <input type="text" class="form-control" name="ibu_negeri_bandar_dituju_ibu" maxlength="50">
                         </div>
                     </div>
                 </div>
@@ -298,6 +305,26 @@ $admin_phoneNo = $user_data['phone_no'];
             }, false)
         })
     })()
+
+    // Add input validation for IC numbers
+    document.querySelectorAll('input[name="no_kp_bapa"], input[name="no_kp_ibu"]').forEach(function(input) {
+        input.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 12) value = value.substr(0, 12);
+            if (value.length > 6) {
+                value = value.substr(0, 6) + '-' + value.substr(6);
+            }
+            if (value.length > 9) {
+                value = value.substr(0, 9) + '-' + value.substr(9);
+            }
+            e.target.value = value;
+        });
+    });
+
+    document.querySelector('.toggle-sidebar').addEventListener('click', function (e) {
+        e.preventDefault();
+        document.getElementById('sidebar').classList.toggle('hidden');
+    });
 </script>
 </body>
 </html> 

@@ -20,13 +20,13 @@ CREATE TABLE IF NOT EXISTS wilayah_asal (
     jawatan_gred VARCHAR(100) NOT NULL,
 
     alamat_menetap_1 VARCHAR(100) NOT NULL,
-    alamat_menetap_2 VARCHAR(100) NOT NULL,
+    alamat_menetap_2 VARCHAR(100),
     poskod_menetap VARCHAR(10) NOT NULL,
     bandar_menetap VARCHAR(50) NOT NULL,
     negeri_menetap VARCHAR(50) NOT NULL,
 
     alamat_berkhidmat_1 VARCHAR(100) NOT NULL,
-    alamat_berkhidmat_2 VARCHAR(100) NOT NULL,
+    alamat_berkhidmat_2 VARCHAR(100),
     poskod_berkhidmat VARCHAR(10) NOT NULL,
     bandar_berkhidmat VARCHAR(50) NOT NULL,
     negeri_berkhidmat VARCHAR(50) NOT NULL,

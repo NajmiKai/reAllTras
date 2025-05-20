@@ -22,11 +22,11 @@ if (!$user_data) {
     exit();
 }
 
-$admin_name = $user_data['name'];
-$admin_role = $user_data['role'];
-$admin_icNo = $user_data['ic_no'];
-$admin_email = $user_data['email'];
-$admin_phoneNo = $user_data['phone_no'];
+$user_name = $user_data['nama_first'] . ' ' . $user_data['nama_last'];
+$user_role = $user_data['role'];
+$user_icNo = $user_data['kp'];
+$user_email = $user_data['email'];
+$user_phoneNo = $user_data['phone'];
 ?>
 <!DOCTYPE html>
 <html lang="ms">
@@ -134,7 +134,7 @@ $admin_phoneNo = $user_data['phone_no'];
 
     <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-            <span class="nav-link fw-semibold"><?= htmlspecialchars($admin_name) ?> (<?= htmlspecialchars($admin_role) ?>)</span>
+            <span class="nav-link fw-semibold"><?= htmlspecialchars($user_name) ?> (<?= htmlspecialchars($user_role) ?>)</span>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
             <a href="../../../logout.php" class="nav-link text-danger">
@@ -292,13 +292,27 @@ $admin_phoneNo = $user_data['phone_no'];
                     <label class="form-label">Tarikh Lahir</label>
                     <input type="date" class="form-control" name="pengikut[${followerCount}][tarikh_lahir]" required>
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Tarikh Penerbangan Pergi</label>
-                    <input type="date" class="form-control" name="pengikut[${followerCount}][tarikh_penerbangan_pergi]" required>
+                <div class="col-12">
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="pengikut[${followerCount}][same_flight]" value="yes" id="same_flight_yes_${followerCount}" onchange="toggleFlightDetails(${followerCount})" checked>
+                        <label class="form-check-label" for="same_flight_yes_${followerCount}">
+                            Gunakan butiran penerbangan yang sama dengan pemohon
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="pengikut[${followerCount}][same_flight]" value="no" id="same_flight_no_${followerCount}" onchange="toggleFlightDetails(${followerCount})">
+                        <label class="form-check-label" for="same_flight_no_${followerCount}">
+                            Gunakan butiran penerbangan yang berbeza
+                        </label>
+                    </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 flight-details-${followerCount}" style="display: none;">
+                    <label class="form-label">Tarikh Penerbangan Pergi</label>
+                    <input type="date" class="form-control" name="pengikut[${followerCount}][tarikh_penerbangan_pergi]">
+                </div>
+                <div class="col-md-6 flight-details-${followerCount}" style="display: none;">
                     <label class="form-label">Tarikh Penerbangan Balik</label>
-                    <input type="date" class="form-control" name="pengikut[${followerCount}][tarikh_penerbangan_balik]" required>
+                    <input type="date" class="form-control" name="pengikut[${followerCount}][tarikh_penerbangan_balik]">
                 </div>
             </div>
         `;
@@ -308,6 +322,20 @@ $admin_phoneNo = $user_data['phone_no'];
 
     function removeFollower(element) {
         element.closest('.follower-card').remove();
+    }
+
+    function toggleFlightDetails(followerCount) {
+        const flightDetails = document.querySelectorAll(`.flight-details-${followerCount}`);
+        const sameFlight = document.querySelector(`#same_flight_yes_${followerCount}`).checked;
+        
+        flightDetails.forEach(element => {
+            element.style.display = sameFlight ? 'none' : 'block';
+            const input = element.querySelector('input');
+            input.required = !sameFlight;
+            if (sameFlight) {
+                input.value = '';
+            }
+        });
     }
 
     document.querySelector('.toggle-sidebar').addEventListener('click', function (e) {

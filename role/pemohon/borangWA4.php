@@ -22,11 +22,11 @@ if (!$user_data) {
     exit();
 }
 
-$admin_name = $user_data['name'];
-$admin_role = $user_data['role'];
-$admin_icNo = $user_data['ic_no'];
-$admin_email = $user_data['email'];
-$admin_phoneNo = $user_data['phone_no'];
+$user_name = $user_data['nama_first'] . ' ' . $user_data['nama_last'];
+$user_role = $user_data['role'];
+$user_icNo = $user_data['kp'];
+$user_email = $user_data['email'];
+$user_phoneNo = $user_data['phone'];
 
 // Get data from session
 $officer_data = $_SESSION['borangWA_data'];
@@ -130,7 +130,7 @@ $flight_data = $_SESSION['flight_info'];
 
     <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-            <span class="nav-link fw-semibold"><?= htmlspecialchars($admin_name) ?> (<?= htmlspecialchars($admin_role) ?>)</span>
+            <span class="nav-link fw-semibold"><?= htmlspecialchars($user_name) ?> (<?= htmlspecialchars($user_role) ?>)</span>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
             <a href="../../../logout.php" class="nav-link text-danger">

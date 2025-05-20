@@ -21,18 +21,12 @@ if (!$user_data) {
     exit();
 }
 
-$admin_name = $user_data['nama_first'] . ' ' . $user_data['nama_last'];
-$admin_role = $user_data['role'];
-$admin_icNo = $user_data['kp'];
-$admin_email = $user_data['email'];
-$admin_phoneNo = $user_data['phone'];
+$user_name = $user_data['nama_first'] . ' ' . $user_data['nama_last'];
+$user_role = $user_data['role'];
+$user_icNo = $user_data['kp'];
+$user_email = $user_data['email'];
+$user_phoneNo = $user_data['phone'];
 
-$stats = [
-    "total" => ["Wilayah Asal" => 22, "Tugas Rasmi" => 12],
-    "processing" => ["Wilayah Asal" => 7, "Tugas Rasmi" => 12],
-    "approved" => ["Wilayah Asal" => 14, "Tugas Rasmi" => 0],
-    "rejected" => ["Wilayah Asal" => 14, "Tugas Rasmi" => 0]
-];
 ?>
 <!DOCTYPE html>
 <html lang="ms">
@@ -122,7 +116,7 @@ $stats = [
 
     <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-            <span class="nav-link fw-semibold"><?= htmlspecialchars($admin_name) ?> (<?= htmlspecialchars($admin_role) ?>)</span>
+            <span class="nav-link fw-semibold"><?= htmlspecialchars($user_name) ?> (<?= htmlspecialchars($user_role) ?>)</span>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
             <a href="../../../logout.php" class="nav-link text-danger">
@@ -148,6 +142,16 @@ $stats = [
     <div class="col p-4">
         <h3 class="mb-3">Borang Permohonan Wilayah Asal (Bahagian 1)</h3>
         
+        <?php if (isset($_SESSION['error'])): ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <?php 
+                    echo $_SESSION['error'];
+                    unset($_SESSION['error']);
+                ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+
         <!-- Multi-step Indicator -->
         <div class="multi-step-indicator mb-4">
             <div class="step active">
@@ -189,11 +193,11 @@ $stats = [
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Nama Pegawai</label>
-                            <input type="text" class="form-control" name="nama_pegawai" value="<?= htmlspecialchars($admin_name) ?>" readonly required>
+                            <input type="text" class="form-control" name="nama_pegawai" value="<?= htmlspecialchars($user_name) ?>" readonly required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">No. Kad Pengenalan</label>
-                            <input type="text" class="form-control" name="user_kp" value="<?= htmlspecialchars($admin_icNo) ?>" readonly required>
+                            <input type="text" class="form-control" name="user_kp" value="<?= htmlspecialchars($user_icNo) ?>" readonly required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Jawatan & Gred</label>
@@ -295,6 +299,77 @@ $stats = [
                 </div>
             </div>
 
+            <!-- Partner Information Section -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header" style="background-color: #d59e3e; color: white;">
+                    <h5 class="mb-0"><i class="fas fa-user-friends me-2"></i>Maklumat Pasangan</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-12 mb-4">
+                            <label class="form-label fw-bold">Adakah Anda Mempunyai Pasangan?</label>
+                            <div class="d-flex gap-4 mt-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="ada_pasangan" value="ya" id="ada_pasangan_ya" onchange="togglePartnerDetails()">
+                                    <label class="form-check-label" for="ada_pasangan_ya">Ya</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="ada_pasangan" value="tidak" id="ada_pasangan_tidak" onchange="togglePartnerDetails()" checked>
+                                    <label class="form-check-label" for="ada_pasangan_tidak">Tidak</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="partner_details_container" style="display: none;" class="mt-3">
+                            <div class="border rounded p-4 bg-light">
+                                <h6 class="mb-4 text-muted border-bottom pb-2">Maklumat Peribadi Pasangan</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Nama Depan Pasangan</label>
+                                        <input type="text" class="form-control" name="nama_first_pasangan" maxlength="50">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Nama Belakang Pasangan</label>
+                                        <input type="text" class="form-control" name="nama_last_pasangan" maxlength="50">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">No. KP Pasangan</label>
+                                        <input type="text" class="form-control" name="no_kp_pasangan" maxlength="20" pattern="[0-9]{6}-[0-9]{2}-[0-9]{4}" title="Format: XXXXXX-XX-XXXX">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Wilayah Menetap Pasangan</label>
+                                        <input type="text" class="form-control" name="wilayah_menetap_pasangan" maxlength="50">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="border rounded p-4 bg-light mt-4">
+                                <h6 class="mb-4 text-muted border-bottom pb-2">Alamat Berkhidmat Pasangan</h6>
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label class="form-label">Alamat</label>
+                                        <input type="text" class="form-control mb-2" name="alamat_berkhidmat_1_pasangan" placeholder="Alamat 1" maxlength="100">
+                                        <input type="text" class="form-control" name="alamat_berkhidmat_2_pasangan" placeholder="Alamat 2" maxlength="100">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Poskod</label>
+                                        <input type="text" class="form-control" name="poskod_berkhidmat_pasangan" maxlength="10" pattern="[0-9]{5}" title="5 digit poskod">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Bandar</label>
+                                        <input type="text" class="form-control" name="bandar_berkhidmat_pasangan" maxlength="50">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Negeri</label>
+                                        <input type="text" class="form-control" name="negeri_berkhidmat_pasangan" maxlength="50">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="d-flex justify-content-end mt-4">
                 <button type="submit" class="btn btn-primary">
                     Seterusnya<i class="fas fa-arrow-right ms-2"></i>
@@ -337,9 +412,34 @@ $stats = [
         }
     }
 
+    function togglePartnerDetails() {
+        const partnerDetails = document.getElementById('partner_details_container');
+        const hasPartner = document.getElementById('ada_pasangan_ya').checked;
+        partnerDetails.style.display = hasPartner ? 'block' : 'none';
+        
+        // Toggle required attribute for partner fields
+        const partnerFields = partnerDetails.querySelectorAll('input');
+        partnerFields.forEach(field => {
+            field.required = hasPartner;
+        });
+    }
+
     document.querySelector('.toggle-sidebar').addEventListener('click', function (e) {
         e.preventDefault();
         document.getElementById('sidebar').classList.toggle('hidden');
+    });
+
+    // Add input validation for IC number
+    document.querySelector('input[name="no_kp_pasangan"]').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 12) value = value.substr(0, 12);
+        if (value.length > 6) {
+            value = value.substr(0, 6) + '-' + value.substr(6);
+        }
+        if (value.length > 9) {
+            value = value.substr(0, 9) + '-' + value.substr(9);
+        }
+        e.target.value = value;
     });
 </script>
 </body>
