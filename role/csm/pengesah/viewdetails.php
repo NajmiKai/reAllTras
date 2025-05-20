@@ -222,7 +222,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <!-- Maklumat Permohonan -->
         <div class="card mb-4">
-            <div class="card-header bg-warning text-dark">BAHAGIAN CAWANGAN SUMBER MANUSIA (Pengesah)</div>
+            <div class="card-header bg-warning text-dark">BAHAGIAN CAWANGAN SUMBER MANUSIA (PENGESAH)</div>
             <div class="card-body row">
                 <!-- <div class="col-md-6 mb-3">
                     <label class="form-label">Muat Naik Dokumen (optional)</label>

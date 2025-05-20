@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
-    <title>ALLTRAS - Dashboard</title>
+    <title>ALLTRAS - Permohonan</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -211,19 +211,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <!-- Maklumat Permohonan -->
         <div class="card mb-4">
-            <div class="card-header bg-warning text-dark">BAHAGIAN CAWANGAN SUMBER MANUSIA (PEGAWAI SULIT)</div>
+            <div class="card-header bg-warning text-dark">BAHAGIAN IBU PEJABAT (PENYEMAK)</div>
             <div class="card-body row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Markah Prestasi (optional)</label>
-                    <input type="text" class="form-control" name="markah">
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label for="tatatertib_select" class="form-label">Hukuman tatatertib pada tahun permohonan</label>
-                    <select class="form-select" name="hukuman_tatatertib" id="tatatertib_select" required onchange="toggleUlasan()">
+               
+            <div class="col-md-6 mb-3">
+                    <label for="status_select" class="form-label">Status Permohonan</label>
+                    <select class="form-select" name="status_permohonan" id="status_select" required onchange="toggleUlasan()">
                         <option value="">-- Sila Pilih --</option>
-                        <option value="ada">Ada</option>
-                        <option value="tiada">Tiada</option>
+                        <option value="terima">Permohonan diterima</option>
+                        <option value="kuiri">Permohonan dikuiri</option>
                     </select>
+                </div>
+                <div class="col-md-12 mb-3" id="ulasan_section" style="display: none;">
+                    <label for="ulasan" class="form-label">Ulasan (jika dikuiri)</label>
+                    <textarea class="form-control" name="ulasan" id="ulasan" rows="4" placeholder="Nyatakan sebab dikuiri..."></textarea>
+                </div>
+
+                <!-- letak if else kat sini -->
+                <button type="submit" class="btn btn-success">Cetak Borang</button>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Muat Naik Dokumen (Surat Kelulusan)</label>
+                    <input type="file" class="form-control" name="dokumen">
                 </div>
             </div>
         </div>
@@ -240,9 +248,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 <script>
-   
-
-   
+   function toggleUlasan() {
+    const select = document.getElementById('status_select');
+    const ulasanDiv = document.getElementById('ulasan_section');
+    if (select.value === 'kuiri') {
+        ulasanDiv.style.display = 'block';
+        document.getElementById('ulasan').setAttribute('required', 'required');
+    } else {
+        ulasanDiv.style.display = 'none';
+        document.getElementById('ulasan').removeAttribute('required');
+    }
+} 
 </script>
 </body>
 </html>

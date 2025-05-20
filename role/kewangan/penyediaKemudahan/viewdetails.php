@@ -69,9 +69,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // move_uploaded_file($_FILES['dokumen']['tmp_name'], $uploadedPath);
 
         // Change status
-        $record['status'] = 'Lulus (Pegawai Sulit)';
+        $record['status'] = 'Lulus (Penyemak Baki)';
     } else {
-        $record['status'] = 'Gagal (Pegawai Sulit)';
+        $record['status'] = 'Gagal (Penyemak Baki)';
     }
 }
 
@@ -211,19 +211,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <!-- Maklumat Permohonan -->
         <div class="card mb-4">
-            <div class="card-header bg-warning text-dark">BAHAGIAN CAWANGAN SUMBER MANUSIA (PEGAWAI SULIT)</div>
+            <div class="card-header bg-warning text-dark">BAHAGIAN CAWANGAN KEWANGAN (PENYEDIA KEMUDAHAN)</div>
             <div class="card-body row">
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">Markah Prestasi (optional)</label>
-                    <input type="text" class="form-control" name="markah">
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label for="tatatertib_select" class="form-label">Hukuman tatatertib pada tahun permohonan</label>
-                    <select class="form-select" name="hukuman_tatatertib" id="tatatertib_select" required onchange="toggleUlasan()">
-                        <option value="">-- Sila Pilih --</option>
-                        <option value="ada">Ada</option>
-                        <option value="tiada">Tiada</option>
-                    </select>
+                    <label class="form-label">Muat Naik Dokumen (e-Tiket)</label>
+                    <input type="file" class="form-control" name="dokumen">
                 </div>
             </div>
         </div>

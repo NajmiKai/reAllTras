@@ -211,22 +211,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <!-- Maklumat Permohonan -->
         <div class="card mb-4">
-            <div class="card-header bg-warning text-dark">BAHAGIAN CAWANGAN SUMBER MANUSIA (PEGAWAI SULIT)</div>
+            <div class="card-header bg-warning text-dark">BAHAGIAN IBU PEJABAT (PENGESAH)</div>
             <div class="card-body row">
+            
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">Markah Prestasi (optional)</label>
-                    <input type="text" class="form-control" name="markah">
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label for="tatatertib_select" class="form-label">Hukuman tatatertib pada tahun permohonan</label>
-                    <select class="form-select" name="hukuman_tatatertib" id="tatatertib_select" required onchange="toggleUlasan()">
+                    <label for="status_select" class="form-label">Status Permohonan</label>
+                    <select class="form-select" name="status_permohonan" id="status_select" required onchange="toggleUlasan()">
                         <option value="">-- Sila Pilih --</option>
-                        <option value="ada">Ada</option>
-                        <option value="tiada">Tiada</option>
+                        <option value="sokong">Disokong</option>
+                        <option value="tidakDisokong">Tidak disokong</option>
                     </select>
+                </div>
+                <div class="col-md-12 mb-3" id="ulasan_section" style="display: none;">
+                    <label for="ulasan" class="form-label">Ulasan (jika dikuiri)</label>
+                    <textarea class="form-control" name="ulasan" id="ulasan" rows="4" placeholder="Nyatakan sebab dikuiri..."></textarea>
                 </div>
             </div>
         </div>
+
 
         <div class="text-end mb-5">
             <button type="submit" class="btn btn-success">Hantar</button>
@@ -240,9 +242,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 <script>
-   
-
-   
+   function toggleUlasan() {
+    const select = document.getElementById('status_select');
+    const ulasanDiv = document.getElementById('ulasan_section');
+    if (select.value === 'tidakDisokong') {
+        ulasanDiv.style.display = 'block';
+        document.getElementById('ulasan').setAttribute('required', 'required');
+    } else {
+        ulasanDiv.style.display = 'none';
+        document.getElementById('ulasan').removeAttribute('required');
+    }
+} 
 </script>
 </body>
 </html>

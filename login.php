@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->store_result();
 
     if ($stmt->num_rows === 1) {
-        $stmt->bind_result($id, $name, $icNo, $email, $phoneNo, $hashedPassword, $role);
+        $stmt->bind_result($id, $name, $icNo, $email, $phoneNo, $hashedPassword, $role, $reset_token, $token_expiry);
         $stmt->fetch();
 
         if (password_verify($password, $hashedPassword)) {
@@ -33,6 +33,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 exit();
             } else if ($role === 'Pengesah CSM') {
                 header("Location: role/CSM/pengesah/dashboard.php");
+                exit();
+            } else if ($role === 'Penyemak HQ') {
+                header("Location: role/HQ/penyemak/dashboard.php");
+                exit();
+            } else if ($role === 'Pengesah HQ') {
+                header("Location: role/HQ/pengesah/dashboard.php");
+                exit();
+            } else if ($role === 'Pelulus HQ') {
+                header("Location: role/HQ/pelulus/dashboard.php");
+                exit();
+            } else if ($role === 'Penyemak Baki Kewangan') {
+                header("Location: role/kewangan/penyemakBaki/dashboard.php");
+                exit();
+            } else if ($role === 'Pengesah Kewangan') {
+                header("Location: role/kewangan/pengesah/dashboard.php");
+                exit();
+            } else if ($role === 'Penyedia Kemudahan Kewangan') {
+                header("Location: role/kewangan/penyediaKemudahan/dashboard.php");
                 exit();
             } else {
                 echo "<script>alert('Akses ditolak untuk peranan: $role'); window.location.href='login.php';</script>";
