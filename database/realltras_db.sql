@@ -18,12 +18,7 @@ CREATE TABLE IF NOT EXISTS wilayah_asal (
 
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_kp VARCHAR(20) NOT NULL UNIQUE,
-    nama_first VARCHAR(50) NOT NULL,
-    nama_last VARCHAR(50) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    phone VARCHAR(20),
-    bahagian VARCHAR(50) NOT NULL,
-    jawatan VARCHAR(50) NOT NULL,
+    jawatan_gred VARCHAR(100) NOT NULL,
 
     alamat_menetap_1 VARCHAR(100) NOT NULL,
     alamat_menetap_2 VARCHAR(100) NOT NULL,
@@ -88,6 +83,9 @@ CREATE TABLE IF NOT EXISTS wilayah_asal (
     kp_ketua_jabatan VARCHAR(50),
     tarikh_keputusan_ketua_jabatan DATE,
 
+    status_permohonan ENUM('Belum Disemak','Selesai','Semak Semula', 'Tolak', 'Lulus') DEFAULT 'Belum Disemak',
+    kedudukan_permohonan ENUM('Pemohon','CSM', 'HQ', 'CSM2', 'Kewangan') DEFAULT 'Pemohon',
+
     FOREIGN KEY (user_kp) REFERENCES user(kp),
     FOREIGN KEY (kp_ketua_jabatan) REFERENCES user(kp),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -112,4 +110,21 @@ CREATE TABLE IF NOT EXISTS wilayah_asal_pengikut (
     FOREIGN KEY (kp_ibuayah_pengikut) REFERENCES user(kp),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-); 
+);
+
+-- Create table for document uploads
+CREATE TABLE IF NOT EXISTS documents (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    wilayah_asal_id INT,
+    file_name VARCHAR(255) NOT NULL,
+    file_path VARCHAR(255) NOT NULL,
+    file_type VARCHAR(50) NOT NULL,
+    file_size INT NOT NULL,
+    file_class_origin ENUM('pemohon', 'csm1', 'csm2', 'hq', 'kewangan') DEFAULT 'pemohon',
+    file_uploader_origin VARCHAR(20) NOT NULL UNIQUE,
+    upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    description TEXT,
+    FOREIGN KEY (wilayah_asal_id) REFERENCES wilayah_asal(id) ON DELETE CASCADE,
+    FOREIGN KEY (file_uploader_origin) REFERENCES user(kp) ON DELETE CASCADE
+);
+
