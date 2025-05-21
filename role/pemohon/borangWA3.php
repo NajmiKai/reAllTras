@@ -199,6 +199,21 @@ $user_phoneNo = $user_data['phone'];
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
+                        <div class="col-12 mb-3">
+                            <label class="form-label fw-bold">Jenis Permohonan</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="jenis_permohonan" id="diri_sendiri" value="diri_sendiri" required>
+                                <label class="form-check-label" for="diri_sendiri">
+                                    Diri Sendiri/ Pasangan/ Anak Ke Wilayah Ditetapkan
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="jenis_permohonan" id="keluarga" value="keluarga" required>
+                                <label class="form-check-label" for="keluarga">
+                                    Keluarga Pegawai ke Wilayah Berkhidmat
+                                </label>
+                            </div>
+                        </div>
                         <div class="col-md-6">
                             <label class="form-label">Tarikh Penerbangan Pergi</label>
                             <input type="date" class="form-control" name="tarikh_penerbangan_pergi" required>

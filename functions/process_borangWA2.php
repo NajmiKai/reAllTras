@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         // Prepare values for binding
         $nama_bapa = $_POST['nama_bapa'];
-        $no_kp_bapa = $_POST['no_kp_bapa'];
+        $no_kp_bapa = $_POST['no_kp_bapa_raw'] ?? $_POST['no_kp_bapa'];
         $wilayah_menetap_bapa = $_POST['wilayah_menetap_bapa'];
         $alamat_menetap_1_bapa = $_POST['alamat_menetap_1_bapa'];
         $alamat_menetap_2_bapa = $_POST['alamat_menetap_2_bapa'];
@@ -47,7 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $ibu_negeri_bandar_dituju_bapa = $_POST['ibu_negeri_bandar_dituju_bapa'];
         
         $nama_ibu = $_POST['nama_ibu'];
-        $no_kp_ibu = $_POST['no_kp_ibu'];
+        $no_kp_ibu = $_POST['no_kp_ibu_raw'] ?? $_POST['no_kp_ibu'];
         $wilayah_menetap_ibu = $_POST['wilayah_menetap_ibu'];
         $alamat_menetap_1_ibu = $_POST['alamat_menetap_1_ibu'];
         $alamat_menetap_2_ibu = $_POST['alamat_menetap_2_ibu'];
@@ -81,6 +81,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Execute the statement
         if ($stmt->execute()) {
+            // Store parent information in session
+            $_SESSION['parent_info'] = [
+                'nama_bapa' => $nama_bapa,
+                'no_kp_bapa' => $no_kp_bapa,
+                'wilayah_menetap_bapa' => $wilayah_menetap_bapa,
+                'alamat_menetap_1_bapa' => $alamat_menetap_1_bapa,
+                'alamat_menetap_2_bapa' => $alamat_menetap_2_bapa,
+                'poskod_menetap_bapa' => $poskod_menetap_bapa,
+                'bandar_menetap_bapa' => $bandar_menetap_bapa,
+                'negeri_menetap_bapa' => $negeri_menetap_bapa,
+                'ibu_negeri_bandar_dituju_bapa' => $ibu_negeri_bandar_dituju_bapa,
+                'nama_ibu' => $nama_ibu,
+                'no_kp_ibu' => $no_kp_ibu,
+                'wilayah_menetap_ibu' => $wilayah_menetap_ibu,
+                'alamat_menetap_1_ibu' => $alamat_menetap_1_ibu,
+                'alamat_menetap_2_ibu' => $alamat_menetap_2_ibu,
+                'poskod_menetap_ibu' => $poskod_menetap_ibu,
+                'bandar_menetap_ibu' => $bandar_menetap_ibu,
+                'negeri_menetap_ibu' => $negeri_menetap_ibu,
+                'ibu_negeri_bandar_dituju_ibu' => $ibu_negeri_bandar_dituju_ibu
+            ];
+
+            // Keep existing borangWA_data if it exists
+            if (!isset($_SESSION['borangWA_data'])) {
+                $_SESSION['borangWA_data'] = [];
+            }
+
             // Redirect to the next form
             header("Location: ../role/pemohon/borangWA3.php");
             exit();

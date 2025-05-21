@@ -2,8 +2,8 @@
 session_start();
 include '../../connection.php';
 
-// Check if all required session data exists
-if (!isset($_SESSION['borangWA_data']) || !isset($_SESSION['parent_info']) || !isset($_SESSION['flight_info'])) {
+// Check if wilayah_asal_id exists in session
+if (!isset($_SESSION['wilayah_asal_id'])) {
     header("Location: borangWA.php");
     exit();
 }
@@ -24,99 +24,16 @@ if (!$user_data) {
 
 $user_name = $user_data['nama_first'] . ' ' . $user_data['nama_last'];
 $user_role = $user_data['role'];
-$user_icNo = $user_data['kp'];
-$user_email = $user_data['email'];
-$user_phoneNo = $user_data['phone'];
-
-// Get data from session
-$officer_data = $_SESSION['borangWA_data'];
-$parent_data = $_SESSION['parent_info'];
-$flight_data = $_SESSION['flight_info'];
 ?>
 <!DOCTYPE html>
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
-    <title>ALLTRAS - Borang Wilayah Asal (Pengesahan)</title>
+    <title>ALLTRAS - Borang Wilayah Asal (Dokumen)</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../assets/css/adminStyle.css">
-    <style>
-        .multi-step-indicator {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 2rem 0;
-        }
-
-        .step {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            z-index: 1;
-        }
-
-        .step-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: #f8f9fa;
-            border: 2px solid #dee2e6;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .step.completed .step-icon {
-            background-color: #d59e3e;
-            border-color: #d59e3e;
-            color: white;
-        }
-
-        .step.active .step-icon {
-            background-color: #d59e3e;
-            border-color: #d59e3e;
-            color: white;
-        }
-
-        .step-label {
-            font-size: 0.875rem;
-            color: #6c757d;
-            text-align: center;
-        }
-
-        .step.active .step-label {
-            color: #d59e3e;
-            font-weight: 600;
-        }
-
-        .step.completed .step-label {
-            color: #d59e3e;
-            font-weight: 600;
-        }
-
-        .step-line {
-            flex: 1;
-            height: 2px;
-            background-color: #dee2e6;
-            margin: 0 1rem;
-            position: relative;
-            top: -25px;
-        }
-
-        .info-label {
-            font-weight: 600;
-            color: #495057;
-        }
-
-        .info-value {
-            color: #6c757d;
-        }
-    </style>
 </head>
 <body>
 
@@ -154,120 +71,56 @@ $flight_data = $_SESSION['flight_info'];
 
     <!-- Main Content -->
     <div class="col p-4">
-        <h3 class="mb-3">Pengesahan Permohonan Wilayah Asal</h3>
+        <h3 class="mb-3">Muat Naik Dokumen</h3>
         
-        <!-- Multi-step Indicator -->
-        <div class="multi-step-indicator mb-4">
-            <div class="step completed">
-                <div class="step-icon">
-                    <i class="fas fa-user"></i>
-                </div>
-                <div class="step-label">Maklumat Pegawai</div>
-            </div>
-            <div class="step-line"></div>
-            <div class="step completed">
-                <div class="step-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <div class="step-label">Maklumat Ibu Bapa</div>
-            </div>
-            <div class="step-line"></div>
-            <div class="step completed">
-                <div class="step-icon">
-                    <i class="fas fa-plane"></i>
-                </div>
-                <div class="step-label">Maklumat Penerbangan</div>
-            </div>
-            <div class="step-line"></div>
-            <div class="step active">
-                <div class="step-icon">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="step-label">Pengesahan</div>
-            </div>
-        </div>
-
-        <form action="../../functions/process_borangWA4.php" method="POST" class="needs-validation" novalidate>
-            <!-- Maklumat Pegawai -->
+        <form action="../../functions/process_borangWA4.php" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+            <!-- Dokumen Sokongan -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header" style="background-color: #d59e3e; color: white;">
-                    <h5 class="mb-0">Maklumat Pegawai</h5>
+                    <h5 class="mb-0">Dokumen Sokongan</h5>
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
-                        <div class="col-md-6">
-                            <p class="mb-1 info-label">Nama Pegawai</p>
-                            <p class="info-value"><?= htmlspecialchars($officer_data['nama_pegawai']) ?></p>
-                        </div>
-                        <div class="col-md-6">
-                            <p class="mb-1 info-label">No. Kad Pengenalan</p>
-                            <p class="info-value"><?= htmlspecialchars($officer_data['user_kp']) ?></p>
-                        </div>
-                        <div class="col-md-6">
-                            <p class="mb-1 info-label">Jawatan & Gred</p>
-                            <p class="info-value"><?= htmlspecialchars($officer_data['jawatan_gred']) ?></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                        <div class="col-12">
+                            <div class="document-item d-flex align-items-center mb-3">
+                                <div class="form-check me-3">
+                                    <input class="form-check-input document-check" type="checkbox" id="ic_pegawai" name="documents[]" value="ic_pegawai" required>
+                                    <label class="form-check-label" for="ic_pegawai">
+                                        Salinan IC Pegawai <span class="text-danger">*</span>
+                                    </label>
+                                </div>
+                                <input type="file" class="form-control document-file" id="ic_pegawai_file" name="ic_pegawai_file" accept=".pdf,.jpg,.jpeg,.png" required>
+                                <div class="upload-status ms-3 d-none">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                </div>
+                            </div>
 
-            <!-- Maklumat Ibu Bapa -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-header" style="background-color: #d59e3e; color: white;">
-                    <h5 class="mb-0">Maklumat Ibu Bapa</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <p class="mb-1 info-label">Nama Bapa</p>
-                            <p class="info-value"><?= htmlspecialchars($parent_data['nama_bapa']) ?></p>
-                        </div>
-                        <div class="col-md-6">
-                            <p class="mb-1 info-label">Nama Ibu</p>
-                            <p class="info-value"><?= htmlspecialchars($parent_data['nama_ibu']) ?></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                            <div class="document-item d-flex align-items-center mb-3">
+                                <div class="form-check me-3">
+                                    <input class="form-check-input document-check" type="checkbox" id="ic_pengikut" name="documents[]" value="ic_pengikut">
+                                    <label class="form-check-label" for="ic_pengikut">
+                                        Salinan IC Pengikut dan Pasangan (sekiranya berkait)
+                                    </label>
+                                </div>
+                                <input type="file" class="form-control document-file" id="ic_pengikut_file" name="ic_pengikut_file" accept=".pdf,.jpg,.jpeg,.png">
+                                <div class="upload-status ms-3 d-none">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                </div>
+                            </div>
 
-            <!-- Maklumat Penerbangan -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-header" style="background-color: #d59e3e; color: white;">
-                    <h5 class="mb-0">Maklumat Penerbangan</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <p class="mb-1 info-label">Tarikh Penerbangan Pergi</p>
-                            <p class="info-value"><?= htmlspecialchars($flight_data['tarikh_penerbangan_pergi']) ?></p>
+                            <div class="document-item d-flex align-items-center mb-3">
+                                <div class="form-check me-3">
+                                    <input class="form-check-input document-check" type="checkbox" id="dokumen_sokongan" name="documents[]" value="dokumen_sokongan">
+                                    <label class="form-check-label" for="dokumen_sokongan">
+                                        Dokument Sokongan (Sijil Kelahiran Ibu Bapa Pegawai / Sijil Kematian Ibu Bapa dan Lain-Lain)
+                                    </label>
+                                </div>
+                                <input type="file" class="form-control document-file" id="dokumen_sokongan_file" name="dokumen_sokongan_file" accept=".pdf,.jpg,.jpeg,.png">
+                                <div class="upload-status ms-3 d-none">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <p class="mb-1 info-label">Tarikh Penerbangan Balik</p>
-                            <p class="info-value"><?= htmlspecialchars($flight_data['tarikh_penerbangan_balik']) ?></p>
-                        </div>
-                        <div class="col-md-6">
-                            <p class="mb-1 info-label">Lapangan Terbang Berlepas</p>
-                            <p class="info-value"><?= htmlspecialchars($flight_data['start_point']) ?></p>
-                        </div>
-                        <div class="col-md-6">
-                            <p class="mb-1 info-label">Lapangan Terbang Tiba</p>
-                            <p class="info-value"><?= htmlspecialchars($flight_data['end_point']) ?></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Pengesahan -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-header" style="background-color: #d59e3e; color: white;">
-                    <h5 class="mb-0">Pengesahan</h5>
-                </div>
-                <div class="card-body">
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="confirmation" required>
-                        <label class="form-check-label" for="confirmation">
-                            Saya mengesahkan bahawa semua maklumat yang diberikan adalah benar dan tepat.
-                        </label>
                     </div>
                 </div>
             </div>
@@ -300,6 +153,35 @@ $flight_data = $_SESSION['flight_info'];
             }, false)
         })
     })()
+
+    // Document upload handling
+    document.querySelectorAll('.document-file').forEach(function(input) {
+        input.addEventListener('change', function() {
+            const checkbox = this.previousElementSibling.querySelector('.document-check');
+            const statusIcon = this.nextElementSibling;
+            
+            if (this.files.length > 0) {
+                checkbox.checked = true;
+                statusIcon.classList.remove('d-none');
+            } else {
+                checkbox.checked = false;
+                statusIcon.classList.add('d-none');
+            }
+        });
+    });
+
+    // Checkbox handling
+    document.querySelectorAll('.document-check').forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            const fileInput = this.parentElement.nextElementSibling;
+            const statusIcon = fileInput.nextElementSibling;
+            
+            if (!this.checked) {
+                fileInput.value = '';
+                statusIcon.classList.add('d-none');
+            }
+        });
+    });
 </script>
 </body>
 </html> 

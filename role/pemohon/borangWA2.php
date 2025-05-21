@@ -202,7 +202,7 @@ $user_phoneNo = $user_data['phone'];
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">No. KP Bapa</label>
-                            <input type="text" class="form-control" name="no_kp_bapa" maxlength="20" pattern="[0-9]{6}-[0-9]{2}-[0-9]{4}" title="Format: XXXXXX-XX-XXXX">
+                            <input type="text" class="form-control" name="no_kp_bapa" id="no_kp_bapa" maxlength="14" oninput="formatIC(this)" title="Format: XXXXXX-XX-XXXX">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Wilayah Menetap Bapa</label>
@@ -246,7 +246,7 @@ $user_phoneNo = $user_data['phone'];
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">No. KP Ibu</label>
-                            <input type="text" class="form-control" name="no_kp_ibu" maxlength="20" pattern="[0-9]{6}-[0-9]{2}-[0-9]{4}" title="Format: XXXXXX-XX-XXXX">
+                            <input type="text" class="form-control" name="no_kp_ibu" id="no_kp_ibu" maxlength="14" oninput="formatIC(this)" title="Format: XXXXXX-XX-XXXX">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Wilayah Menetap Ibu</label>
@@ -306,20 +306,35 @@ $user_phoneNo = $user_data['phone'];
         })
     })()
 
-    // Add input validation for IC numbers
-    document.querySelectorAll('input[name="no_kp_bapa"], input[name="no_kp_ibu"]').forEach(function(input) {
-        input.addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 12) value = value.substr(0, 12);
-            if (value.length > 6) {
-                value = value.substr(0, 6) + '-' + value.substr(6);
+    function formatIC(input) {
+        // Remove all non-digit characters
+        let value = input.value.replace(/\D/g, '');
+        
+        // Format the value with hyphens
+        if (value.length > 0) {
+            if (value.length <= 6) {
+                value = value;
+            } else if (value.length <= 8) {
+                value = value.slice(0, 6) + '-' + value.slice(6);
+            } else {
+                value = value.slice(0, 6) + '-' + value.slice(6, 8) + '-' + value.slice(8, 12);
             }
-            if (value.length > 9) {
-                value = value.substr(0, 9) + '-' + value.substr(9);
-            }
-            e.target.value = value;
-        });
-    });
+        }
+        
+        // Update the display value
+        input.value = value;
+        
+        // Create a hidden input to store the raw value
+        let hiddenInput = document.getElementById(input.id + '_raw');
+        if (!hiddenInput) {
+            hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.id = input.id + '_raw';
+            hiddenInput.name = input.name + '_raw';
+            input.parentNode.appendChild(hiddenInput);
+        }
+        hiddenInput.value = input.value.replace(/\D/g, '');
+    }
 
     document.querySelector('.toggle-sidebar').addEventListener('click', function (e) {
         e.preventDefault();

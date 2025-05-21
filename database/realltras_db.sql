@@ -69,8 +69,6 @@ CREATE TABLE IF NOT EXISTS wilayah_asal (
     tarikh_penerbangan_pergi DATE NOT NULL,
     tarikh_penerbangan_balik DATE NOT NULL,
 
-    tarikh_penerbangan_pergi_pasangan DATE,
-    tarikh_penerbangan_balik_pasangan DATE,
 
     start_point VARCHAR(100) NOT NULL,
     end_point VARCHAR(100) NOT NULL,
@@ -80,11 +78,12 @@ CREATE TABLE IF NOT EXISTS wilayah_asal (
 
     markah_prestasi_user VARCHAR(10000),
     hukuman_tatatertib_user ENUM('Ada', 'Tiada', 'Belum Pasti') DEFAULT 'Belum Pasti',
-    tarikh_csm_permohonan DATE,
+    tarikh_csm_permohonan TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
 
     keputusan_permohonan_ketua_jabatan ENUM('Diterima', 'Ditolak', 'Belum Pasti') DEFAULT 'Belum Pasti',
     kp_ketua_jabatan VARCHAR(50),
-    tarikh_keputusan_ketua_jabatan DATE,
+    tarikh_keputusan_ketua_jabatan TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     ulasan_csm1 TEXT,
     ulasan_csm2 TEXT,
@@ -97,7 +96,6 @@ CREATE TABLE IF NOT EXISTS wilayah_asal (
 
     FOREIGN KEY (user_kp) REFERENCES user(kp),
     FOREIGN KEY (kp_ketua_jabatan) REFERENCES user(kp),
-    FOREIGN KEY (documents_id) REFERENCES documents(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -111,13 +109,11 @@ CREATE TABLE IF NOT EXISTS wilayah_asal_pengikut (
     nama_last_pengikut VARCHAR(50) NOT NULL,
     tarikh_lahir_pengikut DATE NOT NULL,
     kp_pengikut VARCHAR(20) NOT NULL UNIQUE,
-    kp_ibuayah_pengikut VARCHAR(20) NOT NULL UNIQUE,
 
     tarikh_penerbangan_pergi_pengikut DATE,
     tarikh_penerbangan_balik_pengikut DATE,
 
     FOREIGN KEY (wilayah_asal_id) REFERENCES wilayah_asal(id),
-    FOREIGN KEY (kp_ibuayah_pengikut) REFERENCES user(kp),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );

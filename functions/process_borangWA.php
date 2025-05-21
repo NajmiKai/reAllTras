@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt = $conn->prepare($sql);
         
         // Prepare values for binding
-        $user_kp = $_POST['user_kp'];
+        $user_kp = $_POST['user_kp_raw'] ?? $_POST['user_kp'];
         $jawatan_gred = $_POST['jawatan_gred'];
         $alamat_menetap_1 = $_POST['alamat_menetap_1'];
         $alamat_menetap_2 = $_POST['alamat_menetap_2'];
@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Partner information
         $nama_first_pasangan = ($_POST['ada_pasangan'] === 'ya') ? $_POST['nama_first_pasangan'] : null;
         $nama_last_pasangan = ($_POST['ada_pasangan'] === 'ya') ? $_POST['nama_last_pasangan'] : null;
-        $no_kp_pasangan = ($_POST['ada_pasangan'] === 'ya') ? $_POST['no_kp_pasangan'] : null;
+        $no_kp_pasangan = ($_POST['ada_pasangan'] === 'ya') ? ($_POST['no_kp_pasangan_raw'] ?? $_POST['no_kp_pasangan']) : null;
         $alamat_berkhidmat_1_pasangan = ($_POST['ada_pasangan'] === 'ya') ? $_POST['alamat_berkhidmat_1_pasangan'] : null;
         $alamat_berkhidmat_2_pasangan = ($_POST['ada_pasangan'] === 'ya') ? $_POST['alamat_berkhidmat_2_pasangan'] : null;
         $poskod_berkhidmat_pasangan = ($_POST['ada_pasangan'] === 'ya') ? $_POST['poskod_berkhidmat_pasangan'] : null;

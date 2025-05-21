@@ -197,7 +197,7 @@ $user_phoneNo = $user_data['phone'];
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">No. Kad Pengenalan</label>
-                            <input type="text" class="form-control" name="user_kp" value="<?= htmlspecialchars($user_icNo) ?>" readonly required>
+                            <input type="text" class="form-control" name="user_kp" id="user_kp" value="<?= htmlspecialchars($user_icNo) ?>" readonly required oninput="formatIC(this)">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Jawatan & Gred</label>
@@ -334,7 +334,7 @@ $user_phoneNo = $user_data['phone'];
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">No. KP Pasangan</label>
-                                        <input type="text" class="form-control" name="no_kp_pasangan" maxlength="20" pattern="[0-9]{6}-[0-9]{2}-[0-9]{4}" title="Format: XXXXXX-XX-XXXX">
+                                        <input type="text" class="form-control" name="no_kp_pasangan" maxlength="14" id="no_kp_pasangan" oninput="formatIC(this)" title="Format: XXXXXX-XX-XXXX">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Wilayah Menetap Pasangan</label>
@@ -429,18 +429,35 @@ $user_phoneNo = $user_data['phone'];
         document.getElementById('sidebar').classList.toggle('hidden');
     });
 
-    // Add input validation for IC number
-    document.querySelector('input[name="no_kp_pasangan"]').addEventListener('input', function(e) {
-        let value = e.target.value.replace(/\D/g, '');
-        if (value.length > 12) value = value.substr(0, 12);
-        if (value.length > 6) {
-            value = value.substr(0, 6) + '-' + value.substr(6);
+    function formatIC(input) {
+        // Remove all non-digit characters
+        let value = input.value.replace(/\D/g, '');
+        
+        // Format the value with hyphens
+        if (value.length > 0) {
+            if (value.length <= 6) {
+                value = value;
+            } else if (value.length <= 8) {
+                value = value.slice(0, 6) + '-' + value.slice(6);
+            } else {
+                value = value.slice(0, 6) + '-' + value.slice(6, 8) + '-' + value.slice(8, 12);
+            }
         }
-        if (value.length > 9) {
-            value = value.substr(0, 9) + '-' + value.substr(9);
+        
+        // Update the display value
+        input.value = value;
+        
+        // Create a hidden input to store the raw value
+        let hiddenInput = document.getElementById('no_kp_pasangan_raw');
+        if (!hiddenInput) {
+            hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.id = 'no_kp_pasangan_raw';
+            hiddenInput.name = 'no_kp_pasangan_raw';
+            input.parentNode.appendChild(hiddenInput);
         }
-        e.target.value = value;
-    });
+        hiddenInput.value = input.value.replace(/\D/g, '');
+    }
 </script>
 </body>
 </html>
