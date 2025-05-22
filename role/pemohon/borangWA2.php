@@ -28,7 +28,7 @@ if (!$user_data) {
 }
 
 $user_name = $user_data['nama_first'] . ' ' . $user_data['nama_last'];
-$user_role = $user_data['role'];
+$user_role = $user_data['bahagian'];
 $user_icNo = $user_data['kp'];
 $user_email = $user_data['email'];
 $user_phoneNo = $user_data['phone'];

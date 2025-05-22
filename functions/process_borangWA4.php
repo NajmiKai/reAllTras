@@ -2,9 +2,15 @@
 session_start();
 include '../connection.php';
 
+// Debug logging
+error_log("process_borangWA4.php accessed");
+error_log("Request method: " . $_SERVER['REQUEST_METHOD']);
+error_log("POST data: " . print_r($_POST, true));
+error_log("FILES data: " . print_r($_FILES, true));
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check if all required session data exists
-    if (!isset($_SESSION['borangWA_data']) || !isset($_SESSION['parent_info']) || !isset($_SESSION['flight_info'])) {
+    if (!isset($_SESSION['borangWA_data']) || !isset($_SESSION['parent_info']) || !isset($_SESSION['flight_info']) || !isset($_SESSION['wilayah_asal_id'])) {
         header("Location: ../role/pemohon/borangWA.php");
         exit();
     }
@@ -13,6 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $officer_data = $_SESSION['borangWA_data'];
     $parent_data = $_SESSION['parent_info'];
     $flight_data = $_SESSION['flight_info'];
+    $wilayah_asal_id = $_SESSION['wilayah_asal_id'];
 
     try {
         // Start transaction
@@ -32,9 +39,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         // Handle document uploads
-        $upload_dir = "../uploads/permohonan/";
+        $upload_dir = "../../uploads/permohonan/";
+        error_log("Upload directory: " . $upload_dir);
+        
         if (!file_exists($upload_dir)) {
-            mkdir($upload_dir, 0777, true);
+            error_log("Creating directory: " . $upload_dir);
+            if (!mkdir($upload_dir, 0777, true)) {
+                error_log("Failed to create directory: " . $upload_dir);
+                throw new Exception("Failed to create upload directory");
+            }
         }
 
         // Process each document
@@ -45,13 +58,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         ];
 
         foreach ($document_types as $input_name => $doc_type) {
-            if (isset($_FILES[$input_name . '_file']) && $_FILES[$input_name . '_file']['error'] === UPLOAD_ERR_OK) {
-                $file = $_FILES[$input_name . '_file'];
+            $file_input_name = $input_name . '_file';
+            error_log("Checking file: " . $file_input_name);
+            
+            if (isset($_FILES[$file_input_name])) {
+                error_log("File details: " . print_r($_FILES[$file_input_name], true));
+            }
+            
+            if (isset($_FILES[$file_input_name]) && $_FILES[$file_input_name]['error'] === UPLOAD_ERR_OK) {
+                $file = $_FILES[$file_input_name];
                 $file_extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
                 $new_filename = $wilayah_asal_id . '_' . $doc_type . '_' . time() . '.' . $file_extension;
                 $upload_path = $upload_dir . $new_filename;
-
+                
+                error_log("Attempting to upload file to: " . $upload_path);
+                
                 if (move_uploaded_file($file['tmp_name'], $upload_path)) {
+                    error_log("File uploaded successfully");
                     // Insert document record into database using existing documents table
                     $doc_sql = "INSERT INTO documents (
                         wilayah_asal_id,

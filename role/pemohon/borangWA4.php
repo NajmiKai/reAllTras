@@ -2,8 +2,13 @@
 session_start();
 include '../../connection.php';
 
+// Enable error reporting
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 // Check if wilayah_asal_id exists in session
 if (!isset($_SESSION['wilayah_asal_id'])) {
+    error_log("wilayah_asal_id not set in session");
     header("Location: borangWA.php");
     exit();
 }
@@ -18,12 +23,13 @@ $result = $stmt->get_result();
 $user_data = $result->fetch_assoc();
 
 if (!$user_data) {
+    error_log("User data not found for ID: " . $user_id);
     header("Location: ../../login.php");
     exit();
 }
 
 $user_name = $user_data['nama_first'] . ' ' . $user_data['nama_last'];
-$user_role = $user_data['role'];
+$user_role = $user_data['bahagian'];
 ?>
 <!DOCTYPE html>
 <html lang="ms">
@@ -74,6 +80,12 @@ $user_role = $user_data['role'];
         <h3 class="mb-3">Muat Naik Dokumen</h3>
         
         <form action="../../functions/process_borangWA4.php" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+            <?php
+            // Debug information
+            error_log("Form submission path: " . realpath("../../functions/process_borangWA4.php"));
+            error_log("Current script path: " . __FILE__);
+            ?>
+            <input type="hidden" name="wilayah_asal_id" value="<?php echo htmlspecialchars($_SESSION['wilayah_asal_id']); ?>">
             <!-- Dokumen Sokongan -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header" style="background-color: #d59e3e; color: white;">
@@ -145,6 +157,7 @@ $user_role = $user_data['role'];
         var forms = document.querySelectorAll('.needs-validation')
         Array.prototype.slice.call(forms).forEach(function (form) {
             form.addEventListener('submit', function (event) {
+                console.log('Form submitted');
                 if (!form.checkValidity()) {
                     event.preventDefault()
                     event.stopPropagation()
@@ -157,6 +170,7 @@ $user_role = $user_data['role'];
     // Document upload handling
     document.querySelectorAll('.document-file').forEach(function(input) {
         input.addEventListener('change', function() {
+            console.log('File selected:', this.files[0]);
             const checkbox = this.previousElementSibling.querySelector('.document-check');
             const statusIcon = this.nextElementSibling;
             
@@ -173,6 +187,7 @@ $user_role = $user_data['role'];
     // Checkbox handling
     document.querySelectorAll('.document-check').forEach(function(checkbox) {
         checkbox.addEventListener('change', function() {
+            console.log('Checkbox changed:', this.checked);
             const fileInput = this.parentElement.nextElementSibling;
             const statusIcon = fileInput.nextElementSibling;
             

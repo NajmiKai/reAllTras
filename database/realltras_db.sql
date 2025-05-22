@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS wilayah_asal (
 CREATE TABLE IF NOT EXISTS wilayah_asal_pengikut (
     id INT PRIMARY KEY AUTO_INCREMENT,
 
-    wilayah_asal_id INT NOT NULL UNIQUE,
+    wilayah_asal_id INT NOT NULL,
     nama_first_pengikut VARCHAR(50) NOT NULL,
     nama_last_pengikut VARCHAR(50) NOT NULL,
     tarikh_lahir_pengikut DATE NOT NULL,
