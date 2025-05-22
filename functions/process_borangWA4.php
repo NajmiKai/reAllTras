@@ -10,7 +10,8 @@ error_log("FILES data: " . print_r($_FILES, true));
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check if all required session data exists
-    if (!isset($_SESSION['borangWA_data']) || !isset($_SESSION['parent_info']) || !isset($_SESSION['flight_info']) || !isset($_SESSION['wilayah_asal_id'])) {
+    if (!isset($_SESSION['borangWA_data']) || !isset($_SESSION['parent_info']) || !isset($_SESSION['flight_info']) || !isset($_SESSION['wilayah_asal_id']) || !isset($_SESSION['user_id'])) {
+        error_log("Missing required session data");
         header("Location: ../role/pemohon/borangWA.php");
         exit();
     }
@@ -20,6 +21,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $parent_data = $_SESSION['parent_info'];
     $flight_data = $_SESSION['flight_info'];
     $wilayah_asal_id = $_SESSION['wilayah_asal_id'];
+    $user_id = $_SESSION['user_id'];
+
+    // Get user data to get KP
+    $sql = "SELECT kp FROM user WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user_data = $result->fetch_assoc();
+    
+    if (!$user_data) {
+        error_log("User data not found for ID: " . $user_id);
+        throw new Exception("User data not found");
+    }
+    
+    $user_kp = $user_data['kp'];
+    error_log("User KP: " . $user_kp);
 
     try {
         // Start transaction
@@ -28,7 +46,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Update existing wilayah_asal record with final status
         $sql = "UPDATE wilayah_asal SET 
             status_permohonan = 'DRAF',
-            tarikh_permohonan = NOW()
+            updated_at = NOW(),
+            kedudukan_permohonan = 'Pemohon'
             WHERE id = ?";
 
         $stmt = $conn->prepare($sql);
@@ -39,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         // Handle document uploads
-        $upload_dir = "../../uploads/permohonan/";
+        $upload_dir = "../uploads/permohonan/";
         error_log("Upload directory: " . $upload_dir);
         
         if (!file_exists($upload_dir)) {
@@ -61,10 +80,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $file_input_name = $input_name . '_file';
             error_log("Checking file: " . $file_input_name);
             
-            if (isset($_FILES[$file_input_name])) {
-                error_log("File details: " . print_r($_FILES[$file_input_name], true));
-            }
-            
             if (isset($_FILES[$file_input_name]) && $_FILES[$file_input_name]['error'] === UPLOAD_ERR_OK) {
                 $file = $_FILES[$file_input_name];
                 $file_extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
@@ -75,7 +90,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 
                 if (move_uploaded_file($file['tmp_name'], $upload_path)) {
                     error_log("File uploaded successfully");
-                    // Insert document record into database using existing documents table
+                    
+                    // Insert document record into database
                     $doc_sql = "INSERT INTO documents (
                         wilayah_asal_id,
                         file_name,
@@ -87,17 +103,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         description
                     ) VALUES (?, ?, ?, ?, ?, 'pemohon', ?, ?)";
 
+                    $relative_path = 'uploads/permohonan/' . $new_filename;
+                    
                     $doc_stmt = $conn->prepare($doc_sql);
                     $doc_stmt->bind_param("isssiss",
                         $wilayah_asal_id,
                         $file['name'],
-                        $upload_path,
+                        $relative_path,
                         $file['type'],
                         $file['size'],
-                        $officer_data['user_kp'],
+                        $user_kp,
                         $doc_type
                     );
-                    $doc_stmt->execute();
+
+                    if (!$doc_stmt->execute()) {
+                        throw new Exception("Error inserting document record: " . $doc_stmt->error);
+                    }
+                    
+                    error_log("Document record inserted successfully");
                 } else {
                     throw new Exception("Error uploading file: " . $file['name']);
                 }
@@ -106,6 +129,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Commit transaction
         $conn->commit();
+        error_log("Transaction committed successfully");
 
         // Clear session data
         unset($_SESSION['borangWA_data']);
@@ -123,6 +147,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } catch (Exception $e) {
         // Rollback transaction on error
         $conn->rollback();
+        error_log("Error in process_borangWA4.php: " . $e->getMessage());
         
         // Set error message
         $_SESSION['error_message'] = "Ralat: " . $e->getMessage();

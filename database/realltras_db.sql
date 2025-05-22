@@ -127,7 +127,7 @@ CREATE TABLE IF NOT EXISTS documents (
     file_type VARCHAR(50) NOT NULL,
     file_size INT NOT NULL,
     file_class_origin ENUM('pemohon', 'csm1', 'csm2', 'hq', 'kewangan') DEFAULT 'pemohon',
-    file_uploader_origin VARCHAR(20) NOT NULL UNIQUE,
+    file_uploader_origin VARCHAR(20) NOT NULL,
     upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     description TEXT,
     FOREIGN KEY (wilayah_asal_id) REFERENCES wilayah_asal(id) ON DELETE CASCADE,
