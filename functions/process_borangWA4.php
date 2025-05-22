@@ -131,17 +131,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $conn->commit();
         error_log("Transaction committed successfully");
 
-        // Clear session data
+        // Keep wilayah_asal_id in session for borangWA5
+        // Only clear other session data
         unset($_SESSION['borangWA_data']);
         unset($_SESSION['parent_info']);
         unset($_SESSION['flight_info']);
-        unset($_SESSION['wilayah_asal_id']);
 
         // Set success message
         $_SESSION['success_message'] = "Permohonan berjaya dihantar!";
         
-        // Redirect to dashboard
-        header("Location: ../role/pemohon/dashboard.php");
+        // Redirect to borangWA5 for review
+        header("Location: ../role/pemohon/borangWA5.php");
         exit();
 
     } catch (Exception $e) {

@@ -37,6 +37,7 @@ $user_phoneNo = $user_data['phone'];
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../assets/css/adminStyle.css">
+    <link rel="stylesheet" href="../../assets/css/multi-step.css">
     <style>
         .multi-step-indicator {
             display: flex;
@@ -173,7 +174,7 @@ $user_phoneNo = $user_data['phone'];
                 <div class="step-icon">
                     <i class="fas fa-users"></i>
                 </div>
-                <div class="step-label">Maklumat Ibu Bapa</div>
+                <div class="step-label">Maklumat Wilayah Menetap Ibu Bapa</div>
             </div>
             <div class="step-line"></div>
             <div class="step active">
@@ -185,9 +186,16 @@ $user_phoneNo = $user_data['phone'];
             <div class="step-line"></div>
             <div class="step">
                 <div class="step-icon">
+                    <i class="fas fa-file-upload"></i>
+                </div>
+                <div class="step-label">Muat Naik Dokumen</div>
+            </div>
+            <div class="step-line"></div>
+            <div class="step">
+                <div class="step-icon">
                     <i class="fas fa-check-circle"></i>
                 </div>
-                <div class="step-label">Pengesahan</div>
+                <div class="step-label">Pengesahan Maklumat</div>
             </div>
         </div>
 

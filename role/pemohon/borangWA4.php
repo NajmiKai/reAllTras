@@ -40,6 +40,7 @@ $user_role = $user_data['bahagian'];
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../assets/css/adminStyle.css">
+    <link rel="stylesheet" href="../../assets/css/multi-step.css">
 </head>
 <body>
 
@@ -79,6 +80,44 @@ $user_role = $user_data['bahagian'];
     <div class="col p-4">
         <h3 class="mb-3">Muat Naik Dokumen</h3>
         
+        <!-- Multi-step Indicator -->
+        <div class="multi-step-indicator mb-4">
+            <div class="step completed">
+                <div class="step-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="step-label">Maklumat Pegawai</div>
+            </div>
+            <div class="step-line"></div>
+            <div class="step completed">
+                <div class="step-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="step-label">Maklumat Wilayah Menetap Ibu Bapa</div>
+            </div>
+            <div class="step-line"></div>
+            <div class="step completed">
+                <div class="step-icon">
+                    <i class="fas fa-plane"></i>
+                </div>
+                <div class="step-label">Maklumat Penerbangan</div>
+            </div>
+            <div class="step-line"></div>
+            <div class="step active">
+                <div class="step-icon">
+                    <i class="fas fa-file-upload"></i>
+                </div>
+                <div class="step-label">Muat Naik Dokumen</div>
+            </div>
+            <div class="step-line"></div>
+            <div class="step">
+                <div class="step-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="step-label">Pengesahan Maklumat</div>
+            </div>
+        </div>
+
         <form action="../../functions/process_borangWA4.php" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
             <?php
             // Debug information
