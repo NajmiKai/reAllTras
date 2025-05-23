@@ -228,3 +228,71 @@
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     
+    /* Status Tracker Styles */
+    .status-tracker {
+        padding: 20px 0;
+    }
+
+    .status-tracker .progress-line {
+        position: absolute;
+        top: 25px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #e9ecef;
+        z-index: 1;
+    }
+
+    .status-step {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        width: 120px;
+    }
+
+    .status-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #fff;
+        border: 2px solid #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 10px;
+        transition: all 0.3s ease;
+    }
+
+    .status-icon i {
+        font-size: 20px;
+        color: #6c757d;
+    }
+
+    .status-label {
+        font-size: 12px;
+        color: #6c757d;
+        margin-top: 5px;
+        white-space: nowrap;
+    }
+
+    .status-step.active .status-icon {
+        background: #0d6efd;
+        border-color: #0d6efd;
+    }
+
+    .status-step.active .status-icon i,
+    .status-step.active .status-label {
+        color: #fff;
+    }
+
+    .status-step.current .status-icon {
+        background: #198754;
+        border-color: #198754;
+        box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.2);
+    }
+
+    .status-step.current .status-icon i,
+    .status-step.current .status-label {
+        color: #fff;
+    }
+    

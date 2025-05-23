@@ -2,23 +2,31 @@
 session_start();
 include '../../connection.php';
 
-//if (!isset($_SESSION['admin_id'])) {
-//    header("Location: login.php");
-//    exit();
-//}
+// Set user ID in session if not set
+if (!isset($_SESSION['user_id'])) {
+    $_SESSION['user_id'] = 1; // Set default user ID to 1
+}
 
-$admin_name = 'najmi';
-$admin_role = 'pemohon';
-$admin_icNo = '1234567890';
-$admin_email = 'najmi@gmail.com';
-$admin_phoneNo = '0123456789';
+// Fetch user data from database
+$user_id = $_SESSION['user_id'];
+$sql = "SELECT * FROM user WHERE id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$user_data = $result->fetch_assoc();
 
-$stats = [
-    "total" => ["Wilayah Asal" => 22, "Tugas Rasmi" => 12],
-    "processing" => ["Wilayah Asal" => 7, "Tugas Rasmi" => 12],
-    "approved" => ["Wilayah Asal" => 14, "Tugas Rasmi" => 0],
-    "rejected" => ["Wilayah Asal" => 14, "Tugas Rasmi" => 0]
-];
+if (!$user_data) {
+    header("Location: ../../login.php");
+    exit();
+}
+
+$user_name = $user_data['nama_first'] . ' ' . $user_data['nama_last'];
+$user_role = $user_data['bahagian'];
+$user_icNo = $user_data['kp'];
+$user_email = $user_data['email'];
+$user_phoneNo = $user_data['phone'];
+
 ?>
 <!DOCTYPE html>
 <html lang="ms">
@@ -28,7 +36,7 @@ $stats = [
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../assets/css/adminStyle.css">
+    <link rel="stylesheet" href="../../assets/css/userStyle.css">
 </head>
 <body>
 
@@ -42,7 +50,7 @@ $stats = [
 
     <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-            <span class="nav-link fw-semibold"><?= htmlspecialchars($admin_name) ?> (<?= htmlspecialchars($admin_role) ?>)</span>
+            <span class="nav-link fw-semibold"><?= htmlspecialchars($user_name) ?> (<?= htmlspecialchars($user_role) ?>)</span>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
             <a href="../../../logout.php" class="nav-link text-danger">
@@ -82,40 +90,125 @@ $stats = [
                     $greeting = 'Selamat Malam';
                 }
             ?>
-            <strong>Hi, <?= $greeting ?>!</strong> <?= $admin_name ?>
+            <strong>Hi, <?= $greeting ?>!</strong> <?= $user_name ?>
         </div>
 
-        <div class="row g-4 mb-4">
-            <div class="col-md-3">
-                <div class="card-box bg-primary">
-                    <i class="fas fa-user-plus"></i>
-                    <h6>Jumlah Permohonan</h6>
-                    <p>Wilayah Asal: <?= $stats['total']['Wilayah Asal'] ?></p>
-                    <p>Tugas Rasmi: <?= $stats['total']['Tugas Rasmi'] ?></p>
+        <!-- Status Tracking Section -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title mb-4">Status Permohonan</h5>
+                <div class="status-tracker">
+                    <?php
+                    // Get the latest application status for the user
+                    $status_sql = "SELECT kedudukan_permohonan, status_permohonan, ulasan_csm1, ulasan_csm2, ulasan_hq, ulasan_kewangan FROM wilayah_asal WHERE user_kp = ? ORDER BY id DESC LIMIT 1";
+                    $status_stmt = $conn->prepare($status_sql);
+                    $status_stmt->bind_param("i", $user_icNo);
+                    $status_stmt->execute();
+                    $status_result = $status_stmt->get_result();
+                    $application_data = $status_result->fetch_assoc();
+
+                    // Extract status and ulasan data
+                    $current_status = $application_data['kedudukan_permohonan'] ?? 'Pemohon';
+                    $application_status = $application_data['status_permohonan'] ?? 'Belum Disemak';
+                    $ulasan_csm1 = $application_data['ulasan_csm1'] ?? null;
+                    $ulasan_csm2 = $application_data['ulasan_csm2'] ?? null;
+                    $ulasan_hq = $application_data['ulasan_hq'] ?? null;
+                    $ulasan_kewangan = $application_data['ulasan_kewangan'] ?? null;
+
+                    // Determine status color class
+                    $status_color_class = '';
+                    switch ($application_status) {
+                        case 'Belum Disemak':
+                            $status_color_class = 'status-belum-disemak';
+                            break;
+                        case 'Selesai':
+                            $status_color_class = 'status-selesai';
+                            break;
+                        case 'Dikuiri':
+                            $status_color_class = 'status-dikuiri';
+                            break;
+                        case 'Tolak':
+                            $status_color_class = 'status-tolak';
+                            break;
+                        case 'Lulus':
+                            $status_color_class = 'status-lulus';
+                            break;
+                        default:
+                            $status_color_class = ''; // Default or no special class
+                            break;
+                    }
+
+                    $stages = [
+                        'Pemohon' => ['icon' => 'fa-user', 'label' => 'Pemohon'],
+                        'CSM' => ['icon' => 'fa-users', 'label' => 'CSM'],
+                        'HQ' => ['icon' => 'fa-user-tie', 'label' => 'KB KPSM'],
+                        'CSM2' => ['icon' => 'fa-users', 'label' => 'CSM'],
+                        'Kewangan' => ['icon' => 'fa-money-bill', 'label' => 'Kewangan'],
+                        'Selesai' => ['icon' => 'fa-check-circle', 'label' => 'Keputusan']
+                    ];
+
+                    $current_index = array_search($current_status, array_keys($stages));
+                    if ($current_status === 'Kewangan') {
+                        $current_index = 4;
+                    }
+                    ?>
+
+                    <div class="d-flex justify-content-between position-relative">
+                        <div class="progress-line"></div>
+                        <?php foreach ($stages as $key => $stage): ?>
+                            <?php
+                            $is_active = array_search($key, array_keys($stages)) <= $current_index;
+                            $is_current = $key === $current_status;
+                            ?>
+                            <div class="status-step <?= $is_active ? 'active' : '' ?> <?= $is_current ? 'current' : '' ?>">
+                                <div class="status-icon">
+                                    <i class="fas <?= $stage['icon'] ?>"></i>
+                                </div>
+                                <div class="status-label"><?= $stage['label'] ?></div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card-box bg-success">
-                    <i class="fas fa-spinner"></i>
-                    <h6>Sedang Diproses</h6>
-                    <p>Wilayah Asal: <?= $stats['processing']['Wilayah Asal'] ?></p>
-                    <p>Tugas Rasmi: <?= $stats['processing']['Tugas Rasmi'] ?></p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card-box bg-warning">
-                    <i class="fas fa-check-circle"></i>
-                    <h6>Berjaya Diproses</h6>
-                    <p>Wilayah Asal: <?= $stats['approved']['Wilayah Asal'] ?></p>
-                    <p>Tugas Rasmi: <?= $stats['approved']['Tugas Rasmi'] ?></p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card-box bg-danger">
-                    <i class="fas fa-times-circle"></i>
-                    <h6>Permohonan Gagal</h6>
-                    <p>Wilayah Asal: <?= $stats['rejected']['Wilayah Asal'] ?></p>
-                    <p>Tugas Rasmi: <?= $stats['rejected']['Tugas Rasmi'] ?></p>
+
+                <!-- Detailed Status and Ulasan Section -->
+                <div class="card-body mt-4 text-center-custom">
+                    <h5 class="card-title mb-3">Status Terperinci Permohonan</h5>
+                    <p class="<?= $status_color_class ?>"><strong>Status Semasa:</strong> <?= htmlspecialchars($application_status) ?></p>
+
+                    <?php
+                    $ulasan_to_display = "Tiada Kuiri / Ulasan buat masa ini";
+                    $ulasan_label = "Ulasan:";
+
+                    switch ($current_status) {
+                        case 'CSM':
+                            $ulasan_to_display = !empty($ulasan_csm1) ? $ulasan_csm1 : "Tiada Kuiri / Ulasan buat masa ini";
+                            $ulasan_label = "Ulasan Cawangan Sumber Manusia (CSM):";
+                            break;
+                        case 'HQ':
+                            $ulasan_to_display = !empty($ulasan_hq) ? $ulasan_hq : "Tiada Kuiri / Ulasan buat masa ini";
+                            $ulasan_label = "Ulasan Ketua Bahagian KPSM (HQ):";
+                            break;
+                        case 'CSM2':
+                            $ulasan_to_display = !empty($ulasan_csm2) ? $ulasan_csm2 : "Tiada Kuiri / Ulasan buat masa ini";
+                             $ulasan_label = "Ulasan Cawangan Sumber Manusia (CSM):";
+                            break;
+                        case 'Kewangan':
+                            $ulasan_to_display = !empty($ulasan_kewangan) ? $ulasan_kewangan : "Tiada Kuiri / Ulasan buat masa ini";
+                            $ulasan_label = "Ulasan Cawangan Kewangan:";
+                            break;
+                        // No ulasan to display for 'Pemohon' or 'Selesai' based on the request
+                        default:
+                            $ulasan_to_display = "Tiada Kuiri / Ulasan buat masa ini";
+                            $ulasan_label = "Ulasan:";
+                            break;
+                    }
+                    ?>
+
+                    <div class="mt-3">
+                        <h6><strong><?= htmlspecialchars($ulasan_label) ?></strong></h6>
+                        <p><?= nl2br(htmlspecialchars($ulasan_to_display)) ?></p>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -131,8 +224,8 @@ $stats = [
                         </div>
                     </div>
                 </div>
-
-                <div class="col-md-6">
+            </div>
+            <div class="col-md-6">
                     <div class="card shadow-sm h-100">
                         <div class="card-body">
                             <h5 class="card-title">Carta Aliran Permohonan</h5>
@@ -141,7 +234,6 @@ $stats = [
                         </div>
                     </div>
                 </div>
-            </div>
         </div>
 
         <!-- Image Modal -->

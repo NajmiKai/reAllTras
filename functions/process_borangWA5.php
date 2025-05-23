@@ -6,6 +6,13 @@ include '../connection.php';
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+// Debug logging
+error_log("=== Form Submission Debug ===");
+error_log("Time: " . date('Y-m-d H:i:s'));
+error_log("POST data: " . print_r($_POST, true));
+error_log("SESSION data: " . print_r($_SESSION, true));
+error_log("FILES data: " . print_r($_FILES, true));
+
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../login.php");
@@ -54,7 +61,7 @@ try {
     unset($_SESSION['wilayah_asal_id']);
     
     $_SESSION['success_message'] = "Permohonan berjaya dihantar.";
-    header("Location: ../role/pemohon/wilayahAsal.php");
+    header("Location: ../role/pemohon/dashboard.php");
     exit();
 
 } catch (Exception $e) {
