@@ -1,81 +1,76 @@
 <?php
 session_start();
-include '../../../connection.php';
+include '../../connection.php';
 
-if (!isset($_SESSION['admin_id'])) {
-    header("Location: login.php");
+// Enable error reporting
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Check if wilayah_asal_id exists in session
+// if (!isset($_SESSION['wilayah_asal_id'])) {
+//     error_log("wilayah_asal_id not set in session");
+//     header("Location: borangWA.php");
+//     exit();
+// }
+
+
+// Fetch user data from database
+$user_id = $_SESSION['user_id'];
+$sql = "SELECT * FROM user WHERE id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$user_data = $result->fetch_assoc();
+
+if (!$user_data) {
+    error_log("User data not found for ID: " . $user_id);
+    header("Location: ../../login.php");
     exit();
 }
 
-$admin_name = $_SESSION['admin_name'];
-$admin_role = $_SESSION['admin_role'];
-$admin_icNo = $_SESSION['admin_icNo'];
-$admin_email = $_SESSION['admin_email'];
-$admin_phoneNo = $_SESSION['admin_phoneNo'];
 
-if (isset($_GET['kp'])) {
-    $kp = $_GET['kp'];
+// Fetch all application data
+// $wilayah_asal_id = $_SESSION['wilayah_asal_id'];
+$wilayah_asal_id = 2;
+$sql = "SELECT 
+    wa.*, 
+    GROUP_CONCAT(DISTINCT CONCAT(wp.nama_first_pengikut, ' ', wp.nama_last_pengikut)) AS pengikut_names,
+    GROUP_CONCAT(DISTINCT d.file_name) AS document_names
+    FROM wilayah_asal wa 
+    LEFT JOIN wilayah_asal_pengikut wp ON wa.id = wp.wilayah_asal_id
+    LEFT JOIN documents d ON wa.id = d.wilayah_asal_id
+    WHERE wa.id = ?
+    GROUP BY wa.id";
 
-// Fetch user data from database
-// $user_id = $_SESSION['user_id'];
-$sql = "SELECT *, wilayah_asal.id AS wilayah_asal_id
-FROM user 
-JOIN wilayah_asal ON user.kp = wilayah_asal.user_kp
-WHERE user.kp = ? ";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $kp);
+$stmt->bind_param("i", $wilayah_asal_id);
 $stmt->execute();
 $result = $stmt->get_result();
 $application_data = $result->fetch_assoc();
 
-if ($application_data) {
-    $wilayah_asal_id = $application_data['wilayah_asal_id'];
+// if (!$application_data) {
+//     header("Location: borangWA.php");
+//     exit();
+// }
 
-    $query = "SELECT * FROM wilayah_asal_pengikut WHERE wilayah_asal_id = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $wilayah_asal_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    $pengikutData = [];
-    while ($row = $result->fetch_assoc()) {
-        $pengikutData[] = $row;
-    }
-
-
-    } else {
-        echo "No data found for the given KP.";
-    }
-
-} else {
-echo "No KP provided.";
-}
-
-
+$user_name = $user_data['nama_first'] . ' ' . $user_data['nama_last'];
+$user_role = $user_data['bahagian'];
 ?>
-
 <!DOCTYPE html>
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
-    <title>ALLTRAS - Butiran Permohonan</title>
+    <title>ALLTRAS - Borang Wilayah Asal (Semakan)</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../../assets/css/adminStyle.css">
-    <link rel="stylesheet" href="../../../assets/css/multi-step.css">
-
-
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
+    <link rel="stylesheet" href="../../assets/css/adminStyle.css">
+    <link rel="stylesheet" href="../../assets/css/multi-step.css">
 </head>
 <body>
-    <!-- Top Navbar -->
+
+<!-- Top Navbar -->
 <nav class="navbar navbar-expand navbar-light bg-light shadow-sm px-3 mb-4 w-100">
     <ul class="navbar-nav me-auto">
         <li class="nav-item">
@@ -85,7 +80,7 @@ echo "No KP provided.";
 
     <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-            <span class="nav-link fw-semibold"><?= htmlspecialchars($admin_name) ?> (<?= htmlspecialchars($admin_role) ?>)</span>
+            <span class="nav-link fw-semibold"><?= htmlspecialchars($user_name) ?> (<?= htmlspecialchars($user_role) ?>)</span>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
             <a href="../../../logout.php" class="nav-link text-danger">
@@ -96,32 +91,21 @@ echo "No KP provided.";
 </nav>
 
 <div class="main-container">
-      <!-- Sidebar -->
-      <div class="sidebar" id="sidebar">
-        <h6><img src="../../../assets/ALLTRAS.png" alt="ALLTRAS" width="140" style="margin-left: 20px;"><br>ALL REGION TRAVELLING SYSTEM</h6><br>
-        <a href="dashboard.php"> <i class="fas fa-home me-2"></i>Laman Utama</a>
-        <h6 class="text mt-4">BORANG PERMOHONAN</h6>
-
-        <a href="javascript:void(0);" onclick="toggleSubMenu()" class="<?= $submenuOpen ? 'active' : '' ?>">
-            <i class="fas fa-map-marker-alt me-2"></i>Wilayah Asal
-            <i class="fas fa-chevron-down" style="float: right; margin-right: 10px;"></i>
-        </a>
-        
-        <!-- Submenu -->
-        <div id="wilayahSubmenu" class="submenu" style="display: <?= $submenuOpen ? 'block' : 'none' ?>;">
-            <a href="permohonanPengguna.php">Permohonan Pengguna</a>
-            <a href="permohonanIbuPejabat.php" class="active">Permohonan Ibu Pejabat</a>
-        </div>
-
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <h6><img src="../../assets/ALLTRAS.png" alt="ALLTRAS" width="140" style="margin-left: 20px;"><br>ALL REGION TRAVELLING SYSTEM</h6><br>
+        <a href="dashboard.php"><i class="fas fa-home me-2"></i>Laman Utama</a>
+        <h6 class="text mt-4"></h6>
+        <a href="wilayahAsal.php"><i class="fas fa-map-marker-alt me-2"></i>Wilayah Asal</a>
         <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a>
         <a href="profile.php"><i class="fas fa-user me-2"></i>Paparan Profil</a>
-        <a href="../../../logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
+        <a href="../../logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
     </div>
 
-  <!-- Main Content -->
-  <div class="col p-4" style="margin-left: 250px;">
+    <!-- Main Content -->
+    <div class="col p-4">
         <h3 class="mb-3">Semakan Permohonan</h3>
-        <div class="container">
+        
         <!-- Multi-step Indicator -->
         <div class="multi-step-indicator mb-4">
             <div class="step completed">
@@ -160,7 +144,7 @@ echo "No KP provided.";
             </div>
         </div>
 
-        <form action="send_mail.php" method="POST">
+        <form action="../../functions/process_borangWA5.php" method="POST" class="needs-validation" novalidate>
             <input type="hidden" name="wilayah_asal_id" value="<?php echo htmlspecialchars($wilayah_asal_id); ?>">
             
             <!-- Maklumat Pegawai -->
@@ -175,11 +159,11 @@ echo "No KP provided.";
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Nama Pegawai</label>
-                            <p class="form-control-static ps-2"><?= htmlspecialchars($application_data['nama_first'] . ' ' . $application_data['nama_last']) ?></p>
+                            <p class="form-control-static ps-2"><?= htmlspecialchars($user_name) ?></p>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">No. Kad Pengenalan</label>
-                            <p class="form-control-static ps-2"><?= htmlspecialchars($application_data['kp']) ?></p>
+                            <p class="form-control-static ps-2"><?= htmlspecialchars($user_data['kp']) ?></p>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Jawatan/Gred</label>
@@ -335,7 +319,7 @@ echo "No KP provided.";
                         </div>
                     </div>
 
-
+                    <?php if ($application_data['pengikut_names']): ?>
                     <!-- Maklumat Pengikut -->
                     <h6 class="mt-4 mb-3"><strong>Maklumat Pengikut</strong></h6>
                     <div class="table-responsive">
@@ -350,7 +334,14 @@ echo "No KP provided.";
                                 </tr>
                             </thead>
                             <tbody>
-                            <?php foreach ($pengikutData as $index => $pengikut): ?>
+                                <?php
+                                $sql = "SELECT * FROM wilayah_asal_pengikut WHERE wilayah_asal_id = ?";
+                                $stmt = $conn->prepare($sql);
+                                $stmt->bind_param("i", $wilayah_asal_id);
+                                $stmt->execute();
+                                $result = $stmt->get_result();
+                                while ($pengikut = $result->fetch_assoc()):
+                                ?>
                                 <tr>
                                     <td><?= htmlspecialchars($pengikut['nama_first_pengikut'] . ' ' . $pengikut['nama_last_pengikut']) ?></td>
                                     <td><?= htmlspecialchars($pengikut['kp_pengikut']) ?></td>
@@ -358,11 +349,11 @@ echo "No KP provided.";
                                     <td><?= date('d/m/Y', strtotime($pengikut['tarikh_penerbangan_pergi_pengikut'])) ?></td>
                                     <td><?= date('d/m/Y', strtotime($pengikut['tarikh_penerbangan_balik_pengikut'])) ?></td>
                                 </tr>
-                                <?php endforeach; ?>
+                                <?php endwhile; ?>
                             </tbody>
                         </table>
                     </div>
-
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -623,15 +614,18 @@ echo "No KP provided.";
                 <div class="card-body">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="pengesahan" name="pengesahan" required>
-                        <label class="form-check-label" for="buku_rekod">
-                        Telah direkod dalam buku perkhidmatan
-                    </label>
+                        <label class="form-check-label" for="pengesahan">
+                            Saya mengesahkan bahawa semua maklumat dan kenyataan yang diberikan adalah benar dan sah. 
+                            Saya juga memahami bahawa sekiranya terdapat maklumat palsu, tidak benar atau tidak lengkap, 
+                            maka saya boleh dikenakan tindakan tatatertib di bawah Peraturan-Peraturan Pegawai Awam 
+                            (Kelakuan dan Tatatertib) 1993.
+                        </label>
                     </div>
                 </div>
             </div>
 
             <div class="d-flex justify-content-between mt-4">
-                <a href="permohonanIbuPejabat.php" class="btn btn-secondary">
+                <a href="borangWA4.php" class="btn btn-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Kembali
                 </a>
                 <button type="submit" class="btn btn-success">
@@ -641,38 +635,23 @@ echo "No KP provided.";
         </form>
     </div>
 </div>
-</div>  
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-     document.querySelector('.toggle-sidebar').addEventListener('click', function (e) {
-        e.preventDefault();
-        document.getElementById('sidebar').classList.toggle('hidden');
-    });
-
-    function toggleSubMenu() {
-        const submenu = document.getElementById("wilayahSubmenu");
-        submenu.style.display = submenu.style.display === "block" ? "none" : "block";
-    }
-
-    function toggleUlasan() {
-        const select = document.getElementById('status_select');
-        const ulasanDiv = document.getElementById('ulasan_section');
-        if (select.value === 'dikuiri') {
-            ulasanDiv.style.display = 'block';
-            document.getElementById('ulasan').setAttribute('required', 'required');
-        } else {
-            ulasanDiv.style.display = 'none';
-            document.getElementById('ulasan').removeAttribute('required');
-        }
-    }
-
-    document.querySelector('form').addEventListener('submit', function (e) {
-        const checkbox = document.getElementById('buku_rekod');
-        if (!checkbox.checked) {
-            e.preventDefault();
-            alert('Sila tandakan checkbox "Telah direkod dalam buku perkhidmatan" sebelum menghantar.');
-        }
-    });
+    // Form validation
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
 </script>
 </body>
 </html>

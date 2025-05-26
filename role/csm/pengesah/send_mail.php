@@ -10,53 +10,61 @@ require '../../../PHPMailer/src/SMTP.php';
 session_start();
 include '../../../connection.php';
 
-// Retrieve latest application
-$sql = "SELECT * FROM admin ORDER BY id DESC LIMIT 1";
-$result = $conn->query($sql);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Retrieve latest admin with role 'Pengesah CSM'
+    $sql = "SELECT * FROM admin WHERE role = 'Pelulus HQ'";
+    $result = $conn->query($sql);
 
-if ($result->num_rows > 0) {
-    $data = $result->fetch_assoc();
+    if ($result->num_rows > 0) {
+        $data = $result->fetch_assoc();
 
-    // $nama = $data['nama'];
-    // $tarikh = $data['tarikh_lapor_diri'];
-    // $kategori = $data['kategori'];
+        $receiver_name = $data['nama'];   // make sure your DB column is 'nama'
+        $receiver_email = $data['email']; // and 'email'
 
-    $nama = "Hanis";
-    $tarikh = "17/05/2025";
-    $kategori = "Pengguna";
+        $mail = new PHPMailer(true);
+        try {
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'haniszainee1105@gmail.com';  // Gmail used to send
+            $mail->Password = 'eizx afua iazr efrl';         // Gmail app password
+            $mail->SMTPSecure = 'tls';
+            $mail->Port = 587;
 
+            $mail->setFrom($mail->Username, 'ALLTRAS System');
+            $mail->addAddress($receiver_email, $receiver_name);
 
-    // Send email
-    $mail = new PHPMailer(true);
-    try {
-        $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com';
-        $mail->SMTPAuth = true;
-        $mail->Username = 'haniszainee1105@gmail.com';             // your Gmail
-        $mail->Password = 'eizx afua iazr efrl';                // app password (not Gmail login!)
-        $mail->SMTPSecure = 'tls';
-        $mail->Port = 587;
+            $mail->isHTML(true);
+            $mail->Subject = 'ALLTRAS: Memerlukan Pengesahan Peruntukan Kewangan';
+            $mail->Body = "
+                <p>Salam sejahtera <strong>$receiver_name</strong>,</p><br>
+                <p>Dimaklumkan bahawa terdapat permohonan penyelenggaraan kenderaan yang memerlukan pengesahan peruntukan kewangan melalui Sistem ALLTRAS.</p>
+                <p>Sila semak sistem untuk maklumat lanjut.</p>
+                <p><u>PAPAR MAKLUMAT PERMOHONAN</u></p><br><br>
 
-        $mail->setFrom('haniszainee1105@gmail.com', 'Sistem Permohonan');
-        $mail->addAddress('2023168781@student.uitm.edu.my', 'Pegawai HR');
+                <p>Sekian, terima kasih.</p>
+                <p>Pasukan ALLTRAS</p>
+                <p>Jabatan Kastam Diraja Malaysia</p>
+            ";
 
-        $mail->isHTML(true);
-        $mail->Subject = 'Permohonan Baru Diterima';
-        $mail->Body = "
-            <h3>Notifikasi Permohonan</h3>
-            <p><strong>Nama:</strong> $nama</p>
-            <p><strong>Tarikh Lapor Diri:</strong> $tarikh</p>
-            <p><strong>Kategori:</strong> $kategori</p>
-            <p>Sila semak sistem untuk maklumat lanjut.</p>
-        ";
-
-        $mail->send();
-        echo "✅ Emel berjaya dihantar.";
-    } catch (Exception $e) {
-        echo "❌ Emel gagal dihantar. Ralat: {$mail->ErrorInfo}";
+            $mail->send();
+            $_SESSION['status'] = 'success';
+        } catch (Exception $e) {
+            $_SESSION['status'] = 'fail';
+            $_SESSION['error'] = $mail->ErrorInfo;
+        }
+    } else {
+        $_SESSION['status'] = 'no_admin';
     }
-} else {
-    echo "❌ Tiada permohonan ditemui dalam pangkalan data.";
-}
 
-?>
+    // Redirect back to previous page
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? 'dashboard.php';
+    header("Location: $backUrl");
+    exit();
+
+} else {
+    $_SESSION['status'] = 'no_post';
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? 'dashboard.php';
+    header("Location: $backUrl");
+    exit();
+}

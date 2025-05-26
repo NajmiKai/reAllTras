@@ -2,6 +2,22 @@
 session_start();
 include '../../../connection.php';
 
+if (isset($_SESSION['status'])): ?>
+    <script>
+        <?php if ($_SESSION['status'] === 'success'): ?>
+            alert("✅ Emel berjaya dihantar.");
+        <?php elseif ($_SESSION['status'] === 'fail'): ?>
+            alert("❌ Emel gagal dihantar. Ralat: <?= addslashes($_SESSION['error']) ?>");
+        <?php elseif ($_SESSION['status'] === 'no_admin'): ?>
+            alert("⚠️ Tiada admin dengan peranan 'Pengesah CSM' ditemui.");
+        <?php elseif ($_SESSION['status'] === 'no_post'): ?>
+            alert("❌ Borang tidak dihantar dengan betul.");
+        <?php endif; ?>
+    </script>
+    <?php unset($_SESSION['status'], $_SESSION['error']); 
+endif;
+
+
 if (!isset($_SESSION['admin_id'])) {
     header("Location: login.php");
     exit();

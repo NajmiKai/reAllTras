@@ -1,230 +1,255 @@
-    body {
-        font-family: 'Inter', sans-serif;
-        background-color: #f5f7fa;
-    }
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f5f7fa;
+}
 
-    nav.navbar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 1030; /* above sidebar */
-    }
+nav.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030; /* above sidebar */
+}
 
-    .main-container {
-        display: flex;
-        min-height: 100vh;
-    }
+.main-container {
+    display: flex;
+    min-height: 100vh;
+}
 
+.sidebar {
+    background-color: #212529;
+    color: white;
+    min-height: 100vh;
+    padding: 70px 20px;
+    flex-shrink: 0;
+    width: 250px;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    position: fixed;
+}
+
+.sidebar a {
+    color: #d1d1d1;
+    text-decoration: none;
+    padding: 10px;
+    display: block;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    background-color: #d89d2e;
+    color: white;
+}
+
+.sidebar.hidden {
+    display: none;
+}
+
+.card-box {
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.card-box i {
+    font-size: 1.5rem;
+    float: right;
+}
+
+.greeting-box {
+    background-color: #fefefe;
+    padding: 15px 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    margin-bottom: 25px;
+}
+
+input[readonly] {
+    background-color: #e9ecef; 
+    opacity: 1; 
+    color: #6c757d; 
+    pointer-events: none; /* Prevent clicking */
+    user-select: none;    /* Prevent text selection */
+}
+
+.nav-container ul {
+    list-style-type: none;
+    margin: 0 auto;
+    padding: 0;
+    display: inline-block;
+    background-color: #f3f3f3;
+  }
+  
+  .nav-container li {
+    display: inline-block;
+    margin: 0 2px;
+  }
+  
+  .nav-container li a {
+    display: block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+  
+  .nav-container li a:hover:not(.active) {
+    background-color: #ddd;
+  }
+  
+  .nav-container li a.active {
+    color: white;
+    background-color: black;
+  }
+  
+  .nav-container{
+      text-align: center;
+      align-items: center;
+     justify-content: center;
+     padding: 10px;
+  }
+
+  .submenu {
+    background-color: transparent; /* Match sidebar background */
+    padding-left: 20px; /* Indent submenus slightly */
+    margin-top: -8px;   /* Reduce spacing between parent and submenu */
+}
+
+.submenu a {
+    color: #d1d1d1; /* Same as main sidebar links */
+    text-decoration: none;
+    padding: 10px;
+    display: block;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    font-size: 15px; /* Slightly smaller if preferred */
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.submenu a:hover,
+.submenu a.active {
+    background-color: #d89d2e;
+    color: white;
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+}
+table {
+    width: 60%;
+    margin: 30px auto;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+th, td {
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+}
+th {
+    background-color: #e3f2fd;
+    width: 30%;
+    color: #333;
+    text-align: left;
+}
+td {
+    color: #444;
+}
+a.button, button.submit-btn {
+    display: block;
+    text-align: center;
+    width: 150px;
+    margin: 30px auto 0;
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px;
+    text-decoration: none;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+}
+a.button:hover, button.submit-btn:hover {
+    background-color: #0056b3;
+}
+
+form.upload-form {
+    text-align: center;
+    margin-top: 40px;
+}
+input[type="file"] {
+    margin-bottom: 15px;
+}
+
+  
+
+/* File Upload Styles */
+.drop-zone {
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.drop-zone.highlight {
+    border-color: #d89d2e;
+    background-color: #fff3cd;
+}
+
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    margin: 5px 0;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+
+.file-item button {
+    margin-left: 10px;
+}
+
+#fileList {
+    margin-top: 15px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.upload-container {
+    margin: 20px 0;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.col.p-4 {
+    margin-left: 250px; /* same as sidebar width */
+  }
+
+  .col.lg-8 {
+    margin-left: 250px; /* same as sidebar width */
+  }
+
+  @media (max-width: 768px) {
     .sidebar {
-        background-color: #212529;
-        color: white;
-        min-height: 100vh;
-        padding: 70px 20px;
-        flex-shrink: 0;
-        width: 250px;
-        transition: all 0.3s ease;
+      position: relative;
+      width: 100%;
+      height: auto;
     }
+    .col.p-4 {
+      margin-left: 0;
+    }
+    .col.lg-8 {
+      margin-left: 0;
+    }
+  }
+  
 
-    .sidebar a {
-        color: #d1d1d1;
-        text-decoration: none;
-        padding: 10px;
-        display: block;
-        border-radius: 6px;
-        margin-bottom: 8px;
-    }
-
-    .sidebar a:hover,
-    .sidebar a.active {
-        background-color: #d89d2e;
-        color: white;
-    }
-
-    .sidebar.hidden {
-        display: none;
-    }
-
-    .card-box {
-        color: white;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-
-    .card-box i {
-        font-size: 1.5rem;
-        float: right;
-    }
-
-    .greeting-box {
-        background-color: #fefefe;
-        padding: 15px 25px;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        margin-bottom: 25px;
-    }
-    
-    input[readonly] {
-        background-color: #e9ecef; 
-        opacity: 1; 
-        color: #6c757d; 
-        pointer-events: none; /* Prevent clicking */
-        user-select: none;    /* Prevent text selection */
-    }
-
-    .nav-container ul {
-        list-style-type: none;
-        margin: 0 auto;
-        padding: 0;
-        display: inline-block;
-        background-color: #f3f3f3;
-      }
-      
-      .nav-container li {
-        display: inline-block;
-        margin: 0 2px;
-      }
-      
-      .nav-container li a {
-        display: block;
-        color: black;
-        text-align: center;
-        padding: 14px 16px;
-        text-decoration: none;
-      }
-      
-      .nav-container li a:hover:not(.active) {
-        background-color: #ddd;
-      }
-      
-      .nav-container li a.active {
-        color: white;
-        background-color: black;
-      }
-      
-      .nav-container{
-          text-align: center;
-          align-items: center;
-         justify-content: center;
-         padding: 10px;
-      }
-
-      .submenu {
-        background-color: transparent; /* Match sidebar background */
-        padding-left: 20px; /* Indent submenus slightly */
-        margin-top: -8px;   /* Reduce spacing between parent and submenu */
-    }
-    
-    .submenu a {
-        color: #d1d1d1; /* Same as main sidebar links */
-        text-decoration: none;
-        padding: 10px;
-        display: block;
-        border-radius: 6px;
-        margin-bottom: 8px;
-        font-size: 15px; /* Slightly smaller if preferred */
-        transition: background-color 0.2s, color 0.2s;
-    }
-    
-    .submenu a:hover,
-    .submenu a.active {
-        background-color: #d89d2e;
-        color: white;
-    }
-
-    h2 {
-        text-align: center;
-        color: #333;
-    }
-    table {
-        width: 60%;
-        margin: 30px auto;
-        border-collapse: collapse;
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0,0,0,0.05);
-    }
-    th, td {
-        padding: 10px 15px;
-        border-bottom: 1px solid #eee;
-    }
-    th {
-        background-color: #e3f2fd;
-        width: 30%;
-        color: #333;
-        text-align: left;
-    }
-    td {
-        color: #444;
-    }
-    a.button, button.submit-btn {
-        display: block;
-        text-align: center;
-        width: 150px;
-        margin: 30px auto 0;
-        background-color: #007bff;
-        color: #fff;
-        padding: 10px;
-        text-decoration: none;
-        border-radius: 4px;
-        border: none;
-        cursor: pointer;
-    }
-    a.button:hover, button.submit-btn:hover {
-        background-color: #0056b3;
-    }
-
-    form.upload-form {
-        text-align: center;
-        margin-top: 40px;
-    }
-    input[type="file"] {
-        margin-bottom: 15px;
-    }
-    
-      
-    
-    /* File Upload Styles */
-    .drop-zone {
-        border: 2px dashed #ccc;
-        border-radius: 8px;
-        padding: 20px;
-        text-align: center;
-        background-color: #f8f9fa;
-        transition: all 0.3s ease;
-        cursor: pointer;
-    }
-
-    .drop-zone.highlight {
-        border-color: #d89d2e;
-        background-color: #fff3cd;
-    }
-
-    .file-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 8px;
-        margin: 5px 0;
-        background-color: #f8f9fa;
-        border-radius: 4px;
-    }
-
-    .file-item button {
-        margin-left: 10px;
-    }
-
-    #fileList {
-        margin-top: 15px;
-        max-height: 200px;
-        overflow-y: auto;
-    }
-
-    .upload-container {
-        margin: 20px 0;
-        padding: 20px;
-        background-color: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    

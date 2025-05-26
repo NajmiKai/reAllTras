@@ -2,6 +2,22 @@
 session_start();
 include '../../../connection.php';
 
+if (isset($_SESSION['status'])): ?>
+    <script>
+        <?php if ($_SESSION['status'] === 'success'): ?>
+            alert("✅ Emel berjaya dihantar.");
+        <?php elseif ($_SESSION['status'] === 'fail'): ?>
+            alert("❌ Emel gagal dihantar. Ralat: <?= addslashes($_SESSION['error']) ?>");
+        <?php elseif ($_SESSION['status'] === 'no_admin'): ?>
+            alert("⚠️ Tiada admin dengan peranan 'Pengesah CSM' ditemui.");
+        <?php elseif ($_SESSION['status'] === 'no_post'): ?>
+            alert("❌ Borang tidak dihantar dengan betul.");
+        <?php endif; ?>
+    </script>
+    <?php unset($_SESSION['status'], $_SESSION['error']); 
+endif;
+
+
 if (!isset($_SESSION['admin_id'])) {
     header("Location: login.php");
     exit();
@@ -13,52 +29,21 @@ $admin_icNo = $_SESSION['admin_icNo'];
 $admin_email = $_SESSION['admin_email'];
 $admin_phoneNo = $_SESSION['admin_phoneNo'];
 
-$currentPage = basename($_SERVER['PHP_SELF']);
 
-$users = [
-    [
-        'id' => 1,
-        'nama_first' => 'Ahmad',
-        'nama_last' => 'Zulkifli2',
-        'email' => 'ahmad.zulkifli@example.com',
-        'phone' => '0123456789',
-        'kp' => '900101-10-1234',
-        'bahagian' => 'Bahagian Teknologi Maklumat',
-        'status' => 'Kuiri'
-    ],
-    [    
-        'id' => 2,
-        'nama_first' => 'Siti',
-        'nama_last' => 'Noraini2',
-        'email' => 'siti.noraini@example.com',
-        'phone' => '0198765432',
-        'kp' => '850505-14-5678',
-        'bahagian' => 'Bahagian Pentadbiran',
-        'status' => 'Kuiri '
-    ],
-    // Add more users as needed
-];
+// Query user table
+$sql = "SELECT * FROM user JOIN wilayah_asal ON user.kp = wilayah_asal.user_kp WHERE status = 'Menunggu pengesahan Pegawai Sulit CSM'";
+$result = $conn->query($sql);
 
-// Sample data for 'wilayah_asal' table as an array of associative arrays
-$wilayah_asal = [
-    [
-        'user_kp' => '900101-10-1234',
-        'nama_first' => 'Ahmad',
-        'nama_last' => 'Zulkifli',
-        'email' => 'ahmad.zulkifli@example.com',
-        'phone' => '0123456789',
-        'bahagian' => 'Bahagian Teknologi Maklumat',
-        'jawatan' => 'Pegawai Teknologi Maklumat',
-        'alamat_menetap_1' => 'No. 12 Jalan Mawar',
-        'alamat_menetap_2' => 'Taman Melati',
-        'poskod_menetap' => '53000',
-        'bandar_menetap' => 'Kuala Lumpur',
-        'negeri_menetap' => 'Wilayah Persekutuan',
-        'tarikh_lapor_diri' => '2022-01-10',
-        // Add other fields as needed for your app...
-    ],
-    // Add more wilayah_asal data if needed
-];
+$users = [];
+
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $row['status'] = 'Sedang diproses'; // Optional: add custom status manually
+        $users[] = $row;
+    }
+} else {
+    echo "No users found.";
+}
 ?>
 <!DOCTYPE html>
 <html lang="ms">
@@ -113,7 +98,7 @@ $wilayah_asal = [
             <div class="card shadow-sm">
                 <div class="card-body">
                     <table class="table table-hover" id="myTable">
-                        <thead class="table-light">
+                        <thead class="table-dark">
                             <tr>
                             <th>Nama</th>
                             <th>Email</th>
@@ -134,7 +119,7 @@ $wilayah_asal = [
                                 <td><?php echo htmlspecialchars($user['bahagian']); ?></td>                              
                                 <td><?php echo htmlspecialchars($user['status']); ?></td>
                                 <td>
-                                    <a class="button" href="viewdetails.php?id=<?= $user['id'] ?>">View Details</a>
+                                    <a class="button" href="viewdetails.php?kp=<?= $user['kp'] ?>">View Details</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

@@ -2,7 +2,9 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-// Load PHPMailer
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 require '../../../PHPMailer/src/Exception.php';
 require '../../../PHPMailer/src/PHPMailer.php';
 require '../../../PHPMailer/src/SMTP.php';
@@ -10,21 +12,16 @@ require '../../../PHPMailer/src/SMTP.php';
 session_start();
 include '../../../connection.php';
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 // Retrieve latest application
-$sql = "SELECT * FROM admin ORDER BY id DESC LIMIT 1";
+$sql = "SELECT * FROM admin where role  = 'Pengesah CSM'";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
     $data = $result->fetch_assoc();
 
-    // $nama = $data['nama'];
-    // $tarikh = $data['tarikh_lapor_diri'];
-    // $kategori = $data['kategori'];
-
-    $nama = "Hanis";
-    $tarikh = "17/05/2025";
-    $kategori = "Pengguna";
-
+    $receiver_name = $data['Name'];
+    $receiver_email = $data['Email'];
 
     // Send email
     $mail = new PHPMailer(true);
@@ -32,31 +29,44 @@ if ($result->num_rows > 0) {
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'haniszainee1105@gmail.com';             // your Gmail
-        $mail->Password = 'eizx afua iazr efrl';                // app password (not Gmail login!)
+        $mail->Username = 'haniszainee1105@gmail.com';  // Gmail used to send
+        $mail->Password = 'eizx afua iazr efrl';         // Gmail app password
         $mail->SMTPSecure = 'tls';
         $mail->Port = 587;
 
-        $mail->setFrom('haniszainee1105@gmail.com', 'Sistem Permohonan');
-        $mail->addAddress('2023168781@student.uitm.edu.my', 'Pegawai HR');
+        // Dynamic sender
+        $mail->setFrom($mail->Username, 'ALLTRAS System'); // or use $admin_email if verified
+        // Dynamic receiver
+        $mail->addAddress($receiver_email, $receiver_name);
 
         $mail->isHTML(true);
-        $mail->Subject = 'Permohonan Baru Diterima';
+        $mail->Subject = 'ALLTRAS: Memerlukan Pengesahan Peruntukan Kewangan';
         $mail->Body = "
-            <h3>Notifikasi Permohonan</h3>
-            <p><strong>Nama:</strong> $nama</p>
-            <p><strong>Tarikh Lapor Diri:</strong> $tarikh</p>
-            <p><strong>Kategori:</strong> $kategori</p>
+            <p>Salam sejahtera <strong>$receiver_name</strong>,</p><br>
+            <p>Dimaklumkan bahawa terdapat permohonan penyelenggaraan kenderaan yang memerlukan pengesahan peruntukan kewangan melalui Sistem ALLTRAS.</p>
             <p>Sila semak sistem untuk maklumat lanjut.</p>
+            <p><u>PAPAR MAKLUMAT PERMOHONAN</u></p><br><br>
+
+            <p>Sekian, terima kasih.</p>
+            <p>Pasukan ALLTRAS</p>
+            <p>Jabatan Kastam Diraja Malaysia</p>
         ";
 
         $mail->send();
-        echo "✅ Emel berjaya dihantar.";
+        $_SESSION['status'] = 'success';
     } catch (Exception $e) {
-        echo "❌ Emel gagal dihantar. Ralat: {$mail->ErrorInfo}";
+        $_SESSION['status'] = 'fail';
+        $_SESSION['error'] = $mail->ErrorInfo;
     }
 } else {
-    echo "❌ Tiada permohonan ditemui dalam pangkalan data.";
+    $_SESSION['status'] = 'no_admin';
 }
-
+// Redirect back to the form page
+header("Location: wilayahAsal.php"); // <-- replace with your real page
+exit();
+} else {
+$_SESSION['status'] = 'no_post';
+header("Location: wilayahAsal.php");
+exit();
+}
 ?>
