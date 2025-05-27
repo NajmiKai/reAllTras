@@ -224,16 +224,16 @@ $user_phoneNo = $user_data['phone'];
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-6">
+                <div class="col-md-6">
                     <div class="card shadow-sm h-100">
                         <div class="card-body">
                             <h5 class="card-title">Carta Aliran Permohonan</h5>
                             <h6 class="text-danger mb-3">Tugas Rasmi / Kursus</h6>
-                            <img src="../../assets/flowchart-tugasrasmi.jpg" alt="Carta Aliran Wilayah Asal" class="img-fluid rounded clickable-image" style="cursor:pointer;">
+                            <img src="../../assets/flowchart-tugasrasmi.jpg" alt="Carta Aliran Tugas Rasmi" class="img-fluid rounded clickable-image" style="cursor:pointer;">
                         </div>
                     </div>
                 </div>
+            </div>
         </div>
 
         <!-- Image Modal -->

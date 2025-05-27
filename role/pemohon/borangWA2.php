@@ -196,7 +196,7 @@ $user_phoneNo = $user_data['phone'];
             </div>
         </div>
 
-        <form action="../../functions/process_borangWA2.php" method="POST" class="needs-validation" novalidate>
+        <form action="includes/process_borangWA2.php" method="POST" class="needs-validation" novalidate>
             <!-- Father's Information -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header" style="background-color: #d59e3e; color: white;">

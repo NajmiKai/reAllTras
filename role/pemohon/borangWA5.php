@@ -139,7 +139,7 @@ $user_role = $user_data['bahagian'];
             </div>
         </div>
 
-        <form action="../../functions/process_borangWA5.php" method="POST" class="needs-validation" novalidate>
+        <form action="includes/update_borangWA5.php" method="POST" class="needs-validation" novalidate>
             <input type="hidden" name="wilayah_asal_id" value="<?php echo htmlspecialchars($wilayah_asal_id); ?>">
             
             <!-- Maklumat Pegawai -->
@@ -404,7 +404,7 @@ $user_role = $user_data['bahagian'];
                             <h5 class="modal-title">Edit Maklumat Pegawai</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
-                        <form action="../../functions/update_borangWA5.php" method="POST">
+                        <form action="includes/update_borangWA5.php" method="POST">
                             <div class="modal-body">
                                 <input type="hidden" name="wilayah_asal_id" value="<?= $wilayah_asal_id ?>">
                                 <input type="hidden" name="update_type" value="pegawai">
@@ -430,7 +430,7 @@ $user_role = $user_data['bahagian'];
                             <h5 class="modal-title">Edit Maklumat Pasangan</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
-                        <form action="../../functions/update_borangWA5.php" method="POST">
+                        <form action="includes/update_borangWA5.php" method="POST">
                             <div class="modal-body">
                                 <input type="hidden" name="wilayah_asal_id" value="<?= $wilayah_asal_id ?>">
                                 <input type="hidden" name="update_type" value="pasangan">
@@ -468,7 +468,7 @@ $user_role = $user_data['bahagian'];
                             <h5 class="modal-title">Edit Maklumat Ibu Bapa</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
-                        <form action="../../functions/update_borangWA5.php" method="POST">
+                        <form action="includes/update_borangWA5.php" method="POST">
                             <div class="modal-body">
                                 <input type="hidden" name="wilayah_asal_id" value="<?= $wilayah_asal_id ?>">
                                 <input type="hidden" name="update_type" value="ibu_bapa">
@@ -530,7 +530,7 @@ $user_role = $user_data['bahagian'];
                             <h5 class="modal-title">Edit Maklumat Penerbangan</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
-                        <form action="../../functions/update_borangWA5.php" method="POST">
+                        <form action="includes/update_borangWA5.php" method="POST">
                             <div class="modal-body">
                                 <input type="hidden" name="wilayah_asal_id" value="<?= $wilayah_asal_id ?>">
                                 <input type="hidden" name="update_type" value="penerbangan">
@@ -575,7 +575,7 @@ $user_role = $user_data['bahagian'];
                             <h5 class="modal-title">Tambah Dokumen</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
-                        <form action="../../functions/update_borangWA5.php" method="POST" enctype="multipart/form-data">
+                        <form action="includes/update_borangWA5.php" method="POST" enctype="multipart/form-data">
                             <div class="modal-body">
                                 <input type="hidden" name="wilayah_asal_id" value="<?= $wilayah_asal_id ?>">
                                 <input type="hidden" name="update_type" value="document">

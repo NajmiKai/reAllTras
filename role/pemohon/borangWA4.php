@@ -118,7 +118,7 @@ $user_role = $user_data['bahagian'];
             </div>
         </div>
 
-        <form action="../../functions/process_borangWA4.php" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+        <form action="includes/process_borangWA4.php" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
             <?php
             // Debug information
             error_log("Form submission path: " . realpath("../../functions/process_borangWA4.php"));
