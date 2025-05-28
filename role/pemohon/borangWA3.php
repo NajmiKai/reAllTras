@@ -138,7 +138,7 @@ $user_phoneNo = $user_data['phone'];
             <span class="nav-link fw-semibold"><?= htmlspecialchars($user_name) ?> (<?= htmlspecialchars($user_role) ?>)</span>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
-            <a href="../../../logout.php" class="nav-link text-danger">
+            <a href="../../logoutUser.php" class="nav-link text-danger">
                 <i class="fas fa-sign-out-alt me-1"></i> Log Keluar
             </a>
         </li>
@@ -154,7 +154,7 @@ $user_phoneNo = $user_data['phone'];
         <a href="wilayahAsal.php"><i class="fas fa-map-marker-alt me-2"></i>Wilayah Asal</a>
         <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a>
         <a href="profile.php"><i class="fas fa-user me-2"></i>Paparan Profil</a>
-        <a href="../../logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
+        <a href="../../logoutUser.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
     </div>
 
     <!-- Main Content -->

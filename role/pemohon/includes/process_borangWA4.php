@@ -1,88 +1,132 @@
 <?php
 session_start();
-include '../../../connection.php';
+include '../../connection.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    try {
-        // Check if wilayah_asal_id exists in session
-        if (!isset($_SESSION['wilayah_asal_id'])) {
-            throw new Exception("Session data not found. Please start from the beginning.");
-        }
+// Enable error reporting
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-        $wilayah_asal_id = $_SESSION['wilayah_asal_id'];
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../../loginUser.php");
+    exit();
+}
 
-        // Handle file uploads
-        $upload_dir = "../../uploads/";
-        if (!file_exists($upload_dir)) {
-            mkdir($upload_dir, 0777, true);
-        }
-
-        $document_types = ['surat_rasmi', 'surat_tawaran', 'surat_permohonan', 'dokumen_sokongan'];
-        $uploaded_files = [];
-
-        foreach ($document_types as $type) {
-            if (isset($_FILES[$type]) && $_FILES[$type]['error'] == 0) {
-                $file = $_FILES[$type];
-                $file_name = time() . '_' . basename($file['name']);
-                $target_path = $upload_dir . $file_name;
-
-                if (move_uploaded_file($file['tmp_name'], $target_path)) {
-                    $uploaded_files[$type] = $file_name;
-                } else {
-                    throw new Exception("Error uploading file: " . $file['name']);
-                }
-            }
-        }
-
-        // Prepare the SQL statement
-        $sql = "UPDATE wilayah_asal SET 
-            surat_rasmi = ?,
-            surat_tawaran = ?,
-            surat_permohonan = ?,
-            dokumen_sokongan = ?
-            WHERE id = ?";
-
-        $stmt = $conn->prepare($sql);
-        
-        // Bind parameters
-        $stmt->bind_param("ssssi",
-            $uploaded_files['surat_rasmi'] ?? null,
-            $uploaded_files['surat_tawaran'] ?? null,
-            $uploaded_files['surat_permohonan'] ?? null,
-            $uploaded_files['dokumen_sokongan'] ?? null,
-            $wilayah_asal_id
-        );
-
-        // Execute the statement
-        if ($stmt->execute()) {
-            // Store document information in session
-            $_SESSION['document_info'] = $uploaded_files;
-
-            // Keep existing borangWA_data if it exists
-            if (!isset($_SESSION['borangWA_data'])) {
-                $_SESSION['borangWA_data'] = [];
-            }
-
-            // Redirect to the next form
-            header("Location: ../borangWA5.php");
-            exit();
-        } else {
-            throw new Exception("Error executing statement: " . $stmt->error);
-        }
-    } catch (Exception $e) {
-        // Log the error
-        error_log("Error in process_borangWA4.php: " . $e->getMessage());
-        
-        // Set error message in session
-        $_SESSION['error'] = "Ralat semasa menyimpan data. Sila cuba lagi.";
-        
-        // Redirect back to form with error
-        header("Location: ../borangWA4.php");
-        exit();
-    }
-} else {
-    // If not POST request, redirect back to form
+// Check if wilayah_asal_id exists
+if (!isset($_POST['wilayah_asal_id'])) {
+    $_SESSION['error'] = "ID Wilayah Asal tidak dijumpai.";
     header("Location: ../borangWA4.php");
     exit();
 }
+
+$wilayah_asal_id = $_POST['wilayah_asal_id'];
+$user_id = $_SESSION['user_id'];
+$user_kp = $_SESSION['user_kp'];
+
+// Create upload directory if it doesn't exist
+$upload_dir = "../../../uploads/permohonan/" . $wilayah_asal_id;
+if (!file_exists($upload_dir)) {
+    mkdir($upload_dir, 0777, true);
+}
+
+// Function to handle file upload
+function handleFileUpload($file, $upload_dir, $wilayah_asal_id, $user_kp, $description = '') {
+    global $conn;
+    
+    if ($file['error'] === UPLOAD_ERR_OK) {
+        $file_name = basename($file['name']);
+        $file_type = $file['type'];
+        $file_size = $file['size'];
+        
+        // Generate unique filename
+        $unique_filename = uniqid() . '_' . $file_name;
+        $target_path = $upload_dir . '/' . $unique_filename;
+        
+        if (move_uploaded_file($file['tmp_name'], $target_path)) {
+            // Insert into database
+            $sql = "INSERT INTO documents (wilayah_asal_id, file_name, file_path, file_type, file_size, description, file_uploader_origin, file_class_origin) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, 'pemohon')";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("isssisss", $wilayah_asal_id, $file_name, $target_path, $file_type, $file_size, $description, $user_kp);
+            
+            if ($stmt->execute()) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+$success = true;
+$error_messages = [];
+
+// Handle Dokumen Pegawai (Required)
+if (!isset($_FILES['dokumen_pegawai']) || $_FILES['dokumen_pegawai']['error'] === UPLOAD_ERR_NO_FILE) {
+    $success = false;
+    $error_messages[] = "Dokumen Pegawai diperlukan.";
+} else {
+    if (!handleFileUpload($_FILES['dokumen_pegawai'], $upload_dir, $wilayah_asal_id, $user_kp, 'Dokumen Pegawai')) {
+        $success = false;
+        $error_messages[] = "Gagal memuat naik Dokumen Pegawai.";
+    }
+}
+
+// Handle Dokumen Pasangan (Optional)
+if (isset($_FILES['dokumen_pasangan']) && $_FILES['dokumen_pasangan']['error'] !== UPLOAD_ERR_NO_FILE) {
+    if (!handleFileUpload($_FILES['dokumen_pasangan'], $upload_dir, $wilayah_asal_id, $user_kp, 'Dokumen Pasangan')) {
+        $success = false;
+        $error_messages[] = "Gagal memuat naik Dokumen Pasangan.";
+    }
+}
+
+// Handle Dokumen Pengikut (Multiple)
+if (isset($_FILES['dokumen_pengikut'])) {
+    foreach ($_FILES['dokumen_pengikut']['tmp_name'] as $key => $tmp_name) {
+        if ($_FILES['dokumen_pengikut']['error'][$key] === UPLOAD_ERR_OK) {
+            $file = [
+                'name' => $_FILES['dokumen_pengikut']['name'][$key],
+                'type' => $_FILES['dokumen_pengikut']['type'][$key],
+                'tmp_name' => $tmp_name,
+                'error' => $_FILES['dokumen_pengikut']['error'][$key],
+                'size' => $_FILES['dokumen_pengikut']['size'][$key]
+            ];
+            
+            if (!handleFileUpload($file, $upload_dir, $wilayah_asal_id, $user_kp, 'Dokumen Pengikut')) {
+                $success = false;
+                $error_messages[] = "Gagal memuat naik Dokumen Pengikut #" . ($key + 1);
+            }
+        }
+    }
+}
+
+// Handle Dokumen Sokongan (Multiple)
+if (isset($_FILES['dokumen_sokongan'])) {
+    foreach ($_FILES['dokumen_sokongan']['tmp_name'] as $key => $tmp_name) {
+        if ($_FILES['dokumen_sokongan']['error'][$key] === UPLOAD_ERR_OK) {
+            $file = [
+                'name' => $_FILES['dokumen_sokongan']['name'][$key],
+                'type' => $_FILES['dokumen_sokongan']['type'][$key],
+                'tmp_name' => $tmp_name,
+                'error' => $_FILES['dokumen_sokongan']['error'][$key],
+                'size' => $_FILES['dokumen_sokongan']['size'][$key]
+            ];
+            
+            $description = isset($_POST['sokongan_description'][$key]) ? $_POST['sokongan_description'][$key] : 'Dokumen Sokongan';
+            
+            if (!handleFileUpload($file, $upload_dir, $wilayah_asal_id, $user_kp, $description)) {
+                $success = false;
+                $error_messages[] = "Gagal memuat naik Dokumen Sokongan #" . ($key + 1);
+            }
+        }
+    }
+}
+
+if ($success) {
+    $_SESSION['success'] = "Semua dokumen berjaya dimuat naik.";
+    header("Location: ../borangWA5.php");
+} else {
+    $_SESSION['error'] = implode("<br>", $error_messages);
+    header("Location: ../borangWA4.php");
+}
+exit();
 ?> 

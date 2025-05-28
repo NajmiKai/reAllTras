@@ -16,8 +16,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             jenis_permohonan = ?,
             tarikh_penerbangan_pergi = ?,
             tarikh_penerbangan_balik = ?,
-            lapangan_terbang_berlepas = ?,
-            lapangan_terbang_tiba = ?
+            start_point = ?,
+            end_point = ?
             WHERE id = ?";
 
         $stmt = $conn->prepare($sql);
@@ -26,16 +26,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $jenis_permohonan = $_POST['jenis_permohonan'];
         $tarikh_penerbangan_pergi = $_POST['tarikh_penerbangan_pergi'];
         $tarikh_penerbangan_balik = $_POST['tarikh_penerbangan_balik'];
-        $lapangan_terbang_berlepas = $_POST['lapangan_terbang_berlepas'];
-        $lapangan_terbang_tiba = $_POST['lapangan_terbang_tiba'];
+        $start_point = $_POST['start_point'];
+        $end_point = $_POST['end_point'];
 
         // Bind parameters
         $stmt->bind_param("sssssi",
             $jenis_permohonan,
             $tarikh_penerbangan_pergi,
             $tarikh_penerbangan_balik,
-            $lapangan_terbang_berlepas,
-            $lapangan_terbang_tiba,
+            $start_point,
+            $end_point,
             $wilayah_asal_id
         );
 
@@ -46,8 +46,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 'jenis_permohonan' => $jenis_permohonan,
                 'tarikh_penerbangan_pergi' => $tarikh_penerbangan_pergi,
                 'tarikh_penerbangan_balik' => $tarikh_penerbangan_balik,
-                'lapangan_terbang_berlepas' => $lapangan_terbang_berlepas,
-                'lapangan_terbang_tiba' => $lapangan_terbang_tiba
+                'start_point' => $start_point,
+                'end_point' => $end_point
             ];
 
             // Keep existing borangWA_data if it exists

@@ -9,7 +9,10 @@ CREATE TABLE IF NOT EXISTS user (
     bahagian VARCHAR(50) NOT NULL,
     password VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    reset_token varchar(255) DEFAULT NULL,
+    token_expiry datetime DEFAULT NULL
+
 );
 
 -- Create application table example

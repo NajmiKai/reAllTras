@@ -41,6 +41,49 @@ $user_role = $user_data['bahagian'];
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../assets/css/userStyle.css">
     <link rel="stylesheet" href="../../assets/css/multi-step.css">
+    <style>
+        .document-section {
+            margin-bottom: 2rem;
+        }
+        .document-item {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+        }
+        .document-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .document-title i {
+            margin-left: 0.5rem;
+            color: #28a745;
+            display: none;
+        }
+        .document-title i.uploaded {
+            display: inline-block;
+        }
+        .upload-list {
+            margin-top: 0.5rem;
+        }
+        .upload-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            background-color: #f8f9fa;
+            border-radius: 0.25rem;
+        }
+        .upload-item .remove-upload {
+            margin-left: auto;
+            color: #dc3545;
+            cursor: pointer;
+        }
+        .add-more-btn {
+            margin-top: 0.5rem;
+        }
+    </style>
 </head>
 <body>
 
@@ -57,7 +100,7 @@ $user_role = $user_data['bahagian'];
             <span class="nav-link fw-semibold"><?= htmlspecialchars($user_name) ?> (<?= htmlspecialchars($user_role) ?>)</span>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
-            <a href="../../../logout.php" class="nav-link text-danger">
+            <a href="../../logoutUser.php" class="nav-link text-danger">
                 <i class="fas fa-sign-out-alt me-1"></i> Log Keluar
             </a>
         </li>
@@ -66,15 +109,7 @@ $user_role = $user_data['bahagian'];
 
 <div class="main-container">
     <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <h6><img src="../../assets/ALLTRAS.png" alt="ALLTRAS" width="140" style="margin-left: 20px;"><br>ALL REGION TRAVELLING SYSTEM</h6><br>
-        <a href="dashboard.php"><i class="fas fa-home me-2"></i>Laman Utama</a>
-        <h6 class="text mt-4"></h6>
-        <a href="wilayahAsal.php"><i class="fas fa-map-marker-alt me-2"></i>Wilayah Asal</a>
-        <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a>
-        <a href="profile.php"><i class="fas fa-user me-2"></i>Paparan Profil</a>
-        <a href="../../logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
-    </div>
+    <?php include 'includes/sidebar.php'; ?>
 
     <!-- Main Content -->
     <div class="col p-4">
@@ -119,60 +154,80 @@ $user_role = $user_data['bahagian'];
         </div>
 
         <form action="includes/process_borangWA4.php" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
-            <?php
-            // Debug information
-            error_log("Form submission path: " . realpath("../../functions/process_borangWA4.php"));
-            error_log("Current script path: " . __FILE__);
-            ?>
             <input type="hidden" name="wilayah_asal_id" value="<?php echo htmlspecialchars($_SESSION['wilayah_asal_id']); ?>">
+            
+            <!-- Dokumen Pegawai -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header" style="background-color: #d59e3e; color: white;">
+                    <h5 class="mb-0">Dokumen Pegawai <span class="text-danger">*</span></h5>
+                </div>
+                <div class="card-body">
+                    <div class="document-item">
+                        <div class="document-title">
+                            <h6 class="mb-0">Salinan IC Pegawai</h6>
+                            <i class="fas fa-check-circle uploaded"></i>
+                        </div>
+                        <input type="file" class="form-control" name="dokumen_pegawai" accept=".pdf,.jpg,.jpeg,.png" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dokumen Pasangan -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header" style="background-color: #d59e3e; color: white;">
+                    <h5 class="mb-0">Dokumen Pasangan</h5>
+                </div>
+                <div class="card-body">
+                    <div class="document-item">
+                        <div class="document-title">
+                            <h6 class="mb-0">Salinan IC Pasangan</h6>
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <input type="file" class="form-control" name="dokumen_pasangan" accept=".pdf,.jpg,.jpeg,.png">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dokumen Pengikut -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header" style="background-color: #d59e3e; color: white;">
+                    <h5 class="mb-0">Dokumen Pengikut</h5>
+                </div>
+                <div class="card-body">
+                    <div id="pengikut-container">
+                        <div class="document-item">
+                            <div class="document-title">
+                                <h6 class="mb-0">Salinan IC Pengikut</h6>
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <input type="file" class="form-control" name="dokumen_pengikut[]" accept=".pdf,.jpg,.jpeg,.png">
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-outline-primary btn-sm add-more-btn" onclick="addPengikut()">
+                        <i class="fas fa-plus me-2"></i>Tambah Pengikut
+                    </button>
+                </div>
+            </div>
+
             <!-- Dokumen Sokongan -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header" style="background-color: #d59e3e; color: white;">
                     <h5 class="mb-0">Dokumen Sokongan</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-12">
-                            <div class="document-item d-flex align-items-center mb-3">
-                                <div class="form-check me-3">
-                                    <input class="form-check-input document-check" type="checkbox" id="ic_pegawai" name="documents[]" value="ic_pegawai" required>
-                                    <label class="form-check-label" for="ic_pegawai">
-                                        Salinan IC Pegawai <span class="text-danger">*</span>
-                                    </label>
-                                </div>
-                                <input type="file" class="form-control document-file" id="ic_pegawai_file" name="ic_pegawai_file" accept=".pdf,.jpg,.jpeg,.png" required>
-                                <div class="upload-status ms-3 d-none">
-                                    <i class="fas fa-check-circle text-success"></i>
-                                </div>
+                    <div id="sokongan-container">
+                        <div class="document-item">
+                            <div class="document-title">
+                                <h6 class="mb-0">Dokumen Sokongan</h6>
+                                <i class="fas fa-check-circle"></i>
                             </div>
-
-                            <div class="document-item d-flex align-items-center mb-3">
-                                <div class="form-check me-3">
-                                    <input class="form-check-input document-check" type="checkbox" id="ic_pengikut" name="documents[]" value="ic_pengikut">
-                                    <label class="form-check-label" for="ic_pengikut">
-                                        Salinan IC Pengikut dan Pasangan (sekiranya berkait)
-                                    </label>
-                                </div>
-                                <input type="file" class="form-control document-file" id="ic_pengikut_file" name="ic_pengikut_file" accept=".pdf,.jpg,.jpeg,.png">
-                                <div class="upload-status ms-3 d-none">
-                                    <i class="fas fa-check-circle text-success"></i>
-                                </div>
-                            </div>
-
-                            <div class="document-item d-flex align-items-center mb-3">
-                                <div class="form-check me-3">
-                                    <input class="form-check-input document-check" type="checkbox" id="dokumen_sokongan" name="documents[]" value="dokumen_sokongan">
-                                    <label class="form-check-label" for="dokumen_sokongan">
-                                        Dokument Sokongan (Sijil Kelahiran Ibu Bapa Pegawai / Sijil Kematian Ibu Bapa dan Lain-Lain)
-                                    </label>
-                                </div>
-                                <input type="file" class="form-control document-file" id="dokumen_sokongan_file" name="dokumen_sokongan_file" accept=".pdf,.jpg,.jpeg,.png">
-                                <div class="upload-status ms-3 d-none">
-                                    <i class="fas fa-check-circle text-success"></i>
-                                </div>
-                            </div>
+                            <input type="file" class="form-control" name="dokumen_sokongan[]" accept=".pdf,.jpg,.jpeg,.png">
+                            <input type="text" class="form-control mt-2" name="sokongan_description[]" placeholder="Penerangan dokumen">
                         </div>
                     </div>
+                    <button type="button" class="btn btn-outline-primary btn-sm add-more-btn" onclick="addSokongan()">
+                        <i class="fas fa-plus me-2"></i>Tambah Dokumen Sokongan
+                    </button>
                 </div>
             </div>
 
@@ -196,7 +251,6 @@ $user_role = $user_data['bahagian'];
         var forms = document.querySelectorAll('.needs-validation')
         Array.prototype.slice.call(forms).forEach(function (form) {
             form.addEventListener('submit', function (event) {
-                console.log('Form submitted');
                 if (!form.checkValidity()) {
                     event.preventDefault()
                     event.stopPropagation()
@@ -206,36 +260,58 @@ $user_role = $user_data['bahagian'];
         })
     })()
 
-    // Document upload handling
-    document.querySelectorAll('.document-file').forEach(function(input) {
+    // File upload handling
+    document.querySelectorAll('input[type="file"]').forEach(function(input) {
         input.addEventListener('change', function() {
-            console.log('File selected:', this.files[0]);
-            const checkbox = this.previousElementSibling.querySelector('.document-check');
-            const statusIcon = this.nextElementSibling;
-            
+            const checkIcon = this.parentElement.querySelector('.fa-check-circle');
             if (this.files.length > 0) {
-                checkbox.checked = true;
-                statusIcon.classList.remove('d-none');
+                checkIcon.classList.add('uploaded');
             } else {
-                checkbox.checked = false;
-                statusIcon.classList.add('d-none');
+                checkIcon.classList.remove('uploaded');
             }
         });
     });
 
-    // Checkbox handling
-    document.querySelectorAll('.document-check').forEach(function(checkbox) {
-        checkbox.addEventListener('change', function() {
-            console.log('Checkbox changed:', this.checked);
-            const fileInput = this.parentElement.nextElementSibling;
-            const statusIcon = fileInput.nextElementSibling;
-            
-            if (!this.checked) {
-                fileInput.value = '';
-                statusIcon.classList.add('d-none');
-            }
-        });
-    });
+    // Add more pengikut
+    function addPengikut() {
+        const container = document.getElementById('pengikut-container');
+        const newItem = document.createElement('div');
+        newItem.className = 'document-item';
+        newItem.innerHTML = `
+            <div class="document-title">
+                <h6 class="mb-0">Salinan IC Pengikut</h6>
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="d-flex">
+                <input type="file" class="form-control" name="dokumen_pengikut[]" accept=".pdf,.jpg,.jpeg,.png">
+                <button type="button" class="btn btn-danger ms-2" onclick="this.parentElement.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+        container.appendChild(newItem);
+    }
+
+    // Add more sokongan
+    function addSokongan() {
+        const container = document.getElementById('sokongan-container');
+        const newItem = document.createElement('div');
+        newItem.className = 'document-item';
+        newItem.innerHTML = `
+            <div class="document-title">
+                <h6 class="mb-0">Dokumen Sokongan</h6>
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="d-flex flex-column">
+                <input type="file" class="form-control" name="dokumen_sokongan[]" accept=".pdf,.jpg,.jpeg,.png">
+                <input type="text" class="form-control mt-2" name="sokongan_description[]" placeholder="Penerangan dokumen">
+                <button type="button" class="btn btn-danger mt-2" onclick="this.parentElement.parentElement.remove()">
+                    <i class="fas fa-times me-2"></i>Buang
+                </button>
+            </div>
+        `;
+        container.appendChild(newItem);
+    }
 </script>
 </body>
 </html> 
