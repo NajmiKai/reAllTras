@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../connection.php';
+include '../../../connection.php';
 
 // Enable error reporting
 error_reporting(E_ALL);
@@ -47,7 +47,7 @@ function handleFileUpload($file, $upload_dir, $wilayah_asal_id, $user_kp, $descr
             $sql = "INSERT INTO documents (wilayah_asal_id, file_name, file_path, file_type, file_size, description, file_uploader_origin, file_class_origin) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, 'pemohon')";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("isssisss", $wilayah_asal_id, $file_name, $target_path, $file_type, $file_size, $description, $user_kp);
+            $stmt->bind_param("isssiss", $wilayah_asal_id, $file_name, $target_path, $file_type, $file_size, $description, $user_kp);
             
             if ($stmt->execute()) {
                 return true;

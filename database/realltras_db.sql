@@ -1,3 +1,15 @@
+CREATE TABLE admin (
+  ID int(11) NOT NULL,
+  Name varchar(255) NOT NULL,
+  ICNo varchar(255) NOT NULL,
+  Email varchar(255) NOT NULL,
+  PhoneNo varchar(15) NOT NULL,
+  Password varchar(255) NOT NULL,
+  Role varchar(255) NOT NULL,
+  reset_token varchar(255) DEFAULT NULL,
+  token_expiry datetime DEFAULT NULL
+)
+
 -- Create user table
 CREATE TABLE IF NOT EXISTS user (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -21,6 +33,7 @@ CREATE TABLE IF NOT EXISTS wilayah_asal (
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_kp VARCHAR(20) NOT NULL UNIQUE,
     jawatan_gred VARCHAR(100) NOT NULL,
+    email_penyelia VARCHAR(100) NOT NULL,
 
     alamat_menetap_1 VARCHAR(100) NOT NULL,
     alamat_menetap_2 VARCHAR(100),
@@ -71,6 +84,8 @@ CREATE TABLE IF NOT EXISTS wilayah_asal (
 
     tarikh_penerbangan_pergi DATE NOT NULL,
     tarikh_penerbangan_balik DATE NOT NULL,
+    tarikh_penerbangan_pergi_pasangan DATE,
+    tarikh_penerbangan_balik_pasangan DATE,
 
 
     start_point VARCHAR(100) NOT NULL,
@@ -95,6 +110,44 @@ CREATE TABLE IF NOT EXISTS wilayah_asal (
 
     status_permohonan ENUM('Belum Disemak','Selesai','Dikuiri', 'Tolak', 'Lulus') DEFAULT 'Belum Disemak',
     kedudukan_permohonan ENUM('Pemohon','CSM', 'HQ', 'CSM2', 'Kewangan') DEFAULT 'Pemohon',
+
+    status varchar(255) DEFAULT NULL,
+    tarikh_keputusan_csm1 date DEFAULT NULL,
+    ulasan_pbr_csm1 text DEFAULT NULL,
+    pbr_csm1_id int(11) DEFAULT NULL,
+    pengesah_csm1_id int(11) DEFAULT NULL,
+    pegSulit_csm_id int(11) DEFAULT NULL,
+    tarikh_keputusan_pengesah_csm1 date DEFAULT NULL,
+    ulasan_pengesah_csm1 text DEFAULT NULL,
+
+    tarikh_keputusan_csm2 date DEFAULT NULL,
+    pbr_csm2_id int(11) DEFAULT NULL,
+    tarikh_keputusan_pegsulit_csm date DEFAULT NULL,
+    pengesah_csm2_id int(11) DEFAULT NULL,
+    tarikh_keputusan_pengesah_csm2 date DEFAULT NULL,
+    ulasan_pengesah_csm2 text DEFAULT NULL,
+    
+    penyemak_HQ1_id int(11) DEFAULT NULL,
+    ulasan_penyemak_HQ text DEFAULT NULL,
+    tarikh_keputusan_penyemak_HQ1 date DEFAULT NULL,
+    pengesah_HQ_id int(11) DEFAULT NULL,
+    ulasan_pengesah_HQ text DEFAULT NULL,
+    tarikh_keputusan_pengesah_HQ date DEFAULT NULL,
+    pelulus_HQ_id int(11) DEFAULT NULL,
+    ulasan_pelulus_HQ text DEFAULT NULL,
+    tarikh_keputusan_pelulus_HQ date DEFAULT NULL,
+    penyemak_HQ2_id int(11) DEFAULT NULL,
+    tarikh_keputusan_penyemak_HQ2 date DEFAULT NULL,
+
+    penyemakBaki_kewangan_id int(11) DEFAULT NULL,
+    tarikh_keputusan_penyemakBaki_kewangan date DEFAULT NULL,
+    ulasan_penyemakBaki_kewangan text DEFAULT NULL,
+    pengesah_kewangan_id int(11) DEFAULT NULL,
+    tarikh_keputusan_pengesah_kewangan date DEFAULT NULL,
+    ulasan_pengesah_kewangan text DEFAULT NULL,
+    penyediaKemudahan_kewangan_id int(11) DEFAULT NULL,
+    tarikh_keputusan_penyediaKemudahan_kewangan date DEFAULT NULL,
+
 
 
     FOREIGN KEY (user_kp) REFERENCES user(kp),
@@ -135,55 +188,4 @@ CREATE TABLE IF NOT EXISTS documents (
     description TEXT,
     FOREIGN KEY (wilayah_asal_id) REFERENCES wilayah_asal(id) ON DELETE CASCADE,
     FOREIGN KEY (file_uploader_origin) REFERENCES user(kp) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS wa_csm1 (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    wilayah_asal_id INT NOT NULL UNIQUE,
-    documents_id INT NOT NULL UNIQUE,
-    id_csm_pengawai_sulit INT UNIQUE,
-    id_csm_pbr INT UNIQUE,
-    id_csm_pengesah INT UNIQUE,
-
-    FOREIGN KEY (id_csm_pengawai_sulit) REFERENCES user(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_csm_pbr) REFERENCES user(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_csm_pengesah) REFERENCES user(id) ON DELETE CASCADE,
-    FOREIGN KEY (wilayah_asal_id) REFERENCES wilayah_asal(id) ON DELETE CASCADE,
-    FOREIGN KEY (documents_id) REFERENCES documents(id) ON DELETE CASCADE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS wa_csm2 (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    wilayah_asal_id INT NOT NULL UNIQUE,
-    documents_id INT NOT NULL UNIQUE,
-    id_csm_pengawai_sulit INT UNIQUE,
-    id_csm_pbr INT UNIQUE,
-    id_csm_pengesah INT UNIQUE,
-
-    FOREIGN KEY (id_csm_pengawai_sulit) REFERENCES user(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_csm_pbr) REFERENCES user(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_csm_pengesah) REFERENCES user(id) ON DELETE CASCADE,
-    FOREIGN KEY (wilayah_asal_id) REFERENCES wilayah_asal(id) ON DELETE CASCADE,
-    FOREIGN KEY (documents_id) REFERENCES documents(id) ON DELETE CASCADE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS wa_csm2 (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    wilayah_asal_id INT NOT NULL UNIQUE,
-    documents_id INT NOT NULL UNIQUE,
-    id_csm_pengawai_sulit INT UNIQUE,
-    id_csm_pbr INT UNIQUE,
-    id_csm_pengesah INT UNIQUE,
-
-    FOREIGN KEY (id_csm_pengawai_sulit) REFERENCES user(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_csm_pbr) REFERENCES user(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_csm_pengesah) REFERENCES user(id) ON DELETE CASCADE,
-    FOREIGN KEY (wilayah_asal_id) REFERENCES wilayah_asal(id) ON DELETE CASCADE,
-    FOREIGN KEY (documents_id) REFERENCES documents(id) ON DELETE CASCADE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );

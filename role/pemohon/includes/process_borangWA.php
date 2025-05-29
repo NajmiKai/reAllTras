@@ -6,7 +6,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
         // Prepare the SQL statement
         $sql = "INSERT INTO wilayah_asal (
-            user_kp, jawatan_gred,
+            user_kp, jawatan_gred, email_penyelia,
             alamat_menetap_1, alamat_menetap_2, poskod_menetap, bandar_menetap, negeri_menetap,
             alamat_berkhidmat_1, alamat_berkhidmat_2, poskod_berkhidmat, bandar_berkhidmat, negeri_berkhidmat,
             tarikh_lapor_diri, tarikh_terakhir_kemudahan,
@@ -14,13 +14,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             alamat_berkhidmat_1_pasangan, alamat_berkhidmat_2_pasangan,
             poskod_berkhidmat_pasangan, bandar_berkhidmat_pasangan, negeri_berkhidmat_pasangan,
             wilayah_menetap_pasangan
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $conn->prepare($sql);
         
         // Prepare values for binding
         $user_kp = $_POST['user_kp_raw'] ?? $_POST['user_kp'];
         $jawatan_gred = $_POST['jawatan_gred'];
+        $email_penyelia = $_POST['email_penyelia'];
         $alamat_menetap_1 = $_POST['alamat_menetap_1'];
         $alamat_menetap_2 = $_POST['alamat_menetap_2'];
         $poskod_menetap = $_POST['poskod_menetap'];
@@ -46,9 +47,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $wilayah_menetap_pasangan = ($_POST['ada_pasangan'] === 'ya') ? $_POST['wilayah_menetap_pasangan'] : null;
 
         // Bind parameters
-        $stmt->bind_param("sssssssssssssssssssssss",
+        $stmt->bind_param("ssssssssssssssssssssssss",
             $user_kp,
             $jawatan_gred,
+            $email_penyelia,
             $alamat_menetap_1,
             $alamat_menetap_2,
             $poskod_menetap,
@@ -78,6 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['borangWA_data'] = [
                 'user_kp' => $user_kp,
                 'jawatan_gred' => $jawatan_gred,
+                'email_penyelia' => $email_penyelia,
                 'alamat_menetap_1' => $alamat_menetap_1,
                 'alamat_menetap_2' => $alamat_menetap_2,
                 'poskod_menetap' => $poskod_menetap,

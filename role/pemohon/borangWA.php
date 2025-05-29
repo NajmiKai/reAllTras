@@ -211,6 +211,10 @@ $user_phoneNo = $user_data['phone'];
                             <label class="form-label">Jawatan & Gred</label>
                             <input type="text" class="form-control" name="jawatan_gred" required>
                         </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email Penyelia</label>
+                            <input type="email" class="form-control" name="email_penyelia" required>
+                        </div>
                     </div>
                 </div>
             </div>

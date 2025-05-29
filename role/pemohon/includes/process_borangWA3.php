@@ -17,7 +17,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             tarikh_penerbangan_pergi = ?,
             tarikh_penerbangan_balik = ?,
             start_point = ?,
-            end_point = ?
+            end_point = ?,
+            tarikh_penerbangan_pergi_pasangan = ?,
+            tarikh_penerbangan_balik_pasangan = ?
             WHERE id = ?";
 
         $stmt = $conn->prepare($sql);
@@ -28,14 +30,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $tarikh_penerbangan_balik = $_POST['tarikh_penerbangan_balik'];
         $start_point = $_POST['start_point'];
         $end_point = $_POST['end_point'];
+        
+        // Get partner flight dates
+        $partner_flight_type = $_POST['partner_flight_type'] ?? 'same';
+        if ($partner_flight_type === 'same') {
+            $tarikh_penerbangan_pergi_pasangan = $tarikh_penerbangan_pergi;
+            $tarikh_penerbangan_balik_pasangan = $tarikh_penerbangan_balik;
+        } else {
+            $tarikh_penerbangan_pergi_pasangan = $_POST['tarikh_penerbangan_pergi_pasangan'];
+            $tarikh_penerbangan_balik_pasangan = $_POST['tarikh_penerbangan_balik_pasangan'];
+        }
 
         // Bind parameters
-        $stmt->bind_param("sssssi",
+        $stmt->bind_param("sssssssi",
             $jenis_permohonan,
             $tarikh_penerbangan_pergi,
             $tarikh_penerbangan_balik,
             $start_point,
             $end_point,
+            $tarikh_penerbangan_pergi_pasangan,
+            $tarikh_penerbangan_balik_pasangan,
             $wilayah_asal_id
         );
 
@@ -49,6 +63,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 'start_point' => $start_point,
                 'end_point' => $end_point
             ];
+
+            // Process followers data if any
+            if (isset($_POST['followers']) && is_array($_POST['followers'])) {
+                $followers_sql = "INSERT INTO wilayah_asal_pengikut 
+                    (wilayah_asal_id, nama_first_pengikut, nama_last_pengikut, 
+                    tarikh_lahir_pengikut, kp_pengikut, 
+                    tarikh_penerbangan_pergi_pengikut, tarikh_penerbangan_balik_pengikut) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?)";
+                
+                $followers_stmt = $conn->prepare($followers_sql);
+                
+                foreach ($_POST['followers'] as $follower) {
+                    // Determine which flight dates to use
+                    $flight_date_type = $follower['flight_date_type'] ?? 'same';
+                    
+                    if ($flight_date_type === 'same') {
+                        $follower_pergi = $tarikh_penerbangan_pergi;
+                        $follower_balik = $tarikh_penerbangan_balik;
+                    } else {
+                        $follower_pergi = $follower['tarikh_penerbangan_pergi_pengikut'];
+                        $follower_balik = $follower['tarikh_penerbangan_balik_pengikut'];
+                    }
+
+                    $followers_stmt->bind_param("issssss",
+                        $wilayah_asal_id,
+                        $follower['nama_first'],
+                        $follower['nama_last'],
+                        $follower['tarikh_lahir'],
+                        $follower['kp'],
+                        $follower_pergi,
+                        $follower_balik
+                    );
+                    
+                    if (!$followers_stmt->execute()) {
+                        throw new Exception("Error saving follower data: " . $followers_stmt->error);
+                    }
+                }
+                
+                $followers_stmt->close();
+            }
 
             // Keep existing borangWA_data if it exists
             if (!isset($_SESSION['borangWA_data'])) {
