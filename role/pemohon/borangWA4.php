@@ -222,7 +222,6 @@ $user_role = $user_data['bahagian'];
                                 <i class="fas fa-check-circle"></i>
                             </div>
                             <input type="file" class="form-control" name="dokumen_sokongan[]" accept=".pdf,.jpg,.jpeg,.png">
-                            <input type="text" class="form-control mt-2" name="sokongan_description[]" placeholder="Penerangan dokumen">
                         </div>
                     </div>
                     <button type="button" class="btn btn-outline-primary btn-sm add-more-btn" onclick="addSokongan()">
@@ -304,7 +303,6 @@ $user_role = $user_data['bahagian'];
             </div>
             <div class="d-flex flex-column">
                 <input type="file" class="form-control" name="dokumen_sokongan[]" accept=".pdf,.jpg,.jpeg,.png">
-                <input type="text" class="form-control mt-2" name="sokongan_description[]" placeholder="Penerangan dokumen">
                 <button type="button" class="btn btn-danger mt-2" onclick="this.parentElement.parentElement.remove()">
                     <i class="fas fa-times me-2"></i>Buang
                 </button>

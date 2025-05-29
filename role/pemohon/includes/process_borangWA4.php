@@ -38,16 +38,20 @@ function handleFileUpload($file, $upload_dir, $wilayah_asal_id, $user_kp, $descr
         $file_type = $file['type'];
         $file_size = $file['size'];
         
-        // Generate unique filename
-        $unique_filename = uniqid() . '_' . $file_name;
+        // Generate unique filename with new format
+        $file_extension = pathinfo($file_name, PATHINFO_EXTENSION);
+        $unique_filename = uniqid() . '_' . $wilayah_asal_id . '_' . str_replace(' ', '_', $description) . '.' . $file_extension;
         $target_path = $upload_dir . '/' . $unique_filename;
         
         if (move_uploaded_file($file['tmp_name'], $target_path)) {
+            // Create the web-accessible path for database storage
+            $web_path = 'uploads/permohonan/' . $wilayah_asal_id . '/' . $unique_filename;
+            
             // Insert into database
             $sql = "INSERT INTO documents (wilayah_asal_id, file_name, file_path, file_type, file_size, description, file_uploader_origin, file_class_origin) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, 'pemohon')";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("isssiss", $wilayah_asal_id, $file_name, $target_path, $file_type, $file_size, $description, $user_kp);
+            $stmt->bind_param("isssiss", $wilayah_asal_id, $file_name, $web_path, $file_type, $file_size, $description, $user_kp);
             
             if ($stmt->execute()) {
                 return true;
@@ -101,6 +105,7 @@ if (isset($_FILES['dokumen_pengikut'])) {
 
 // Handle Dokumen Sokongan (Multiple)
 if (isset($_FILES['dokumen_sokongan'])) {
+    $sokongan_count = 1;
     foreach ($_FILES['dokumen_sokongan']['tmp_name'] as $key => $tmp_name) {
         if ($_FILES['dokumen_sokongan']['error'][$key] === UPLOAD_ERR_OK) {
             $file = [
@@ -111,12 +116,13 @@ if (isset($_FILES['dokumen_sokongan'])) {
                 'size' => $_FILES['dokumen_sokongan']['size'][$key]
             ];
             
-            $description = isset($_POST['sokongan_description'][$key]) ? $_POST['sokongan_description'][$key] : 'Dokumen Sokongan';
+            $description = "Dokumen Sokongan " . $sokongan_count;
             
             if (!handleFileUpload($file, $upload_dir, $wilayah_asal_id, $user_kp, $description)) {
                 $success = false;
-                $error_messages[] = "Gagal memuat naik Dokumen Sokongan #" . ($key + 1);
+                $error_messages[] = "Gagal memuat naik Dokumen Sokongan #" . $sokongan_count;
             }
+            $sokongan_count++;
         }
     }
 }
