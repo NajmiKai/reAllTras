@@ -116,4 +116,244 @@
         border-radius: 8px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
+
+    .nav-container ul {
+        list-style-type: none;
+        margin: 0 auto;
+        padding: 0;
+        display: inline-block;
+        background-color: #f3f3f3;
+    }
+
+    .nav-container li {
+        display: inline-block;
+        margin: 0 2px;
+    }
+
+    .nav-container li a {
+        display: block;
+        color: black;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+    }
+
+    .nav-container li a:hover:not(.active) {
+        background-color: #ddd;
+    }
+
+    .nav-container li a.active {
+        color: white;
+        background-color: black;
+    }
+
+    .nav-container {
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+    }
+
+    .submenu {
+        background-color: transparent; /* Match sidebar background */
+        padding-left: 20px; /* Indent submenus slightly */
+        margin-top: -8px;   /* Reduce spacing between parent and submenu */
+    }
+
+    .submenu a {
+        color: #d1d1d1; /* Same as main sidebar links */
+        text-decoration: none;
+        padding: 10px;
+        display: block;
+        border-radius: 6px;
+        margin-bottom: 8px;
+        font-size: 15px; /* Slightly smaller if preferred */
+        transition: background-color 0.2s, color 0.2s;
+    }
+
+    .submenu a:hover,
+    .submenu a.active {
+        background-color: #d89d2e;
+        color: white;
+    }
+
+    h2 {
+        text-align: center;
+        color: #333;
+    }
+
+    table {
+        width: 60%;
+        margin: 30px auto;
+        border-collapse: collapse;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+
+    th, td {
+        padding: 10px 15px;
+        border-bottom: 1px solid #eee;
+    }
+
+    th {
+        background-color: #e3f2fd;
+        width: 30%;
+        color: #333;
+        text-align: left;
+    }
+
+    td {
+        color: #444;
+    }
+
+    a.button, button.submit-btn {
+        display: block;
+        text-align: center;
+        width: 150px;
+        margin: 30px auto 0;
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px;
+        text-decoration: none;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+    }
+
+    a.button:hover, button.submit-btn:hover {
+        background-color: #0056b3;
+    }
+
+    form.upload-form {
+        text-align: center;
+        margin-top: 40px;
+    }
+
+    input[type="file"] {
+        margin-bottom: 15px;
+    }
+
+    /* Status Tracker Styles */
+    .status-tracker {
+        position: relative;
+        padding: 20px 0;
+    }
+
+    .status-step {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        width: 120px;
+    }
+
+    .status-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #fff;
+        border: 2px solid #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 10px;
+        transition: all 0.3s ease;
+    }
+
+    .status-icon i {
+        font-size: 20px;
+        color: #6c757d;
+    }
+
+    .status-label {
+        font-size: 1rem;
+        color: #6c757d; /* Default color for inactive */
+        margin-top: 8px;
+        white-space: nowrap;
+    }
+
+    .status-step.active .status-icon {
+        background: #0d6efd;
+        border-color: #0d6efd;
+    }
+
+    .status-step.active .status-icon i,
+    .status-step.active .status-label {
+        color: #fff;
+    }
+
+    .status-step.active .status-label {
+        color: #212529; /* Darker color for active */
+        font-weight: 500;
+    }
+
+    .status-step.current .status-icon {
+        background: #198754;
+        border-color: #198754;
+        box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.2);
+    }
+
+    .status-step.current .status-icon i,
+    .status-step.current .status-label {
+        color: #fff;
+    }
+
+    .status-step.current .status-label {
+        color: #28a745; /* Green color for current */
+        font-weight: 600;
+    }
+
+    .progress-line {
+        position: absolute;
+        top: 25px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #e9ecef;
+        z-index: 1;
+    }
+
+    /* Add styles for the card containing the status tracker */
+    .card.shadow-sm {
+        margin-bottom: 2rem;
+    }
+
+    .card-body {
+        padding: 2rem;  /* Increased padding */
+    }
+
+    .card-title {
+        font-size: 1.5rem;  /* Increased title size */
+        margin-bottom: 2rem !important;  /* Increased margin */
+    }
+
+    /* Ensure main content area clears the fixed navbar */
+    .main-container .col.p-4 {
+        padding-top: 80px; /* Add enough padding to clear navbar */
+    }
+
+    /* Helper class for centering text */
+    .text-center-custom {
+        text-align: center !important;
+    }
+
+    /* Status colors */
+    .status-belum-disemak {
+        color: #212529; /* Dark Grey/Black */
+    }
+
+    .status-selesai {
+        color: #0d6efd; /* Bootstrap Blue */
+    }
+
+    .status-dikuiri {
+        color: #d59e3e; /* Website Gold/Orange */
+    }
+
+    .status-tolak {
+        color: #dc3545; /* Bootstrap Red */
+    }
+
+    .status-lulus {
+        color: #28a745; /* Website Green */
+    }
     

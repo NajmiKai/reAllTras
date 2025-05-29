@@ -229,15 +229,25 @@ try {
 
     // Commit transaction
     $conn->commit();
-    $_SESSION['success_message'] = "Maklumat berjaya dikemaskini.";
+    
+    // Return JSON response instead of redirecting
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => true,
+        'message' => 'Maklumat berjaya dikemaskini.'
+    ]);
+    exit();
 
 } catch (Exception $e) {
     // Rollback transaction on error
     $conn->rollback();
-    $_SESSION['error_message'] = $e->getMessage();
+    
+    // Return JSON error response
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => false,
+        'message' => $e->getMessage()
+    ]);
+    exit();
 }
-
-// Redirect back to borangWA5.php
-header("Location: ../role/pemohon/borangWA5.php");
-exit();
 ?> 

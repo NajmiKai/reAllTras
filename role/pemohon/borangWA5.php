@@ -60,7 +60,7 @@ $user_role = $user_data['bahagian'];
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../assets/css/adminStyle.css">
+    <link rel="stylesheet" href="../../assets/css/userStyle.css">
     <link rel="stylesheet" href="../../assets/css/multi-step.css">
 </head>
 <body>
@@ -647,6 +647,36 @@ $user_role = $user_data['bahagian'];
             }, false)
         })
     })()
+
+    // Handle edit form submissions with AJAX
+    document.querySelectorAll('form[action*="update_borangWA5.php"]').forEach(function(form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch(this.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    alert('Maklumat berjaya dikemaskini');
+                    // Reload the page to show updated data
+                    window.location.reload();
+                } else {
+                    // Show error message
+                    alert(data.message || 'Ralat: Gagal mengemaskini maklumat');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Ralat: Gagal mengemaskini maklumat');
+            });
+        });
+    });
 </script>
 </body>
 </html>
