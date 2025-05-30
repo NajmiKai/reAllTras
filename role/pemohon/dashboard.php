@@ -53,7 +53,7 @@ $user_phoneNo = $user_data['phone'];
             <span class="nav-link fw-semibold"><?= htmlspecialchars($user_name) ?> (<?= htmlspecialchars($user_role) ?>)</span>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
-            <a href="../../../logout.php" class="nav-link text-danger">
+            <a href="../../logoutUser.php" class="nav-link text-danger">
                 <i class="fas fa-sign-out-alt me-1"></i> Log Keluar
             </a>
         </li>
@@ -62,16 +62,7 @@ $user_phoneNo = $user_data['phone'];
 
 <div class="main-container">
     <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-            <h6><img src="../../assets/ALLTRAS.png" alt="ALLTRAS" width="140" style="margin-left: 20px;"><br>ALL REGION TRAVELLING SYSTEM</h6><br>
-            <a href="dashboard.php"  class="active"> <i class="fas fa-home me-2"></i>Laman Utama</a>
-            <h6 class="text mt-4"></h6>
-            <a href="wilayahAsal.php" ><i class="fas fa-map-marker-alt me-2"></i>Wilayah Asal</a>
-            <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a>
-            <a href="profile.php"><i class="fas fa-user me-2"></i>Paparan Profil</a>
-            <a href="../../logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
-        </div>
-
+    <?php include 'includes/sidebar.php'; ?>
 
     <!-- Main Content -->
     <div class="col p-4">
@@ -224,16 +215,16 @@ $user_phoneNo = $user_data['phone'];
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-6">
+                <div class="col-md-6">
                     <div class="card shadow-sm h-100">
                         <div class="card-body">
                             <h5 class="card-title">Carta Aliran Permohonan</h5>
                             <h6 class="text-danger mb-3">Tugas Rasmi / Kursus</h6>
-                            <img src="../../assets/flowchart-tugasrasmi.jpg" alt="Carta Aliran Wilayah Asal" class="img-fluid rounded clickable-image" style="cursor:pointer;">
+                            <img src="../../assets/flowchart-tugasrasmi.jpg" alt="Carta Aliran Tugas Rasmi" class="img-fluid rounded clickable-image" style="cursor:pointer;">
                         </div>
                     </div>
                 </div>
+            </div>
         </div>
 
         <!-- Image Modal -->

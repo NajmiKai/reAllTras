@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../connection.php';
+include '../../../connection.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
@@ -109,7 +109,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
             // Redirect to the next form
-            header("Location: ../role/pemohon/borangWA3.php");
+            header("Location: ../borangWA3.php");
             exit();
         } else {
             throw new Exception("Error executing statement: " . $stmt->error);
@@ -122,12 +122,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['error'] = "Ralat semasa menyimpan data. Sila cuba lagi.";
         
         // Redirect back to form with error
-        header("Location: ../role/pemohon/borangWA2.php");
+        header("Location: ../borangWA2.php");
         exit();
     }
 } else {
     // If not POST request, redirect back to form
-    header("Location: ../role/pemohon/borangWA2.php");
+    header("Location: ../borangWA2.php");
     exit();
 }
 ?> 

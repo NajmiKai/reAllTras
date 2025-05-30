@@ -138,7 +138,7 @@ $user_phoneNo = $user_data['phone'];
             <span class="nav-link fw-semibold"><?= htmlspecialchars($user_name) ?> (<?= htmlspecialchars($user_role) ?>)</span>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
-            <a href="../../../logout.php" class="nav-link text-danger">
+            <a href="../../logoutUser.php" class="nav-link text-danger">
                 <i class="fas fa-sign-out-alt me-1"></i> Log Keluar
             </a>
         </li>
@@ -154,7 +154,7 @@ $user_phoneNo = $user_data['phone'];
         <a href="wilayahAsal.php"><i class="fas fa-map-marker-alt me-2"></i>Wilayah Asal</a>
         <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a>
         <a href="profile.php"><i class="fas fa-user me-2"></i>Paparan Profil</a>
-        <a href="../../logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
+        <a href="../../logoutUser.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
     </div>
 
     <!-- Main Content -->
@@ -199,7 +199,7 @@ $user_phoneNo = $user_data['phone'];
             </div>
         </div>
 
-        <form action="../../functions/process_borangWA3.php" method="POST" class="needs-validation" novalidate>
+        <form action="includes/process_borangWA3.php" method="POST" class="needs-validation" novalidate>
             <!-- Flight Information -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header" style="background-color: #d59e3e; color: white;">
@@ -237,6 +237,29 @@ $user_phoneNo = $user_data['phone'];
                         <div class="col-md-6">
                             <label class="form-label">Lapangan Terbang Tiba</label>
                             <input type="text" class="form-control" name="end_point" required>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label fw-bold">Tarikh Penerbangan Pasangan Lain? (Hanya berkait kepada orang berpasangan)</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="partner_flight_type" id="partner_same" value="same" checked onchange="togglePartnerDates('same')">
+                                <label class="form-check-label" for="partner_same">
+                                    Tidak
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="partner_flight_type" id="partner_different" value="different" onchange="togglePartnerDates('different')">
+                                <label class="form-check-label" for="partner_different">
+                                    Ya
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 partner-dates" style="display: none;">
+                            <label class="form-label">Tarikh Penerbangan Pergi Pasangan</label>
+                            <input type="date" class="form-control" name="tarikh_penerbangan_pergi_pasangan">
+                        </div>
+                        <div class="col-md-6 partner-dates" style="display: none;">
+                            <label class="form-label">Tarikh Penerbangan Balik Pasangan</label>
+                            <input type="date" class="form-control" name="tarikh_penerbangan_balik_pasangan">
                         </div>
                     </div>
                 </div>
@@ -292,74 +315,168 @@ $user_phoneNo = $user_data['phone'];
     function addFollower() {
         const container = document.getElementById('followers-container');
         const followerDiv = document.createElement('div');
-        followerDiv.className = 'follower-card';
+        followerDiv.className = 'follower-entry mb-3 p-3 border rounded';
+        followerDiv.id = `follower-${followerCount}`;
+
         followerDiv.innerHTML = `
-            <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
                 <h6 class="mb-0">Pengikut ${followerCount + 1}</h6>
-                <i class="fas fa-times remove-follower" onclick="removeFollower(this)"></i>
+                <button type="button" class="btn btn-sm btn-danger" onclick="removeFollower(${followerCount})">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <div class="row g-3">
-                <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-6 mb-2">
                     <label class="form-label">Nama Depan</label>
-                    <input type="text" class="form-control" name="pengikut[${followerCount}][nama_depan]" required>
+                    <input type="text" class="form-control" name="followers[${followerCount}][nama_first]" required>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 mb-2">
                     <label class="form-label">Nama Belakang</label>
-                    <input type="text" class="form-control" name="pengikut[${followerCount}][nama_belakang]" required>
+                    <input type="text" class="form-control" name="followers[${followerCount}][nama_last]" required>
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">No. Kad Pengenalan</label>
-                    <input type="text" class="form-control" name="pengikut[${followerCount}][no_kp]" required>
-                </div>
-                <div class="col-md-6">
+                <div class="col-md-6 mb-2">
                     <label class="form-label">Tarikh Lahir</label>
-                    <input type="date" class="form-control" name="pengikut[${followerCount}][tarikh_lahir]" required>
+                    <input type="date" class="form-control" name="followers[${followerCount}][tarikh_lahir]" required>
                 </div>
-                <div class="col-12">
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="radio" name="pengikut[${followerCount}][same_flight]" value="yes" id="same_flight_yes_${followerCount}" onchange="toggleFlightDetails(${followerCount})" checked>
-                        <label class="form-check-label" for="same_flight_yes_${followerCount}">
-                            Gunakan butiran penerbangan yang sama dengan pemohon
+                <div class="col-md-6 mb-2">
+                    <label class="form-label">No. KP</label>
+                    <input type="text" class="form-control" name="followers[${followerCount}][kp]" required>
+                </div>
+                <div class="col-12 mb-2">
+                    <label class="form-label">Tarikh Penerbangan</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="followers[${followerCount}][flight_date_type]" 
+                            id="same_flight_${followerCount}" value="same" checked 
+                            onchange="toggleFlightDates(${followerCount}, 'same')">
+                        <label class="form-check-label" for="same_flight_${followerCount}">
+                            Tarikh Penerbangan Sama
                         </label>
                     </div>
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="radio" name="pengikut[${followerCount}][same_flight]" value="no" id="same_flight_no_${followerCount}" onchange="toggleFlightDetails(${followerCount})">
-                        <label class="form-check-label" for="same_flight_no_${followerCount}">
-                            Gunakan butiran penerbangan yang berbeza
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="followers[${followerCount}][flight_date_type]" 
+                            id="different_flight_${followerCount}" value="different" 
+                            onchange="toggleFlightDates(${followerCount}, 'different')">
+                        <label class="form-check-label" for="different_flight_${followerCount}">
+                            Tarikh Penerbangan Lain
                         </label>
                     </div>
                 </div>
-                <div class="col-md-6 flight-details-${followerCount}" style="display: none;">
+                <div class="col-md-6 mb-2 custom-flight-dates-${followerCount}" style="display: none;">
                     <label class="form-label">Tarikh Penerbangan Pergi</label>
-                    <input type="date" class="form-control" name="pengikut[${followerCount}][tarikh_penerbangan_pergi]">
+                    <input type="date" class="form-control" name="followers[${followerCount}][tarikh_penerbangan_pergi_pengikut]">
                 </div>
-                <div class="col-md-6 flight-details-${followerCount}" style="display: none;">
+                <div class="col-md-6 mb-2 custom-flight-dates-${followerCount}" style="display: none;">
                     <label class="form-label">Tarikh Penerbangan Balik</label>
-                    <input type="date" class="form-control" name="pengikut[${followerCount}][tarikh_penerbangan_balik]">
+                    <input type="date" class="form-control" name="followers[${followerCount}][tarikh_penerbangan_balik_pengikut]">
                 </div>
             </div>
         `;
+
         container.appendChild(followerDiv);
         followerCount++;
     }
 
-    function removeFollower(element) {
-        element.closest('.follower-card').remove();
+    function toggleFlightDates(followerIndex, type) {
+        const customDatesDiv = document.querySelectorAll(`.custom-flight-dates-${followerIndex}`);
+        const mainFlightDates = {
+            pergi: document.querySelector('input[name="tarikh_penerbangan_pergi"]').value,
+            balik: document.querySelector('input[name="tarikh_penerbangan_balik"]').value
+        };
+
+        if (type === 'same') {
+            customDatesDiv.forEach(div => div.style.display = 'none');
+            // Set hidden inputs for same flight dates
+            const hiddenPergi = document.createElement('input');
+            hiddenPergi.type = 'hidden';
+            hiddenPergi.name = `followers[${followerIndex}][tarikh_penerbangan_pergi_pengikut]`;
+            hiddenPergi.value = mainFlightDates.pergi;
+            
+            const hiddenBalik = document.createElement('input');
+            hiddenBalik.type = 'hidden';
+            hiddenBalik.name = `followers[${followerIndex}][tarikh_penerbangan_balik_pengikut]`;
+            hiddenBalik.value = mainFlightDates.balik;
+
+            const followerDiv = document.getElementById(`follower-${followerIndex}`);
+            followerDiv.appendChild(hiddenPergi);
+            followerDiv.appendChild(hiddenBalik);
+        } else {
+            customDatesDiv.forEach(div => div.style.display = 'block');
+            // Remove hidden inputs if they exist
+            const followerDiv = document.getElementById(`follower-${followerIndex}`);
+            const hiddenInputs = followerDiv.querySelectorAll('input[type="hidden"]');
+            hiddenInputs.forEach(input => input.remove());
+        }
     }
 
-    function toggleFlightDetails(followerCount) {
-        const flightDetails = document.querySelectorAll(`.flight-details-${followerCount}`);
-        const sameFlight = document.querySelector(`#same_flight_yes_${followerCount}`).checked;
+    function togglePartnerDates(type) {
+        const partnerDates = document.querySelectorAll('.partner-dates');
+        const partnerDateInputs = document.querySelectorAll('.partner-dates input');
         
-        flightDetails.forEach(element => {
-            element.style.display = sameFlight ? 'none' : 'block';
-            const input = element.querySelector('input');
-            input.required = !sameFlight;
-            if (sameFlight) {
+        if (type === 'different') {
+            partnerDates.forEach(element => {
+                element.style.display = 'block';
+            });
+            partnerDateInputs.forEach(input => {
+                input.required = true;
+            });
+        } else {
+            partnerDates.forEach(element => {
+                element.style.display = 'none';
+            });
+            partnerDateInputs.forEach(input => {
+                input.required = false;
                 input.value = '';
+            });
+        }
+    }
+
+    // Update form submission handler
+    document.querySelector('form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Validate followers data
+        const followers = [];
+        const followerInputs = document.querySelectorAll('.follower-entry');
+        
+        followerInputs.forEach((follower, index) => {
+            const nama_first = follower.querySelector(`input[name="followers[${index}][nama_first]"]`).value;
+            const nama_last = follower.querySelector(`input[name="followers[${index}][nama_last]"]`).value;
+            const tarikh_lahir = follower.querySelector(`input[name="followers[${index}][tarikh_lahir]"]`).value;
+            const kp = follower.querySelector(`input[name="followers[${index}][kp]"]`).value;
+            const flight_date_type = follower.querySelector(`input[name="followers[${index}][flight_date_type]"]:checked`).value;
+
+            let tarikh_penerbangan_pergi_pengikut, tarikh_penerbangan_balik_pengikut;
+
+            if (flight_date_type === 'same') {
+                tarikh_penerbangan_pergi_pengikut = document.querySelector('input[name="tarikh_penerbangan_pergi"]').value;
+                tarikh_penerbangan_balik_pengikut = document.querySelector('input[name="tarikh_penerbangan_balik"]').value;
+            } else {
+                tarikh_penerbangan_pergi_pengikut = follower.querySelector(`input[name="followers[${index}][tarikh_penerbangan_pergi_pengikut]"]`).value;
+                tarikh_penerbangan_balik_pengikut = follower.querySelector(`input[name="followers[${index}][tarikh_penerbangan_balik_pengikut]"]`).value;
+            }
+
+            if (nama_first && nama_last && tarikh_lahir && kp) {
+                followers.push({
+                    nama_first,
+                    nama_last,
+                    tarikh_lahir,
+                    kp,
+                    tarikh_penerbangan_pergi_pengikut,
+                    tarikh_penerbangan_balik_pengikut
+                });
             }
         });
-    }
+
+        // Add followers data to form
+        const followersInput = document.createElement('input');
+        followersInput.type = 'hidden';
+        followersInput.name = 'followers_data';
+        followersInput.value = JSON.stringify(followers);
+        this.appendChild(followersInput);
+
+        // Submit the form
+        this.submit();
+    });
 
     document.querySelector('.toggle-sidebar').addEventListener('click', function (e) {
         e.preventDefault();
