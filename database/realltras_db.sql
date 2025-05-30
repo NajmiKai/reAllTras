@@ -206,37 +206,3 @@ CREATE TABLE IF NOT EXISTS wa_csm1 (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
-
-CREATE TABLE IF NOT EXISTS wa_csm2 (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    wilayah_asal_id INT NOT NULL UNIQUE,
-    documents_id INT NOT NULL UNIQUE,
-    id_csm_pengawai_sulit INT UNIQUE,
-    id_csm_pbr INT UNIQUE,
-    id_csm_pengesah INT UNIQUE,
-
-    FOREIGN KEY (id_csm_pengawai_sulit) REFERENCES user(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_csm_pbr) REFERENCES user(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_csm_pengesah) REFERENCES user(id) ON DELETE CASCADE,
-    FOREIGN KEY (wilayah_asal_id) REFERENCES wilayah_asal(id) ON DELETE CASCADE,
-    FOREIGN KEY (documents_id) REFERENCES documents(id) ON DELETE CASCADE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS wa_csm2 (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    wilayah_asal_id INT NOT NULL UNIQUE,
-    documents_id INT NOT NULL UNIQUE,
-    id_csm_pengawai_sulit INT UNIQUE,
-    id_csm_pbr INT UNIQUE,
-    id_csm_pengesah INT UNIQUE,
-
-    FOREIGN KEY (id_csm_pengawai_sulit) REFERENCES user(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_csm_pbr) REFERENCES user(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_csm_pengesah) REFERENCES user(id) ON DELETE CASCADE,
-    FOREIGN KEY (wilayah_asal_id) REFERENCES wilayah_asal(id) ON DELETE CASCADE,
-    FOREIGN KEY (documents_id) REFERENCES documents(id) ON DELETE CASCADE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
