@@ -110,8 +110,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <p>Permohonan Tambang Ziarah Wilayah (TZW) oleh pegawai telah disemak dan dikemukakan untuk tindakan selanjutnya oleh Unit Sulit Cawangan Sumber Manusia.</p>
         
                         <p>Mohon pihak tuan/puan untuk semakan dan pengesahan maklumat berkaitan.</p>
+                        <p>Sila klik pautan/butang di bawah untuk tindakan lanjut dan maklumat permohonan.</p>
         
-                        <p><a href='http://localhost/reAllTras/role/csm/pbr/viewdetails.php?kp=$kp'><b><u>PAPAR MAKLUMAT PERMOHONAN</u></b></a></p><br>
+                        <p><a href='http://localhost/reAllTras/role/csm/pegawaiSulit/viewdetails.php?kp=$kp'><b><u>PAPAR MAKLUMAT PERMOHONAN</u></b></a></p><br>
         
                         <p>Sekian, terima kasih.</p>
                         <p>Emel ini dijana secara automatik oleh <i>All Region Travelling System (ALLTRAS)</i></p>

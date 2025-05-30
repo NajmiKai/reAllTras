@@ -3,7 +3,7 @@ session_start();
 include '../../../connection.php';
 
     if (!isset($_SESSION['admin_id'])) {
-        header("Location: login.php");
+        header("Location: /reAllTras/login.php");
         exit();
     }
 
@@ -74,13 +74,6 @@ include '../../../connection.php';
     <link rel="stylesheet" href="../../../assets/css/adminStyle.css">
     <link rel="stylesheet" href="../../../assets/css/multi-step.css">
 
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
 </head>
 <body>
     <!-- Top Navbar -->
@@ -119,9 +112,10 @@ include '../../../connection.php';
         <div id="wilayahSubmenu" class="submenu" style="display: <?= $submenuOpen ? 'block' : 'none' ?>;">
             <a href="permohonanPengguna.php" class="active">Permohonan Pengguna</a>
             <a href="permohonanIbuPejabat.php">Permohonan Ibu Pejabat</a>
+            <a href="permohonanDikuiri.php">Permohonan Dikuiri</a>
         </div>
 
-        <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a>
+        <!-- <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a> -->
         <a href="profile.php"><i class="fas fa-user me-2"></i>Paparan Profil</a>
         <a href="../../../logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
     </div>

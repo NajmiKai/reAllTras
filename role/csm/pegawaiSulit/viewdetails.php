@@ -2,61 +2,70 @@
 session_start();
 include '../../../connection.php';
 
-if (!isset($_SESSION['admin_id'])) {
-    header("Location: login.php");
-    exit();
-}
+    if (!isset($_SESSION['admin_id'])) {
+        header("Location: /reAllTras/login.php");
+        exit();
+    }
 
-$admin_name = $_SESSION['admin_name'];
-$admin_role = $_SESSION['admin_role'];
-$admin_icNo = $_SESSION['admin_icNo'];
-$admin_email = $_SESSION['admin_email'];
-$admin_phoneNo = $_SESSION['admin_phoneNo'];
+    $admin_name = $_SESSION['admin_name'];
+    $admin_id = $_SESSION['admin_id'];
+    $admin_role = $_SESSION['admin_role'];
+    $admin_icNo = $_SESSION['admin_icNo'];
+    $admin_email = $_SESSION['admin_email'];
+    $admin_phoneNo = $_SESSION['admin_phoneNo'];
 
-if (isset($_GET['kp'])) {
-    $kp = $_GET['kp'];
+    if (isset($_GET['kp'])) {
+        $kp = $_GET['kp'];
 
-// Fetch user data from database
-// $user_id = $_SESSION['user_id'];
-$sql = "SELECT *, wilayah_asal.id AS wilayah_asal_id
-FROM user 
-JOIN wilayah_asal ON user.kp = wilayah_asal.user_kp
-WHERE user.kp = ? ";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $kp);
-$stmt->execute();
-$result = $stmt->get_result();
-$application_data = $result->fetch_assoc();
-
-if ($application_data) {
-    $wilayah_asal_id = $application_data['wilayah_asal_id'];
-
-    $query = "SELECT * FROM wilayah_asal_pengikut WHERE wilayah_asal_id = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $wilayah_asal_id);
+    // Fetch user data from database
+    $sql = "SELECT *, wilayah_asal.id AS wilayah_asal_id
+    FROM user 
+    JOIN wilayah_asal ON user.kp = wilayah_asal.user_kp
+    WHERE user.kp = ? ";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $kp);
     $stmt->execute();
     $result = $stmt->get_result();
+    $application_data = $result->fetch_assoc();
 
-    $pengikutData = [];
-    while ($row = $result->fetch_assoc()) {
-        $pengikutData[] = $row;
+    if ($application_data) {
+        $wilayah_asal_id = $application_data['wilayah_asal_id'];
+
+        $query = "SELECT * FROM wilayah_asal_pengikut WHERE wilayah_asal_id = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("i", $wilayah_asal_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $pengikutData = [];
+        while ($row = $result->fetch_assoc()) {
+            $pengikutData[] = $row;
+        }
+
+        $isApproved = false; // Assume false initially
+
+        $sql = "SELECT pegSulit_csm_id FROM wilayah_asal WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $wilayah_asal_id);
+        $stmt->execute();
+        $stmt->bind_result($pegSulit_csm_id);
+        if ($stmt->fetch()) {
+            if ($pegSulit_csm_id === $admin_id || $pegSulit_csm_id !== null) { 
+                $isApproved = true;
+            }
+        }
+        $stmt->close();
+        } 
     }
 
 
-    } else {
-        echo "No data found for the given KP.";
-    }
-
-} else {
-echo "No KP provided.";
-}
 ?>
 
 <!DOCTYPE html>
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
-    <title>ALLTRAS - Dashboard</title>
+    <title>ALLTRAS - Butiran Permohonan</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -93,12 +102,12 @@ echo "No KP provided.";
 </nav>
 
 <div class="main-container">
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
+   <!-- Sidebar -->
+   <div class="sidebar" id="sidebar">
         <h6><img src="../../../assets/ALLTRAS.png" alt="ALLTRAS" width="140" style="margin-left: 20px;"><br>ALL REGION TRAVELLING SYSTEM</h6><br>
         <a href="dashboard.php"> <i class="fas fa-home me-2"></i>Laman Utama</a>
         <h6 class="text mt-4">BORANG PERMOHONAN</h6>
-        <a href="wilayahAsal.php" class="active"><i class="fas fa-tasks me-2"></i>Wilayah Asal</a>
+        <a href="wilayahAsal.php"><i class="fas fa-tasks me-2"></i>Wilayah Asal</a>
         <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a>
         <a href="profile.php"><i class="fas fa-user me-2"></i>Paparan Profil</a>
         <a href="../../../logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
@@ -146,16 +155,11 @@ echo "No KP provided.";
             </div>
         </div>
 
-        <form action="send_mail.php" method="post">
-            <input type="hidden" name="wilayah_asal_id" value="<?php echo htmlspecialchars($wilayah_asal_id); ?>">
-            
+        <form action="send_mail.php" method="POST" enctype="multipart/form-data">            
             <!-- Maklumat Pegawai -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #d59e3e; color: white;">
                     <h5 class="mb-0"><strong>Maklumat Pegawai</strong></h5>
-                    <!-- <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#editPegawaiModal">
-                        <i class="fas fa-edit me-1"></i>Edit
-                    </button> -->
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
@@ -180,9 +184,6 @@ echo "No KP provided.";
             <div class="card shadow-sm mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #d59e3e; color: white;">
                     <h5 class="mb-0"><strong>Maklumat Pasangan</strong></h5>
-                    <!-- <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#editPasanganModal">
-                        <i class="fas fa-edit me-1"></i>Edit
-                    </button> -->
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
@@ -217,9 +218,6 @@ echo "No KP provided.";
             <div class="card shadow-sm mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #d59e3e; color: white;">
                     <h5 class="mb-0"><strong>Maklumat Ibu Bapa</strong></h5>
-                    <!-- <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#editIbuBapaModal">
-                        <i class="fas fa-edit me-1"></i>Edit
-                    </button> -->
                 </div>
                 <div class="card-body">
                     <!-- Maklumat Bapa -->
@@ -282,9 +280,6 @@ echo "No KP provided.";
             <div class="card shadow-sm mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #d59e3e; color: white;">
                     <h5 class="mb-0"><strong>Maklumat Penerbangan</strong></h5>
-                    <!-- <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#editPenerbanganModal">
-                        <i class="fas fa-edit me-1"></i>Edit
-                    </button> -->
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
@@ -356,16 +351,12 @@ echo "No KP provided.";
             <div class="card shadow-sm mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #d59e3e; color: white;">
                     <h5 class="mb-0"><strong>Dokumen Sokongan</strong></h5>
-                    <!-- <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#uploadDocumentModal">
-                        <i class="fas fa-upload me-1"></i>Tambah Dokumen
-                    </button> -->
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <thead class="table-light">
                                 <tr>
-                                    <th class="fw-bold">Jenis Dokumen</th>
                                     <th class="fw-bold">Nama Fail</th>
                                     <th class="fw-bold">Tindakan</th>
                                 </tr>
@@ -380,10 +371,9 @@ echo "No KP provided.";
                                 while ($doc = $result->fetch_assoc()):
                                 ?>
                                 <tr>
-                                    <td><?= htmlspecialchars($doc['description']) ?></td>
                                     <td><?= htmlspecialchars($doc['file_name']) ?></td>
                                     <td>
-                                        <a href="../../<?= htmlspecialchars($doc['file_path']) ?>" target="_blank" class="btn btn-primary btn-sm">
+                                        <a href="<?= htmlspecialchars($doc['file_path']) ?>" target="_blank" class="btn btn-primary btn-sm">
                                             <i class="fas fa-eye me-1"></i>Lihat Dokumen
                                         </a>
                                     </td>
@@ -395,45 +385,59 @@ echo "No KP provided.";
                 </div>
             </div>
 
+           
+
             <!-- Pengesahan -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header" style="background-color: #d59e3e; color: white;">
                     <h5 class="mb-0"><strong>Pengesahan</strong></h5>
                 </div>
+                
                 <div class="card-body">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Markah Prestasi (optional)</label>
-                    <input type="text" class="form-control" name="markah">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Markah Prestasi (optional)</label>
+                        <input type="text" class="form-control" name="markah" <?php if ($isApproved) echo 'disabled'; ?>>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="tatatertib_select" class="form-label">Hukuman tatatertib pada tahun permohonan</label>
+                        <select class="form-select" name="hukuman_tatatertib" id="tatatertib_select" required onchange="toggleUlasan()" <?php if ($isApproved) echo 'disabled'; ?>>
+                            <option value="">-- Sila Pilih --</option>
+                            <option value="tiada">Tiada</option>
+                            <option value="ada">Ada</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label for="tatatertib_select" class="form-label">Hukuman tatatertib pada tahun permohonan</label>
-                    <select class="form-select" name="hukuman_tatatertib" id="tatatertib_select" required onchange="toggleUlasan()">
-                        <option value="">-- Sila Pilih --</option>
-                        <option value="ada">Ada</option>
-                        <option value="tiada">Tiada</option>
-                    </select>
-                </div>
-                </div>
+             </div>
+
             </div>
+            <input type="hidden" name="wilayah_asal_id" value="<?= $wilayah_asal_id ?>">
 
             <div class="d-flex justify-content-between mt-4">
                 <a href="wilayahAsal.php" class="btn btn-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Kembali
                 </a>
-                <button type="submit" class="btn btn-success">
+                <button type="submit" class="btn btn-success" <?php if ($isApproved) echo 'disabled'; ?>
                     <i class="fas fa-check me-2"></i>Hantar Permohonan
                 </button>
             </div>
+            <?php if ($isApproved): ?>
+                <div class="alert alert-info mt-3">
+                    Permohonan telah diluluskan dan tidak boleh dikemaskini lagi.
+                </div>
+            <?php endif; ?>
         </form>
+        
     </div>
 </div>
-</div>  
+</div> 
 
 
 <script>
-   
+document.querySelector('.toggle-sidebar').addEventListener('click', function (e) {
+        e.preventDefault();
+        document.getElementById('sidebar').classList.toggle('hidden');
+    });
 
-   
 </script>
 </body>
 </html>

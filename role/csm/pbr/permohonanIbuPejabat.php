@@ -14,10 +14,12 @@ if (isset($_SESSION['status'])): ?>
 endif;
 
 
+
 if (!isset($_SESSION['admin_id'])) {
     header("Location: login.php");
     exit();
 }
+
 
 $admin_name = $_SESSION['admin_name'];
 $admin_role = $_SESSION['admin_role'];
@@ -26,19 +28,23 @@ $admin_email = $_SESSION['admin_email'];
 $admin_phoneNo = $_SESSION['admin_phoneNo'];
 
 $currentPage = basename($_SERVER['PHP_SELF']);
-$submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'permohonanIbuPejabat.php']);
+$submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'permohonanIbuPejabat.php', 'permohonanDikuiri.php']);
 
 // Query user table
-$sql = "SELECT * FROM user JOIN wilayah_asal ON user.kp = wilayah_asal.user_kp WHERE status = 'Kuiri Ibu Pejabat'";
+$sql = "SELECT * FROM user JOIN wilayah_asal ON user.kp = wilayah_asal.user_kp WHERE status = 'Menunggu pengesahan PBR2 CSM'";
 $result = $conn->query($sql);
 
 $users = [];
 
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
+        $row['status'] = 'Sedang diproses'; 
         $users[] = $row;
     }
-} 
+} else {
+    echo "No users found.";
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="ms">
@@ -87,16 +93,19 @@ if ($result->num_rows > 0) {
         <div id="wilayahSubmenu" class="submenu" style="display: <?= $submenuOpen ? 'block' : 'none' ?>;">
             <a href="permohonanPengguna.php">Permohonan Pengguna</a>
             <a href="permohonanIbuPejabat.php">Permohonan Ibu Pejabat</a>
+            <a href="permohonanDikuiri.php">Permohonan Dikuiri</a>
         </div>
 
-        <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a>
+        <!-- <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a> -->
         <a href="profile.php"><i class="fas fa-user me-2"></i>Paparan Profil</a>
         <a href="../../../logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
     </div>
 
     <!-- Main Content -->
-    <div class="col p-4"><br><br><br>
-    <h5 class="mb-3">Senarai Kuiri Pemohon Wilayah Asal (Ibu Pejabat)</h5>
+    <div class="col p-4">
+    <br><br>
+
+    <h5 class="mb-3">Senarai Pemohon Wilayah Asal (Pengguna)</h5>
             <div class="card shadow-sm">
                 <div class="card-body">
                     <table class="table table-hover" id="myTable">
@@ -125,7 +134,7 @@ if ($result->num_rows > 0) {
                                     <a class="button" href="viewdetailsfromHQ.php?kp=<?= $user['kp'] ?>">View Details</a>
                                 </td>
                             </tr>
-                            <?php endforeach; ?>
+                        <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
                                     <td colspan="7" class="text-center text-muted">Tiada data pemohon dijumpai.</td>
@@ -138,7 +147,6 @@ if ($result->num_rows > 0) {
 
 
 <script>
-    
     document.querySelector('.toggle-sidebar').addEventListener('click', function (e) {
         e.preventDefault();
         document.getElementById('sidebar').classList.toggle('hidden');
@@ -148,6 +156,11 @@ if ($result->num_rows > 0) {
         const submenu = document.getElementById("wilayahSubmenu");
         submenu.style.display = submenu.style.display === "block" ? "none" : "block";
     }
+
+    // $(document).ready(function () {
+    //   $('#myTable').DataTable(); // Enables sorting, searching, and pagination
+    // });
+
 
 </script>
 </body>

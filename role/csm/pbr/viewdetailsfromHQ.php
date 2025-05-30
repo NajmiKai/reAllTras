@@ -2,76 +2,75 @@
 session_start();
 include '../../../connection.php';
 
-if (!isset($_SESSION['admin_id'])) {
-    header("Location: login.php");
-    exit();
-}
+    if (!isset($_SESSION['admin_id'])) {
+        header("Location: /reAllTras/login.php");
+        exit();
+    }
 
-$admin_name = $_SESSION['admin_name'];
-$admin_role = $_SESSION['admin_role'];
-$admin_icNo = $_SESSION['admin_icNo'];
-$admin_email = $_SESSION['admin_email'];
-$admin_phoneNo = $_SESSION['admin_phoneNo'];
+    $admin_name = $_SESSION['admin_name'];
+    $admin_id = $_SESSION['admin_id'];
+    $admin_role = $_SESSION['admin_role'];
+    $admin_icNo = $_SESSION['admin_icNo'];
+    $admin_email = $_SESSION['admin_email'];
+    $admin_phoneNo = $_SESSION['admin_phoneNo'];
 
-if (isset($_GET['kp'])) {
-    $kp = $_GET['kp'];
+    if (isset($_GET['kp'])) {
+        $kp = $_GET['kp'];
 
-// Fetch user data from database
-// $user_id = $_SESSION['user_id'];
-$sql = "SELECT *, wilayah_asal.id AS wilayah_asal_id
-FROM user 
-JOIN wilayah_asal ON user.kp = wilayah_asal.user_kp
-WHERE user.kp = ? ";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $kp);
-$stmt->execute();
-$result = $stmt->get_result();
-$application_data = $result->fetch_assoc();
-
-if ($application_data) {
-    $wilayah_asal_id = $application_data['wilayah_asal_id'];
-
-    $query = "SELECT * FROM wilayah_asal_pengikut WHERE wilayah_asal_id = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $wilayah_asal_id);
+    // Fetch user data from database
+    $sql = "SELECT *, wilayah_asal.id AS wilayah_asal_id
+    FROM user 
+    JOIN wilayah_asal ON user.kp = wilayah_asal.user_kp
+    WHERE user.kp = ? ";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $kp);
     $stmt->execute();
     $result = $stmt->get_result();
+    $application_data = $result->fetch_assoc();
 
-    $pengikutData = [];
-    while ($row = $result->fetch_assoc()) {
-        $pengikutData[] = $row;
+    if ($application_data) {
+        $wilayah_asal_id = $application_data['wilayah_asal_id'];
+
+        $query = "SELECT * FROM wilayah_asal_pengikut WHERE wilayah_asal_id = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("i", $wilayah_asal_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $pengikutData = [];
+        while ($row = $result->fetch_assoc()) {
+            $pengikutData[] = $row;
+        }
+
+        $isApproved = false; // Assume false initially
+
+        // Example query: (replace with your actual logic)
+        $sql = "SELECT pbr_csm2_id FROM wilayah_asal WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $wilayah_asal_id);
+        $stmt->execute();
+        $stmt->bind_result($pbr_csm2_id);
+        if ($stmt->fetch()) {
+            if ($pbr_csm2_id === $admin_id || $pbr_csm2_id !== null) { 
+                $isApproved = true;
+            }
+        }
+        $stmt->close();
+        } 
     }
-
-
-    } else {
-        echo "No data found for the given KP.";
-    }
-
-} else {
-echo "No KP provided.";
-}
-
-
 ?>
 
 <!DOCTYPE html>
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
-    <title>ALLTRAS - Butiran Permohonan</title>
+    <title>ALLTRAS - Butiran Permohonan </title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../../assets/css/adminStyle.css">
     <link rel="stylesheet" href="../../../assets/css/multi-step.css">
 
-
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
 </head>
 <body>
@@ -96,8 +95,8 @@ echo "No KP provided.";
 </nav>
 
 <div class="main-container">
-      <!-- Sidebar -->
-      <div class="sidebar" id="sidebar">
+   <!-- Sidebar -->
+   <div class="sidebar" id="sidebar">
         <h6><img src="../../../assets/ALLTRAS.png" alt="ALLTRAS" width="140" style="margin-left: 20px;"><br>ALL REGION TRAVELLING SYSTEM</h6><br>
         <a href="dashboard.php"> <i class="fas fa-home me-2"></i>Laman Utama</a>
         <h6 class="text mt-4">BORANG PERMOHONAN</h6>
@@ -109,11 +108,12 @@ echo "No KP provided.";
         
         <!-- Submenu -->
         <div id="wilayahSubmenu" class="submenu" style="display: <?= $submenuOpen ? 'block' : 'none' ?>;">
-            <a href="permohonanPengguna.php">Permohonan Pengguna</a>
-            <a href="permohonanIbuPejabat.php" class="active">Permohonan Ibu Pejabat</a>
+            <a href="permohonanPengguna.php" class="active">Permohonan Pengguna</a>
+            <a href="permohonanIbuPejabat.php">Permohonan Ibu Pejabat</a>
+            <a href="permohonanDikuiri.php">Permohonan Dikuiri</a>
         </div>
 
-        <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a>
+        <!-- <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a> -->
         <a href="profile.php"><i class="fas fa-user me-2"></i>Paparan Profil</a>
         <a href="../../../logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
     </div>
@@ -160,16 +160,11 @@ echo "No KP provided.";
             </div>
         </div>
 
-        <form action="send_mail.php" method="POST">
-            <input type="hidden" name="wilayah_asal_id" value="<?php echo htmlspecialchars($wilayah_asal_id); ?>">
-            
+        <form action="send_mail2.php" method="POST" enctype="multipart/form-data">            
             <!-- Maklumat Pegawai -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #d59e3e; color: white;">
                     <h5 class="mb-0"><strong>Maklumat Pegawai</strong></h5>
-                    <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#editPegawaiModal">
-                        <i class="fas fa-edit me-1"></i>Edit
-                    </button>
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
@@ -194,9 +189,6 @@ echo "No KP provided.";
             <div class="card shadow-sm mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #d59e3e; color: white;">
                     <h5 class="mb-0"><strong>Maklumat Pasangan</strong></h5>
-                    <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#editPasanganModal">
-                        <i class="fas fa-edit me-1"></i>Edit
-                    </button>
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
@@ -231,9 +223,6 @@ echo "No KP provided.";
             <div class="card shadow-sm mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #d59e3e; color: white;">
                     <h5 class="mb-0"><strong>Maklumat Ibu Bapa</strong></h5>
-                    <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#editIbuBapaModal">
-                        <i class="fas fa-edit me-1"></i>Edit
-                    </button>
                 </div>
                 <div class="card-body">
                     <!-- Maklumat Bapa -->
@@ -296,9 +285,6 @@ echo "No KP provided.";
             <div class="card shadow-sm mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #d59e3e; color: white;">
                     <h5 class="mb-0"><strong>Maklumat Penerbangan</strong></h5>
-                    <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#editPenerbanganModal">
-                        <i class="fas fa-edit me-1"></i>Edit
-                    </button>
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
@@ -370,16 +356,12 @@ echo "No KP provided.";
             <div class="card shadow-sm mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #d59e3e; color: white;">
                     <h5 class="mb-0"><strong>Dokumen Sokongan</strong></h5>
-                    <button type="button" class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#uploadDocumentModal">
-                        <i class="fas fa-upload me-1"></i>Tambah Dokumen
-                    </button>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <thead class="table-light">
                                 <tr>
-                                    <th class="fw-bold">Jenis Dokumen</th>
                                     <th class="fw-bold">Nama Fail</th>
                                     <th class="fw-bold">Tindakan</th>
                                 </tr>
@@ -394,10 +376,9 @@ echo "No KP provided.";
                                 while ($doc = $result->fetch_assoc()):
                                 ?>
                                 <tr>
-                                    <td><?= htmlspecialchars($doc['description']) ?></td>
                                     <td><?= htmlspecialchars($doc['file_name']) ?></td>
                                     <td>
-                                        <a href="../../<?= htmlspecialchars($doc['file_path']) ?>" target="_blank" class="btn btn-primary btn-sm">
+                                        <a href="<?= htmlspecialchars($doc['file_path']) ?>" target="_blank" class="btn btn-primary btn-sm">
                                             <i class="fas fa-eye me-1"></i>Lihat Dokumen
                                         </a>
                                     </td>
@@ -409,242 +390,52 @@ echo "No KP provided.";
                 </div>
             </div>
 
-            <!-- Edit Modals -->
-            <!-- Edit Pegawai Modal -->
-            <div class="modal fade" id="editPegawaiModal" tabindex="-1">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Edit Maklumat Pegawai</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <form action="../../functions/update_borangWA5.php" method="POST">
-                            <div class="modal-body">
-                                <input type="hidden" name="wilayah_asal_id" value="<?= $wilayah_asal_id ?>">
-                                <input type="hidden" name="update_type" value="pegawai">
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Jawatan/Gred</label>
-                                    <input type="text" class="form-control" name="jawatan_gred" value="<?= htmlspecialchars($application_data['jawatan_gred']) ?>" required>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                <button type="submit" class="btn btn-primary">Simpan</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Edit Pasangan Modal -->
-            <div class="modal fade" id="editPasanganModal" tabindex="-1">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Edit Maklumat Pasangan</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <form action="../../functions/update_borangWA5.php" method="POST">
-                            <div class="modal-body">
-                                <input type="hidden" name="wilayah_asal_id" value="<?= $wilayah_asal_id ?>">
-                                <input type="hidden" name="update_type" value="pasangan">
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Nama Pasangan</label>
-                                    <input type="text" class="form-control" name="nama_pasangan" value="<?= htmlspecialchars($application_data['nama_first_pasangan'] . ' ' . $application_data['nama_last_pasangan']) ?>" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">No. Kad Pengenalan</label>
-                                    <input type="text" class="form-control" name="no_kp_pasangan" value="<?= htmlspecialchars($application_data['no_kp_pasangan']) ?>" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Wilayah Menetap</label>
-                                    <input type="text" class="form-control" name="wilayah_menetap_pasangan" value="<?= htmlspecialchars($application_data['wilayah_menetap_pasangan']) ?>" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Alamat Berkhidmat</label>
-                                    <textarea class="form-control" name="alamat_berkhidmat_pasangan" rows="3" required><?= htmlspecialchars($application_data['alamat_berkhidmat_1_pasangan'] . "\n" . $application_data['alamat_berkhidmat_2_pasangan']) ?></textarea>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                <button type="submit" class="btn btn-primary">Simpan</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Edit Ibu Bapa Modal -->
-            <div class="modal fade" id="editIbuBapaModal" tabindex="-1">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Edit Maklumat Ibu Bapa</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <form action="../../functions/update_borangWA5.php" method="POST">
-                            <div class="modal-body">
-                                <input type="hidden" name="wilayah_asal_id" value="<?= $wilayah_asal_id ?>">
-                                <input type="hidden" name="update_type" value="ibu_bapa">
-                                
-                                <h6 class="mb-3"><strong>Maklumat Bapa</strong></h6>
-                                <div class="row g-3 mb-4">
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-bold">Nama Bapa</label>
-                                        <input type="text" class="form-control" name="nama_bapa" value="<?= htmlspecialchars($application_data['nama_bapa']) ?>" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-bold">No. Kad Pengenalan</label>
-                                        <input type="text" class="form-control" name="no_kp_bapa" value="<?= htmlspecialchars($application_data['no_kp_bapa']) ?>" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-bold">Wilayah Menetap</label>
-                                        <input type="text" class="form-control" name="wilayah_menetap_bapa" value="<?= htmlspecialchars($application_data['wilayah_menetap_bapa']) ?>" required>
-                                    </div>
-                                    <div class="col-12">
-                                        <label class="form-label fw-bold">Alamat Menetap</label>
-                                        <textarea class="form-control" name="alamat_menetap_bapa" rows="3" required><?= htmlspecialchars($application_data['alamat_menetap_1_bapa'] . "\n" . $application_data['alamat_menetap_2_bapa']) ?></textarea>
-                                    </div>
-                                </div>
-
-                                <h6 class="mb-3"><strong>Maklumat Ibu</strong></h6>
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-bold">Nama Ibu</label>
-                                        <input type="text" class="form-control" name="nama_ibu" value="<?= htmlspecialchars($application_data['nama_ibu']) ?>" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-bold">No. Kad Pengenalan</label>
-                                        <input type="text" class="form-control" name="no_kp_ibu" value="<?= htmlspecialchars($application_data['no_kp_ibu']) ?>" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-bold">Wilayah Menetap</label>
-                                        <input type="text" class="form-control" name="wilayah_menetap_ibu" value="<?= htmlspecialchars($application_data['wilayah_menetap_ibu']) ?>" required>
-                                    </div>
-                                    <div class="col-12">
-                                        <label class="form-label fw-bold">Alamat Menetap</label>
-                                        <textarea class="form-control" name="alamat_menetap_ibu" rows="3" required><?= htmlspecialchars($application_data['alamat_menetap_1_ibu'] . "\n" . $application_data['alamat_menetap_2_ibu']) ?></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                <button type="submit" class="btn btn-primary">Simpan</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Edit Penerbangan Modal -->
-            <div class="modal fade" id="editPenerbanganModal" tabindex="-1">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Edit Maklumat Penerbangan</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <form action="../../functions/update_borangWA5.php" method="POST">
-                            <div class="modal-body">
-                                <input type="hidden" name="wilayah_asal_id" value="<?= $wilayah_asal_id ?>">
-                                <input type="hidden" name="update_type" value="penerbangan">
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Jenis Permohonan</label>
-                                    <select class="form-select" name="jenis_permohonan" required>
-                                        <option value="diri_sendiri" <?= $application_data['jenis_permohonan'] === 'diri_sendiri' ? 'selected' : '' ?>>Diri Sendiri/ Pasangan/ Anak Ke Wilayah Ditetapkan</option>
-                                        <option value="keluarga" <?= $application_data['jenis_permohonan'] === 'keluarga' ? 'selected' : '' ?>>Keluarga Pegawai ke Wilayah Berkhidmat</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Tarikh Penerbangan Pergi</label>
-                                    <input type="date" class="form-control" name="tarikh_penerbangan_pergi" value="<?= date('Y-m-d', strtotime($application_data['tarikh_penerbangan_pergi'])) ?>" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Tarikh Penerbangan Balik</label>
-                                    <input type="date" class="form-control" name="tarikh_penerbangan_balik" value="<?= date('Y-m-d', strtotime($application_data['tarikh_penerbangan_balik'])) ?>" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Lapangan Terbang Berlepas</label>
-                                    <input type="text" class="form-control" name="start_point" value="<?= htmlspecialchars($application_data['start_point']) ?>" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Lapangan Terbang Tiba</label>
-                                    <input type="text" class="form-control" name="end_point" value="<?= htmlspecialchars($application_data['end_point']) ?>" required>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                <button type="submit" class="btn btn-primary">Simpan</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Upload Document Modal -->
-            <div class="modal fade" id="uploadDocumentModal" tabindex="-1">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Tambah Dokumen</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <form action="../../functions/update_borangWA5.php" method="POST" enctype="multipart/form-data">
-                            <div class="modal-body">
-                                <input type="hidden" name="wilayah_asal_id" value="<?= $wilayah_asal_id ?>">
-                                <input type="hidden" name="update_type" value="document">
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Jenis Dokumen</label>
-                                    <select class="form-select" name="document_type" required>
-                                        <option value="SALINAN_IC_PEGAWAI">Salinan IC Pegawai</option>
-                                        <option value="SALINAN_IC_PENGIKUT">Salinan IC Pengikut</option>
-                                        <option value="DOKUMEN_SOKONGAN">Dokumen Sokongan</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Fail</label>
-                                    <input type="file" class="form-control" name="document_file" required>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                <button type="submit" class="btn btn-primary">Muat Naik</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+           
 
             <!-- Pengesahan -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header" style="background-color: #d59e3e; color: white;">
                     <h5 class="mb-0"><strong>Pengesahan</strong></h5>
                 </div>
-                <div class="card-body">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="pengesahan" name="pengesahan" required>
+                
+            <div class="card-body row">
+                    <div class="form-check" style="margin-left: 10px;">
+                        <input class="form-check-input" type="checkbox" id="buku_rekod" name="buku_rekod" required <?php if ($isApproved) echo 'checked disabled'; ?>>
                         <label class="form-check-label" for="buku_rekod">
                         Telah direkod dalam buku perkhidmatan
                     </label>
                     </div>
-                </div>
             </div>
+        </div>
+
+            </div>
+            <input type="hidden" name="wilayah_asal_id" value="<?= $wilayah_asal_id ?>">
 
             <div class="d-flex justify-content-between mt-4">
                 <a href="permohonanIbuPejabat.php" class="btn btn-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Kembali
                 </a>
-                <button type="submit" class="btn btn-success">
+                <button type="submit" class="btn btn-success" <?php if ($isApproved) echo 'disabled'; ?>
                     <i class="fas fa-check me-2"></i>Hantar Permohonan
                 </button>
             </div>
+            <?php if ($isApproved): ?>
+                <div class="alert alert-info mt-3">
+                    Permohonan telah diluluskan dan tidak boleh dikemaskini lagi.
+                </div>
+            <?php endif; ?>
         </form>
+        
     </div>
 </div>
-</div>  
+</div> 
+
+
+
 
 <script>
-     document.querySelector('.toggle-sidebar').addEventListener('click', function (e) {
+
+document.querySelector('.toggle-sidebar').addEventListener('click', function (e) {
         e.preventDefault();
         document.getElementById('sidebar').classList.toggle('hidden');
     });
@@ -654,19 +445,7 @@ echo "No KP provided.";
         submenu.style.display = submenu.style.display === "block" ? "none" : "block";
     }
 
-    function toggleUlasan() {
-        const select = document.getElementById('status_select');
-        const ulasanDiv = document.getElementById('ulasan_section');
-        if (select.value === 'dikuiri') {
-            ulasanDiv.style.display = 'block';
-            document.getElementById('ulasan').setAttribute('required', 'required');
-        } else {
-            ulasanDiv.style.display = 'none';
-            document.getElementById('ulasan').removeAttribute('required');
-        }
-    }
-
-    document.querySelector('form').addEventListener('submit', function (e) {
+  document.querySelector('form').addEventListener('submit', function (e) {
         const checkbox = document.getElementById('buku_rekod');
         if (!checkbox.checked) {
             e.preventDefault();

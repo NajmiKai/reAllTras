@@ -28,7 +28,7 @@ $admin_email = $_SESSION['admin_email'];
 $admin_phoneNo = $_SESSION['admin_phoneNo'];
 
 $currentPage = basename($_SERVER['PHP_SELF']);
-$submenuOpen = in_array($currentPage, ['perrmohonanPengguna.php', 'permohonanIbuPejabat.php']);
+$submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'permohonanIbuPejabat.php', 'permohonanDikuiri.php']);
 
 // Query user table
 $sql = "SELECT * FROM user JOIN wilayah_asal ON user.kp = wilayah_asal.user_kp WHERE status = 'Menunggu pengesahan PBR CSM'";
@@ -93,9 +93,10 @@ if ($result->num_rows > 0) {
         <div id="wilayahSubmenu" class="submenu" style="display: <?= $submenuOpen ? 'block' : 'none' ?>;">
             <a href="permohonanPengguna.php">Permohonan Pengguna</a>
             <a href="permohonanIbuPejabat.php">Permohonan Ibu Pejabat</a>
+            <a href="permohonanDikuiri.php">Permohonan Dikuiri</a>
         </div>
 
-        <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a>
+        <!-- <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a> -->
         <a href="profile.php"><i class="fas fa-user me-2"></i>Paparan Profil</a>
         <a href="../../../logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
     </div>

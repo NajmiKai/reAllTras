@@ -2,63 +2,53 @@
 session_start();
 include '../../../connection.php';
 
+if (isset($_SESSION['status'])): ?>
+    <script>
+        <?php if ($_SESSION['status'] === 'success'): ?>
+            alert("✅ Permohonan berjaya dihantar.");
+        <?php elseif ($_SESSION['status'] === 'fail'): ?>
+            alert("❌ Permohonan gagal dihantar. Ralat: <?= addslashes($_SESSION['error']) ?>");
+        <?php endif; ?>
+    </script>
+    <?php unset($_SESSION['status'], $_SESSION['error']); 
+endif;
+
+
+
 if (!isset($_SESSION['admin_id'])) {
     header("Location: login.php");
     exit();
 }
 
+
 $admin_name = $_SESSION['admin_name'];
+$admin_id = $_SESSION['admin_id'];
 $admin_role = $_SESSION['admin_role'];
 $admin_icNo = $_SESSION['admin_icNo'];
 $admin_email = $_SESSION['admin_email'];
 $admin_phoneNo = $_SESSION['admin_phoneNo'];
 
-$currentPage = basename($_SERVER['PHP_SELF']);
+// Query user table
+$sql = "SELECT * FROM user JOIN wilayah_asal ON user.kp = wilayah_asal.user_kp WHERE status = 'Menunggu pengesahan penyemak1 HQ' OR status = 'Kembali ke penyemak HQ' OR status = 'Menunggu pengesahan penyemak2 HQ'";
+$result = $conn->query($sql);
 
-$users = [
-    [
-        'id' => 1,
-        'nama_first' => 'Ahmad',
-        'nama_last' => 'Zulkifli2',
-        'email' => 'ahmad.zulkifli@example.com',
-        'phone' => '0123456789',
-        'kp' => '900101-10-1234',
-        'bahagian' => 'Bahagian Teknologi Maklumat',
-        'status' => 'Kuiri'
-    ],
-    [    
-        'id' => 2,
-        'nama_first' => 'Siti',
-        'nama_last' => 'Noraini2',
-        'email' => 'siti.noraini@example.com',
-        'phone' => '0198765432',
-        'kp' => '850505-14-5678',
-        'bahagian' => 'Bahagian Pentadbiran',
-        'status' => 'Kuiri '
-    ],
-    // Add more users as needed
-];
+$users = [];
 
-// Sample data for 'wilayah_asal' table as an array of associative arrays
-$wilayah_asal = [
-    [
-        'user_kp' => '900101-10-1234',
-        'nama_first' => 'Ahmad',
-        'nama_last' => 'Zulkifli',
-        'email' => 'ahmad.zulkifli@example.com',
-        'phone' => '0123456789',
-        'bahagian' => 'Bahagian Teknologi Maklumat',
-        'jawatan' => 'Pegawai Teknologi Maklumat',
-        'alamat_menetap_1' => 'No. 12 Jalan Mawar',
-        'alamat_menetap_2' => 'Taman Melati',
-        'poskod_menetap' => '53000',
-        'bandar_menetap' => 'Kuala Lumpur',
-        'negeri_menetap' => 'Wilayah Persekutuan',
-        'tarikh_lapor_diri' => '2022-01-10',
-        // Add other fields as needed for your app...
-    ],
-    // Add more wilayah_asal data if needed
-];
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        if ($row['status'] == 'Kembali ke penyemak HQ') {
+            $row['status'] = 'Permohonan dikuiri';
+        }elseif($row['status'] == 'Menunggu pengesahan penyemak2 HQ'){
+            $row['status'] = 'Upload borang pengesahan';
+        }else{
+            $row['status'] = 'Sedang diproses'; 
+        }
+        $users[] = $row;
+    }
+} else {
+    echo "No users found.";
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="ms">
@@ -69,7 +59,6 @@ $wilayah_asal = [
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../../assets/css/adminStyle.css">
-
 </head>
 <body>
     <!-- Top Navbar -->
@@ -98,8 +87,7 @@ $wilayah_asal = [
         <h6><img src="../../../assets/ALLTRAS.png" alt="ALLTRAS" width="140" style="margin-left: 20px;"><br>ALL REGION TRAVELLING SYSTEM</h6><br>
         <a href="dashboard.php"> <i class="fas fa-home me-2"></i>Laman Utama</a>
         <h6 class="text mt-4">BORANG PERMOHONAN</h6>
-
-        <a href="wilayahAsal.php" class="active"><i class="fas fa-map-marker-alt me-2"></i>Wilayah Asal</a>
+        <a href="wilayahAsal.php" class="active"><i class="fas fa-tasks me-2"></i>Wilayah Asal</a>
         <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a>
         <a href="profile.php"><i class="fas fa-user me-2"></i>Paparan Profil</a>
         <a href="../../../logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
@@ -107,13 +95,13 @@ $wilayah_asal = [
 
     <!-- Main Content -->
     <div class="col p-4">
-        <h3 class="mb-3">Laman Utama</h3>
+    <br><br>
 
     <h5 class="mb-3">Senarai Pemohon Wilayah Asal </h5>
             <div class="card shadow-sm">
                 <div class="card-body">
                     <table class="table table-hover" id="myTable">
-                        <thead class="table-light">
+                        <thead class="table-dark">
                             <tr>
                             <th>Nama</th>
                             <th>Email</th>
@@ -125,6 +113,7 @@ $wilayah_asal = [
                             </tr>
                         </thead>
                         <tbody>
+                        <?php if (count($users) > 0): ?>
                         <?php foreach ($users as $user): ?>
                             <tr>
                                 <td><?php echo htmlspecialchars($user['nama_first'] . ' ' . $user['nama_last']); ?></td>
@@ -133,11 +122,31 @@ $wilayah_asal = [
                                 <td><?php echo htmlspecialchars($user['kp']); ?></td>
                                 <td><?php echo htmlspecialchars($user['bahagian']); ?></td>                              
                                 <td><?php echo htmlspecialchars($user['status']); ?></td>
-                                <td>
-                                    <a class="button" href="viewdetails.php?id=<?= $user['id'] ?>">View Details</a>
-                                </td>
+                                <?php if($user['status'] == 'Upload borang pengesahan'){ ?>
+                                    <td>
+                                        <a class="button" href="viewdetails2.php?kp=<?= $user['kp'] ?>">View Details</a>
+                                        <div style="margin-top: 10px;">
+                                            <button type="button" onclick="openAndPrint()">
+                                                Cetak Memo Kelulusan
+                                            </button>
+                                        </div> 
+                                    </td>
+                                <?php } elseif ($user['status'] == 'Kembali ke penyemak HQ'){ ?>
+                                    <td>
+                                        <a class="button" href="viewdetailsdikuiri.php?kp=<?= $user['kp'] ?>">View Details</a>
+                                    </td>
+                                <?php }else{ ?>
+                                    <td>
+                                        <a class="button" href="viewdetails.php?kp=<?= $user['kp'] ?>">View Details</a>
+                                    </td>
+                                <?php } ?>
                             </tr>
                         <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted">Tiada data pemohon dijumpai.</td>
+                                </tr>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -145,11 +154,20 @@ $wilayah_asal = [
 
 
 <script>
-    
     document.querySelector('.toggle-sidebar').addEventListener('click', function (e) {
         e.preventDefault();
         document.getElementById('sidebar').classList.toggle('hidden');
     });
+
+    function openAndPrint() {
+    // Open suratKelulusan.php in a new window
+    const printWindow = window.open('suratKelulusan.php');
+
+    // Wait until the new page loads, then call print
+    printWindow.onload = function() {
+        printWindow.print();
+    };
+}
 
 </script>
 </body>

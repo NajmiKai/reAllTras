@@ -27,18 +27,15 @@ $admin_icNo = $_SESSION['admin_icNo'];
 $admin_email = $_SESSION['admin_email'];
 $admin_phoneNo = $_SESSION['admin_phoneNo'];
 
-$currentPage = basename($_SERVER['PHP_SELF']);
-$submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'permohonanIbuPejabat.php']);
-
 // Query user table
-$sql = "SELECT * FROM user JOIN wilayah_asal ON user.kp = wilayah_asal.user_kp WHERE status = 'Menunggu pengesahan pengesah2 CSM'";
+$sql = "SELECT * FROM user JOIN wilayah_asal ON user.kp = wilayah_asal.user_kp WHERE status = 'Kembali ke PBR CSM'";
 $result = $conn->query($sql);
 
 $users = [];
 
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        $row['status'] = 'Sedang diproses'; 
+        $row['status'] = 'Permohonan Dikuiri'; // Optional: add custom status manually
         $users[] = $row;
     }
 } else {
@@ -50,7 +47,7 @@ if ($result->num_rows > 0) {
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
-    <title>ALLTRAS - Wilayah Asal (Permohonan Ibu Pejabat)</title>
+    <title>ALLTRAS - Wilayah Asal (Permohonan Dikuiri)</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -93,9 +90,10 @@ if ($result->num_rows > 0) {
         <div id="wilayahSubmenu" class="submenu" style="display: <?= $submenuOpen ? 'block' : 'none' ?>;">
             <a href="permohonanPengguna.php">Permohonan Pengguna</a>
             <a href="permohonanIbuPejabat.php">Permohonan Ibu Pejabat</a>
+            <a href="permohonanDikuiri.php">Permohonan Dikuiri</a>
         </div>
 
-        <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a>
+        <!-- <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a> -->
         <a href="profile.php"><i class="fas fa-user me-2"></i>Paparan Profil</a>
         <a href="../../../logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
     </div>
@@ -104,7 +102,7 @@ if ($result->num_rows > 0) {
     <div class="col p-4">
     <br><br>
 
-    <h5 class="mb-3">Senarai Pemohon Wilayah Asal (Ibu Pejabat)</h5>
+    <h5 class="mb-3">Senarai Pemohon Wilayah Asal (Dikuiri)</h5>
             <div class="card shadow-sm">
                 <div class="card-body">
                     <table class="table table-hover" id="myTable">
@@ -130,7 +128,7 @@ if ($result->num_rows > 0) {
                                 <td><?php echo htmlspecialchars($user['bahagian']); ?></td>                              
                                 <td><?php echo htmlspecialchars($user['status']); ?></td>
                                 <td>
-                                    <a class="button" href="viewdetailsfromHQ.php?kp=<?= $user['kp'] ?>">View Details</a>
+                                    <a class="button" href="viewdetailskuiri.php?kp=<?= $user['kp'] ?>">View Details</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

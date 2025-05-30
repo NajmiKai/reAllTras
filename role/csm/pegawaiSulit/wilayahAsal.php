@@ -5,23 +5,21 @@ include '../../../connection.php';
 if (isset($_SESSION['status'])): ?>
     <script>
         <?php if ($_SESSION['status'] === 'success'): ?>
-            alert("✅ Emel berjaya dihantar.");
+            alert("✅ Permohonan berjaya dihantar.");
         <?php elseif ($_SESSION['status'] === 'fail'): ?>
-            alert("❌ Emel gagal dihantar. Ralat: <?= addslashes($_SESSION['error']) ?>");
-        <?php elseif ($_SESSION['status'] === 'no_admin'): ?>
-            alert("⚠️ Tiada admin dengan peranan 'Pengesah CSM' ditemui.");
-        <?php elseif ($_SESSION['status'] === 'no_post'): ?>
-            alert("❌ Borang tidak dihantar dengan betul.");
+            alert("❌ Permohonan gagal dihantar. Ralat: <?= addslashes($_SESSION['error']) ?>");
         <?php endif; ?>
     </script>
     <?php unset($_SESSION['status'], $_SESSION['error']); 
 endif;
 
 
+
 if (!isset($_SESSION['admin_id'])) {
     header("Location: login.php");
     exit();
 }
+
 
 $admin_name = $_SESSION['admin_name'];
 $admin_role = $_SESSION['admin_role'];
@@ -38,23 +36,23 @@ $users = [];
 
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        $row['status'] = 'Sedang diproses'; // Optional: add custom status manually
+        $row['status'] = 'Sedang diproses'; 
         $users[] = $row;
     }
 } else {
     echo "No users found.";
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
-    <title>ALLTRAS - Wilayah Asal </title>
+    <title>ALLTRAS - Wilayah Asal</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../../assets/css/adminStyle.css">
-
 </head>
 <body>
     <!-- Top Navbar -->
@@ -83,8 +81,7 @@ if ($result->num_rows > 0) {
         <h6><img src="../../../assets/ALLTRAS.png" alt="ALLTRAS" width="140" style="margin-left: 20px;"><br>ALL REGION TRAVELLING SYSTEM</h6><br>
         <a href="dashboard.php"> <i class="fas fa-home me-2"></i>Laman Utama</a>
         <h6 class="text mt-4">BORANG PERMOHONAN</h6>
-
-        <a href="wilayahAsal.php" class="active"><i class="fas fa-map-marker-alt me-2"></i>Wilayah Asal</a>
+        <a href="wilayahAsal.php" class="active"><i class="fas fa-tasks me-2"></i>Wilayah Asal</a>
         <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a>
         <a href="profile.php"><i class="fas fa-user me-2"></i>Paparan Profil</a>
         <a href="../../../logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
@@ -92,9 +89,9 @@ if ($result->num_rows > 0) {
 
     <!-- Main Content -->
     <div class="col p-4">
-        <h3 class="mb-3">Laman Utama</h3>
+    <br><br>
 
-    <h5 class="mb-3">Senarai Pemohon Wilayah Asal </h5>
+    <h5 class="mb-3">Senarai Pemohon Wilayah Asal</h5>
             <div class="card shadow-sm">
                 <div class="card-body">
                     <table class="table table-hover" id="myTable">
@@ -110,6 +107,7 @@ if ($result->num_rows > 0) {
                             </tr>
                         </thead>
                         <tbody>
+                        <?php if (count($users) > 0): ?>
                         <?php foreach ($users as $user): ?>
                             <tr>
                                 <td><?php echo htmlspecialchars($user['nama_first'] . ' ' . $user['nama_last']); ?></td>
@@ -123,6 +121,11 @@ if ($result->num_rows > 0) {
                                 </td>
                             </tr>
                         <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted">Tiada data pemohon dijumpai.</td>
+                                </tr>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -130,7 +133,6 @@ if ($result->num_rows > 0) {
 
 
 <script>
-    
     document.querySelector('.toggle-sidebar').addEventListener('click', function (e) {
         e.preventDefault();
         document.getElementById('sidebar').classList.toggle('hidden');

@@ -42,40 +42,42 @@ include '../../../connection.php';
             $pengikutData[] = $row;
         }
 
+        $ulasan_by_role = [
+            'Penyemak HQ' => $application_data['ulasan_penyemak_HQ'] ?? '',
+            'Pengesah HQ' => $application_data['ulasan_pengesah_HQ'] ?? '',
+            'Pelulus HQ' => $application_data['ulasan_pelulus_HQ'] ?? '',
+        ];
+
+
         $isApproved = false; // Assume false initially
 
-        $sql = "SELECT pengesah_csm2_id FROM wilayah_asal WHERE id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("i", $wilayah_asal_id);
-        $stmt->execute();
-        $stmt->bind_result($pengesah_csm2_id);
-        if ($stmt->fetch()) {
-            if ($pengesah_csm2_id === $admin_id || $pengesah_csm2_id !== null) { 
-                $isApproved = true;
-            }
-        }
+        // $sql = "SELECT pbr_csm1_id FROM wilayah_asal WHERE id = ?";
+        // $stmt = $conn->prepare($sql);
+        // $stmt->bind_param("i", $wilayah_asal_id);
+        // $stmt->execute();
+        // $stmt->bind_result($pbr_csm1_id);
+        // if ($stmt->fetch()) {
+        //     if ($pbr_csm1_id === $admin_id || $pbr_csm1_id !== null) { 
+        //         $isApproved = true;
+        //     }
+        // }
         $stmt->close();
         } 
     }
+
+
 ?>
 
 <!DOCTYPE html>
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
-    <title>ALLTRAS - Butiran Permohonan </title>
+    <title>ALLTRAS - Butiran Permohonan</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../../assets/css/adminStyle.css">
     <link rel="stylesheet" href="../../../assets/css/multi-step.css">
-
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
 </head>
 <body>
@@ -101,26 +103,16 @@ include '../../../connection.php';
 
 <div class="main-container">
    <!-- Sidebar -->
-   <div class="sidebar" id="sidebar">
+      <div class="sidebar" id="sidebar">
         <h6><img src="../../../assets/ALLTRAS.png" alt="ALLTRAS" width="140" style="margin-left: 20px;"><br>ALL REGION TRAVELLING SYSTEM</h6><br>
         <a href="dashboard.php"> <i class="fas fa-home me-2"></i>Laman Utama</a>
         <h6 class="text mt-4">BORANG PERMOHONAN</h6>
-
-        <a href="javascript:void(0);" onclick="toggleSubMenu()" class="<?= $submenuOpen ? 'active' : '' ?>">
-            <i class="fas fa-map-marker-alt me-2"></i>Wilayah Asal
-            <i class="fas fa-chevron-down" style="float: right; margin-right: 10px;"></i>
-        </a>
-        
-        <!-- Submenu -->
-        <div id="wilayahSubmenu" class="submenu" style="display: <?= $submenuOpen ? 'block' : 'none' ?>;">
-            <a href="permohonanPengguna.php">Permohonan Pengguna</a>
-            <a href="permohonanIbuPejabat.php">Permohonan Ibu Pejabat</a>
-        </div>
-
+        <a href="wilayahAsal.php" class="active"><i class="fas fa-tasks me-2"></i>Wilayah Asal</a>  
         <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a>
         <a href="profile.php"><i class="fas fa-user me-2"></i>Paparan Profil</a>
         <a href="../../../logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
     </div>
+
 
   <!-- Main Content -->
   <div class="col p-4" style="margin-left: 250px;">
@@ -164,7 +156,7 @@ include '../../../connection.php';
             </div>
         </div>
 
-        <form action="send_mail2.php" method="POST" enctype="multipart/form-data">            
+        <form action="send_mail3.php" method="POST" enctype="multipart/form-data">            
             <!-- Maklumat Pegawai -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #d59e3e; color: white;">
@@ -394,38 +386,46 @@ include '../../../connection.php';
                 </div>
             </div>
 
-           
 
-            <!-- Pengesahan -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-header" style="background-color: #d59e3e; color: white;">
-                    <h5 class="mb-0"><strong>Pengesahan</strong></h5>
+      <!-- Ulasan -->
+      <div class="card shadow-sm mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #d59e3e; color: white;">
+                    <h5 class="mb-0"><strong>Ulasan</strong></h5>
                 </div>
-            <div class="card-body row">
-                <div class="col-md-6 mb-3">
-                    <label for="status_select" class="form-label">Status Permohonan</label>
-                    <select class="form-select" name="status_permohonan" id="status_select" required onchange="toggleUlasan()" <?php if ($isApproved) echo 'disabled'; ?>>
-                        <option value="">-- Sila Pilih --</option>
-                        <option value="disokong">Disokong</option>
-                        <option value="tidak disokong">Tidak disokong</option>
-                    </select>
-                </div>
-                <div class="col-md-8 mb-3" id="ulasan-section" style="display: none;">
-                    <label for="ulasan" class="form-label">Ulasan (jika dikuiri)</label>
-                    <textarea class="form-control" name="ulasan" id="ulasan" rows="4" placeholder="Nyatakan sebab dikuiri..."></textarea>
-                </div>
-            </div>
+        <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th class="fw-bold">Peranan</th>
+                        <th class="fw-bold">Ulasan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($ulasan_by_role as $peranan => $ulasan): ?>
+                        <?php if (!empty($ulasan)): // Only show if ulasan is not empty ?>
+                        <tr>
+                            <td><?= htmlspecialchars($peranan) ?></td>
+                            <td><?= nl2br(htmlspecialchars($ulasan)) ?></td>
+                        </tr>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
         </div>
+        </div>
+        </div>
+
 
             </div>
             <input type="hidden" name="wilayah_asal_id" value="<?= $wilayah_asal_id ?>">
 
             <div class="d-flex justify-content-between mt-4">
-                <a href="permohonanIbuPejabat.php" class="btn btn-secondary">
+                <a href="wilayahAsal.php" class="btn btn-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Kembali
                 </a>
                 <button type="submit" class="btn btn-success" <?php if ($isApproved) echo 'disabled'; ?>
-                    <i class="fas fa-check me-2"></i>Hantar Permohonan
+                    <i class="fas fa-check me-2"></i>Kuiri Permohonan
                 </button>
             </div>
             <?php if ($isApproved): ?>
@@ -454,17 +454,6 @@ document.querySelector('.toggle-sidebar').addEventListener('click', function (e)
         submenu.style.display = submenu.style.display === "block" ? "none" : "block";
     }
 
-    function toggleUlasan() {
-    const select = document.getElementById('status_select');
-    const ulasanDiv = document.getElementById('ulasan-section');
-    if (select.value === 'tidak disokong') {
-        ulasanDiv.style.display = 'block';
-        document.getElementById('ulasan').setAttribute('required', 'required');
-    } else {
-        ulasanDiv.style.display = 'none';
-        document.getElementById('ulasan').removeAttribute('required');
-    }
-}
 </script>
 </body>
 </html>

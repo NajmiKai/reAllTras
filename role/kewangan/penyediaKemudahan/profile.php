@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
-            <div class="card card-profile shadow-sm p-4" style="margin-top: 3rem;">
+            <div class="card card-profile shadow-sm p-4" style="margin-top: 3rem;  margin-left:250px;">
             <?php if (!empty($success)): ?>
                         <div class="alert alert-success text-center"><?= $success ?></div>
                     <?php endif; ?>

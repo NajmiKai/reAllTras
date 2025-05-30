@@ -2,7 +2,9 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-// Load PHPMailer
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 require '../../../PHPMailer/src/Exception.php';
 require '../../../PHPMailer/src/PHPMailer.php';
 require '../../../PHPMailer/src/SMTP.php';
@@ -10,53 +12,119 @@ require '../../../PHPMailer/src/SMTP.php';
 session_start();
 include '../../../connection.php';
 
-// Retrieve latest application
-$sql = "SELECT * FROM admin ORDER BY id DESC LIMIT 1";
-$result = $conn->query($sql);
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-if ($result->num_rows > 0) {
-    $data = $result->fetch_assoc();
-
-    // $nama = $data['nama'];
-    // $tarikh = $data['tarikh_lapor_diri'];
-    // $kategori = $data['kategori'];
-
-    $nama = "Hanis";
-    $tarikh = "17/05/2025";
-    $kategori = "Pengguna";
+        $wilayah_asal_id = $_POST['wilayah_asal_id'];
+        $status_permohonan = $_POST['status_permohonan'];
+        $admin_id = $_SESSION['admin_id'];
+        $status = 'Menunggu pengesahan pengesah kewangan';
+        $userKP = $_POST['userKP'];
 
 
-    // Send email
-    $mail = new PHPMailer(true);
-    try {
-        $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com';
-        $mail->SMTPAuth = true;
-        $mail->Username = 'haniszainee1105@gmail.com';             // your Gmail
-        $mail->Password = 'eizx afua iazr efrl';                // app password (not Gmail login!)
-        $mail->SMTPSecure = 'tls';
-        $mail->Port = 587;
+          // Handle File Uploads
+          if (!empty($_FILES['dokumen']['name'][0])) {
+            foreach ($_FILES['dokumen']['name'] as $key => $name) {
+                $dokumen_name = $_FILES['dokumen']['name'][$key]; // Original file name
+                $dokumen_tmp = $_FILES['dokumen']['tmp_name'][$key];
 
-        $mail->setFrom('haniszainee1105@gmail.com', 'Sistem Permohonan');
-        $mail->addAddress('2023168781@student.uitm.edu.my', 'Pegawai HR');
+                $upload_path = '../../../documents/' . basename($dokumen_name);
 
-        $mail->isHTML(true);
-        $mail->Subject = 'Permohonan Baru Diterima';
-        $mail->Body = "
-            <h3>Notifikasi Permohonan</h3>
-            <p><strong>Nama:</strong> $nama</p>
-            <p><strong>Tarikh Lapor Diri:</strong> $tarikh</p>
-            <p><strong>Kategori:</strong> $kategori</p>
-            <p>Sila semak sistem untuk maklumat lanjut.</p>
-        ";
+                if (move_uploaded_file($dokumen_tmp, $upload_path)) {
+                    // Insert both file_name and file_path
+                    $stmt_doc = $conn->prepare("INSERT INTO documents (file_name, file_path, wilayah_asal_id) VALUES (?, ?, ?)");
+                    $stmt_doc->bind_param("ssi", $dokumen_name, $upload_path, $wilayah_asal_id);
+                    $stmt_doc->execute();
+                    $stmt_doc->close();
+                } 
+            }
+        }
 
-        $mail->send();
-        echo "✅ Emel berjaya dihantar.";
-    } catch (Exception $e) {
-        echo "❌ Emel gagal dihantar. Ralat: {$mail->ErrorInfo}";
+        
+
+        $tarikh_keputusan = date('Y-m-d H:i:s');
+        // 2. Update wilayah_asal
+        $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, penyediaKemudahan_kewangan_id = ?, tarikh_keputusan_penyediaKemudahan_kewangan = ? WHERE id = ?");
+        $stmt_wilayah->bind_param("sssi", $status, $admin_id, $tarikh_keputusan, $wilayah_asal_id);
+        $stmt_wilayah->execute();
+        $stmt_wilayah->close();
+
+
+        // $sql = "SELECT * FROM user WHERE kp = ?";
+        // $result = $conn->query($sql);
+        
+        if ($result->num_rows > 0) {
+
+            // Fetch user details from wilayah_asal and user tables
+            $stmt_user = $conn->prepare("
+            SELECT u.nama_first, u.nama_last, u.kp, u.bahagian
+            FROM wilayah_asal wa
+            JOIN user u ON wa.user_kp = u.kp
+            WHERE wa.id = ?
+            ");
+            $stmt_user->bind_param("i", $wilayah_asal_id);
+            $stmt_user->execute();
+            $result_user = $stmt_user->get_result();
+
+            if ($result_user->num_rows > 0) {
+            $userData = $result_user->fetch_assoc();
+            $nama = $userData['nama_first'] . ' ' . $userData['nama_last'];
+            $kp = $userData['kp'];
+            $bahagian = $userData['bahagian'];
+            $userKP = $userData['kp'];
+            } else {
+            $nama = $kp = $bahagian = "Tidak Dikenal Pasti";
+            }
+            $stmt_user->close();
+
+            while ($data = $result->fetch_assoc()) {
+                $receiver_name = $userData['nama_first'] . ' ' . $userData['nama_last'];
+                $receiver_email = $userData['email'];
+        
+                // Send email to each admin
+                $mail = new PHPMailer(true);
+                try {
+                    $mail->isSMTP();
+                    $mail->Host = 'smtp.gmail.com';
+                    $mail->SMTPAuth = true;
+                    $mail->Username = 'haniszainee1105@gmail.com';  // your Gmail
+                    $mail->Password = 'eizx afua iazr efrl';         // Gmail App Password
+                    $mail->SMTPSecure = 'tls';
+                    $mail->Port = 587;
+        
+                    $mail->setFrom($mail->Username, 'ALLTRAS System');
+                    $mail->addAddress($receiver_email, $receiver_name);
+        
+                    $mail->isHTML(true);
+                    $mail->Subject = 'Permohonan Tambang Ziarah Wilayah (TZW) : Booking Number';
+                    $mail->Body = "
+                        <br><p>Assalamualaikum dan Salam sejahtera,</p>
+                        <p>Tuan/Puan,</p><br>
+                        <p><b>Permohonan Kemudahan Tambang Ziarah Wilayah</b></p><br>
+        
+                        <p><b>Nama Pegawai :</b> $nama</p>
+                        <p><b>No.Kad Pengenalan :</b> $kp</p>
+                        <p><b>Bahagian/Cawangan :</b> $bahagian</p><br>
+        
+                        <p>Dimaklumkan bahawa permohonan Kemudahan Tambang Ziarah Wilayah(TZW) tuan/puan telah <b>DILULUSKAN</b> dan <b>SELESAI DIPROSES</b>. <i>Booking Number</i> telah dimuat naik ke dalam ALLTRAS untuk tindakan dan rujukan tuan/puan selanjutnya.</p>
+                        <p>Sila klik pautan/butang di bawah untuk tindakan lanjut dan maklumat permohonan.</p>
+        
+                        <p><a href='http://localhost/reAllTras/role/pemohon/dashboard.php'><b><u>PAPAR MAKLUMAT PERMOHONAN</u></b></a></p><br>
+        
+                        <p>Sekian, terima kasih.</p>
+                        <p>Emel ini dijana secara automatik oleh <i>All Region Travelling System (ALLTRAS)</i></p>
+                        <p>Jabatan Kastam Diraja Malaysia</p>
+                    ";
+        
+                    $mail->send();
+                    $_SESSION['status'] = 'success';
+                } catch (Exception $e) {
+                    $_SESSION['status'] = 'fail';
+                    $_SESSION['error'] = $mail->ErrorInfo;
+                }
+            }
+        } 
+        
+        header("Location: wilayahAsal.php");
+        exit();
     }
-} else {
-    echo "❌ Tiada permohonan ditemui dalam pangkalan data.";
-}
-
-?>
+        

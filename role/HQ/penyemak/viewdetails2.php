@@ -44,26 +44,28 @@ include '../../../connection.php';
 
         $isApproved = false; // Assume false initially
 
-        $sql = "SELECT pengesah_csm2_id FROM wilayah_asal WHERE id = ?";
+        $sql = "SELECT penyemak_HQ2_id FROM wilayah_asal WHERE id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("i", $wilayah_asal_id);
         $stmt->execute();
-        $stmt->bind_result($pengesah_csm2_id);
+        $stmt->bind_result($penyemak_HQ2_id);
         if ($stmt->fetch()) {
-            if ($pengesah_csm2_id === $admin_id || $pengesah_csm2_id !== null) { 
+                if ($penyemak_HQ2_id === $admin_id || $penyemak_HQ2_id !== null) { 
                 $isApproved = true;
             }
         }
         $stmt->close();
         } 
     }
+
+
 ?>
 
 <!DOCTYPE html>
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
-    <title>ALLTRAS - Butiran Permohonan </title>
+    <title>ALLTRAS - Butiran Permohonan</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -105,18 +107,7 @@ include '../../../connection.php';
         <h6><img src="../../../assets/ALLTRAS.png" alt="ALLTRAS" width="140" style="margin-left: 20px;"><br>ALL REGION TRAVELLING SYSTEM</h6><br>
         <a href="dashboard.php"> <i class="fas fa-home me-2"></i>Laman Utama</a>
         <h6 class="text mt-4">BORANG PERMOHONAN</h6>
-
-        <a href="javascript:void(0);" onclick="toggleSubMenu()" class="<?= $submenuOpen ? 'active' : '' ?>">
-            <i class="fas fa-map-marker-alt me-2"></i>Wilayah Asal
-            <i class="fas fa-chevron-down" style="float: right; margin-right: 10px;"></i>
-        </a>
-        
-        <!-- Submenu -->
-        <div id="wilayahSubmenu" class="submenu" style="display: <?= $submenuOpen ? 'block' : 'none' ?>;">
-            <a href="permohonanPengguna.php">Permohonan Pengguna</a>
-            <a href="permohonanIbuPejabat.php">Permohonan Ibu Pejabat</a>
-        </div>
-
+        <a href="wilayahAsal.php" class="active"><i class="fas fa-tasks me-2"></i>Wilayah Asal</a>  
         <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a>
         <a href="profile.php"><i class="fas fa-user me-2"></i>Paparan Profil</a>
         <a href="../../../logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
@@ -395,33 +386,32 @@ include '../../../connection.php';
             </div>
 
            
-
             <!-- Pengesahan -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header" style="background-color: #d59e3e; color: white;">
                     <h5 class="mb-0"><strong>Pengesahan</strong></h5>
                 </div>
-            <div class="card-body row">
-                <div class="col-md-6 mb-3">
-                    <label for="status_select" class="form-label">Status Permohonan</label>
-                    <select class="form-select" name="status_permohonan" id="status_select" required onchange="toggleUlasan()" <?php if ($isApproved) echo 'disabled'; ?>>
-                        <option value="">-- Sila Pilih --</option>
-                        <option value="disokong">Disokong</option>
-                        <option value="tidak disokong">Tidak disokong</option>
-                    </select>
-                </div>
-                <div class="col-md-8 mb-3" id="ulasan-section" style="display: none;">
-                    <label for="ulasan" class="form-label">Ulasan (jika dikuiri)</label>
-                    <textarea class="form-control" name="ulasan" id="ulasan" rows="4" placeholder="Nyatakan sebab dikuiri..."></textarea>
+                <div class="card-body row">
+                    <div class="col-md-6 mb-3"><br>
+                        <button type="button" onclick="openAndPrint()">
+                            Cetak Borang
+                        </button><br><br>
+                    <!-- </div> -->
+
+                    <!-- <div class="col-md-6 mb-3"> -->
+                        <label for="formUpload" class="form-label">Muat Naik Borang (Memo Kelulusan)</label>
+                        <input class="form-control" type="file"  name="dokumen[]" accept=".pdf, image/*" required <?php if ($isApproved) echo 'disabled'; ?>>
+                    </div>
+
+                    
                 </div>
             </div>
-        </div>
 
             </div>
             <input type="hidden" name="wilayah_asal_id" value="<?= $wilayah_asal_id ?>">
 
             <div class="d-flex justify-content-between mt-4">
-                <a href="permohonanIbuPejabat.php" class="btn btn-secondary">
+                <a href="wilayahAsal.php" class="btn btn-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Kembali
                 </a>
                 <button type="submit" class="btn btn-success" <?php if ($isApproved) echo 'disabled'; ?>
@@ -439,11 +429,7 @@ include '../../../connection.php';
 </div>
 </div> 
 
-
-
-
 <script>
-
 document.querySelector('.toggle-sidebar').addEventListener('click', function (e) {
         e.preventDefault();
         document.getElementById('sidebar').classList.toggle('hidden');
@@ -454,16 +440,15 @@ document.querySelector('.toggle-sidebar').addEventListener('click', function (e)
         submenu.style.display = submenu.style.display === "block" ? "none" : "block";
     }
 
-    function toggleUlasan() {
-    const select = document.getElementById('status_select');
-    const ulasanDiv = document.getElementById('ulasan-section');
-    if (select.value === 'tidak disokong') {
-        ulasanDiv.style.display = 'block';
-        document.getElementById('ulasan').setAttribute('required', 'required');
-    } else {
-        ulasanDiv.style.display = 'none';
-        document.getElementById('ulasan').removeAttribute('required');
-    }
+
+function openAndPrint() {
+    // Open suratKelulusan.php in a new window
+    const printWindow = window.open('suratKelulusan.php');
+
+    // Wait until the new page loads, then call print
+    printWindow.onload = function() {
+        printWindow.print();
+    };
 }
 </script>
 </body>

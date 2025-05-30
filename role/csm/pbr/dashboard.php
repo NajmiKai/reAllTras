@@ -7,23 +7,55 @@ if (!isset($_SESSION['admin_id'])) {
     exit();
 }
 
+$admin_id = $_SESSION['admin_id'];
 $admin_name = $_SESSION['admin_name'];
 $admin_role = $_SESSION['admin_role'];
 $admin_icNo = $_SESSION['admin_icNo'];
 $admin_email = $_SESSION['admin_email'];
 $admin_phoneNo = $_SESSION['admin_phoneNo'];
 
+// Initialize stats array
 $stats = [
-    "total" => ["Wilayah Asal" => 22, "Tugas Rasmi" => 12],
-    "processing" => ["Wilayah Asal" => 7, "Tugas Rasmi" => 12],
-    "approved" => ["Wilayah Asal" => 14, "Tugas Rasmi" => 0],
-    "rejected" => ["Wilayah Asal" => 14, "Tugas Rasmi" => 0]
+    "total" => ["Wilayah Asal" => 0],
+    "processing" => ["Wilayah Asal" => 0],
+    "approved" => ["Wilayah Asal" => 0],
+    "rejected" => ["Wilayah Asal" => 0]
 ];
 
-$currentPage = basename($_SERVER['PHP_SELF']);
-$submenuOpen = in_array($currentPage, ['perrmohonanPengguna.php', 'perrmohonanIbuPejabat.php']);
+// Function to count rows by table and status
+function countByStatus($conn, $table, $admin_id, $status = null) {
+    $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE pbr_csm1_id = ?";
+    $params = [$admin_id];
 
+    if ($status !== null) {
+        $query .= " AND status = ?";
+        $params[] = $status;
+    }
+
+    $stmt = $conn->prepare($query);
+    if (count($params) === 2) {
+        $stmt->bind_param("is", $params[0], $params[1]);
+    } else {
+        $stmt->bind_param("i", $params[0]);
+    }
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    return (int)$row['jumlah'];
+}
+
+// Wilayah Asal counts
+$stats['total']['Wilayah Asal'] = countByStatus($conn, 'wilayah_asal', $admin_id);
+$stats['processing']['Wilayah Asal'] = countByStatus($conn, 'wilayah_asal', $admin_id, 'processing');
+$stats['approved']['Wilayah Asal'] = countByStatus($conn, 'wilayah_asal', $admin_id, 'approved');
+$stats['rejected']['Wilayah Asal'] = countByStatus($conn, 'wilayah_asal', $admin_id, 'rejected');
+
+
+$currentPage = basename($_SERVER['PHP_SELF']);
+$submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'permohonanIbuPejabat.php', 'permohonanDikuiri.php']);
 ?>
+
 <!DOCTYPE html>
 <html lang="ms">
 <head>
@@ -73,9 +105,10 @@ $submenuOpen = in_array($currentPage, ['perrmohonanPengguna.php', 'perrmohonanIb
         <div id="wilayahSubmenu" class="submenu" style="display: <?= $submenuOpen ? 'block' : 'none' ?>;">
             <a href="permohonanPengguna.php">Permohonan Pengguna</a>
             <a href="permohonanIbuPejabat.php">Permohonan Ibu Pejabat</a>
+            <a href="permohonanDikuiri.php">Permohonan Dikuiri</a>
         </div>
 
-        <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a>
+        <!-- <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a> -->
         <a href="profile.php"><i class="fas fa-user me-2"></i>Paparan Profil</a>
         <a href="../../../logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
     </div>
@@ -107,7 +140,6 @@ $submenuOpen = in_array($currentPage, ['perrmohonanPengguna.php', 'perrmohonanIb
                     <i class="fas fa-user-plus"></i>
                     <h6>Jumlah Permohonan</h6>
                     <p>Wilayah Asal: <?= $stats['total']['Wilayah Asal'] ?></p>
-                    <p>Tugas Rasmi: <?= $stats['total']['Tugas Rasmi'] ?></p>
                 </div>
             </div>
             <div class="col-md-3">
@@ -115,7 +147,6 @@ $submenuOpen = in_array($currentPage, ['perrmohonanPengguna.php', 'perrmohonanIb
                     <i class="fas fa-spinner"></i>
                     <h6>Sedang Diproses</h6>
                     <p>Wilayah Asal: <?= $stats['processing']['Wilayah Asal'] ?></p>
-                    <p>Tugas Rasmi: <?= $stats['processing']['Tugas Rasmi'] ?></p>
                 </div>
             </div>
             <div class="col-md-3">
@@ -123,7 +154,6 @@ $submenuOpen = in_array($currentPage, ['perrmohonanPengguna.php', 'perrmohonanIb
                     <i class="fas fa-check-circle"></i>
                     <h6>Berjaya Diproses</h6>
                     <p>Wilayah Asal: <?= $stats['approved']['Wilayah Asal'] ?></p>
-                    <p>Tugas Rasmi: <?= $stats['approved']['Tugas Rasmi'] ?></p>
                 </div>
             </div>
             <div class="col-md-3">
@@ -131,7 +161,6 @@ $submenuOpen = in_array($currentPage, ['perrmohonanPengguna.php', 'perrmohonanIb
                     <i class="fas fa-times-circle"></i>
                     <h6>Permohonan Dikuiri</h6>
                     <p>Wilayah Asal: <?= $stats['rejected']['Wilayah Asal'] ?></p>
-                    <p>Tugas Rasmi: <?= $stats['rejected']['Tugas Rasmi'] ?></p>
                 </div>
             </div>
         </div>

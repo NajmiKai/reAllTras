@@ -15,28 +15,37 @@ include '../../../connection.php';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $wilayah_asal_id = $_POST['wilayah_asal_id'];
-        $markah = $_POST['markah'];
-        $hukuman_tatatertib = $_POST['hukuman_tatatertib'];
+        $status_permohonan = $_POST['status_permohonan'];
         $admin_id = $_SESSION['admin_id'];
-        $status = 'Menunggu Pengesahan Pengesah CSM';
+    
+        if ($status_permohonan === 'disokong') {
+            $status = 'Menunggu pengesahan penyemak baki kewangan';
+        } else {
+            $status = 'Kembali ke PBR CSM';
+        }
+
+        $ulasan = null;
+        if ($status_permohonan === 'tidak disokong') {
+            $ulasan = $_POST['ulasan'] ?? null;
+        }
         
 
         $tarikh_keputusan = date('Y-m-d H:i:s');
         // 2. Update wilayah_asal
-        $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, markah_prestasi_user = ?, hukuman_tatatertib_user = ?, pegSulit_csm_id = ?, tarikh_keputusan_pegSulit_csm = ? WHERE id = ?");
-        $stmt_wilayah->bind_param("sssisi", $status, $markah, $hukuman_tatatertib, $admin_id, $tarikh_keputusan, $wilayah_asal_id);
+        $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, pengesah_csm2_id = ?, tarikh_keputusan_pengesah_csm2 = ? WHERE id = ?");
+        $stmt_wilayah->bind_param("sssi", $status, $admin_id, $tarikh_keputusan, $wilayah_asal_id);
         $stmt_wilayah->execute();
         $stmt_wilayah->close();
 
 
-        $sql = "SELECT * FROM admin WHERE role = 'Pengesah CSM'";
+        $sql = "SELECT * FROM admin WHERE role = 'Penyemak Baki Kewangan'";
         $result = $conn->query($sql);
         
         if ($result->num_rows > 0) {
 
             // Fetch user details from wilayah_asal and user tables
             $stmt_user = $conn->prepare("
-            SELECT u.nama_first, u.nama_last, u.kp, u.bahagian
+            SELECT u.nama_first, u.nama_last, u.kp, u.bahagian, u.email
             FROM wilayah_asal wa
             JOIN user u ON wa.user_kp = u.kp
             WHERE wa.id = ?
@@ -50,6 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $nama = $userData['nama_first'] . ' ' . $userData['nama_last'];
             $kp = $userData['kp'];
             $bahagian = $userData['bahagian'];
+            $user_email = $userData['email'];
             } else {
             $nama = $kp = $bahagian = "Tidak Dikenal Pasti";
             }
@@ -58,7 +68,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             while ($data = $result->fetch_assoc()) {
                 $receiver_name = $data['Name'];
                 $receiver_email = $data['Email'];
-        
+                $KBPemohon = "hazim.mazni@customs.gov.my"; //example
+
                 // Send email to each admin
                 $mail = new PHPMailer(true);
                 try {
@@ -72,22 +83,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
                     $mail->setFrom($mail->Username, 'ALLTRAS System');
                     $mail->addAddress($receiver_email, $receiver_name);
+                    $mail->addCC($KBPemohon); // CC recipient
+                    $mail->addCC($user_email); // CC recipient
+
         
                     $mail->isHTML(true);
-                    $mail->Subject = 'Permohonan Tambang Ziarah Wilayah (TZW) : Tindakan Pengesahan Permohonan';
+                    $mail->Subject = 'Permohonan Tambang Ziarah Wilayah (TZW) : Semakan Baki Peruntukan';
                     $mail->Body = "
                         <br><p>Assalamualaikum dan Salam sejahtera,</p>
                         <p>Tuan/Puan,</p><br>
                         <p><b>Permohonan Kemudahan Tambang Ziarah Wilayah</b></p><br>
         
                         <p><b>Nama Pegawai :</b> $nama</p>
-                        <p><b>No.Kad Pengenalan :</b> $kp</p>
+                        <p><b>No. Kad Pengenalan :</b> $kp</p>
                         <p><b>Bahagian/Cawangan :</b> $bahagian</p><br>
         
-                        <p>Permohonan Tambang Ziarah Wilayah (TZW) oleh pegawai telah disemak dan dikemukakan untuk tindakan pengesahan tuan/puan.</p>
+                        <p>Permohonan Tambang Ziarah Wilayah (TZW) oleh pegawai telah <b>DILULUSKAN</b> oleh Ketua Jabatan. Mohon semakan baki peruntukan dari pihak tuan/puan.</p>
+        
                         <p>Sila klik pautan/butang di bawah untuk tindakan lanjut dan maklumat permohonan.</p>
         
-                        <p><a href='http://localhost/reAllTras/role/csm/pengesah/viewdetails.php?kp=$kp'><b><u>PAPAR MAKLUMAT PERMOHONAN</u></b></a></p><br>
+                        <p><a href='http://localhost/reAllTras/role/kewangan/penyemakBaki/viewdetails.php?kp=$kp'><b><u>PAPAR MAKLUMAT PERMOHONAN</u></b></a></p><br>
         
                         <p>Sekian, terima kasih.</p>
                         <p>Emel ini dijana secara automatik oleh <i>All Region Travelling System (ALLTRAS)</i></p>
@@ -103,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         } 
         
-        header("Location: wilayahAsal.php");
+        header("Location: permohonanIbuPejabat.php");
         exit();
     }
         

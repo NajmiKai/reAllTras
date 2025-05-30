@@ -8,8 +8,7 @@ if (!isset($_SESSION['admin_id'])) {
 }
 
 $currentPage = basename($_SERVER['PHP_SELF']);
-$submenuOpen = in_array($currentPage, ['perrmohonanPengguna.php', 'permohonanIbuPejabat.php']);
-$submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'perrmohonanIbuPejabat.php']);
+$submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'permohonanIbuPejabat.php', 'permohonanDikuiri.php']);
 
 
 $admin_id = $_SESSION['admin_id'];
@@ -110,9 +109,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div id="wilayahSubmenu" class="submenu" style="display: <?= $submenuOpen ? 'block' : 'none' ?>;">
             <a href="permohonanPengguna.php">Permohonan Pengguna</a>
             <a href="permohonanIbuPejabat.php">Permohonan Ibu Pejabat</a>
+            <a href="permohonanDikuiri.php">Permohonan Dikuiri</a>
         </div>
 
-        <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a>
+        <!-- <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a> -->
         <a href="profile.php" class="active"><i class="fas fa-user me-2"></i>Paparan Profil</a>
         <a href="../../../logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
     </div>

@@ -79,7 +79,7 @@ $showSuccess = isset($_GET['status']) && $_GET['status'] === 'sent';
 
     <div class="login-wrapper">
         <div class="login-title">
-            <img src="assets/ALLTRAS_logo.jpg" alt="ALLTRAS" height="60"><br>
+            <img src="assets/ALLTRAS_logo.jpg" alt="ALLTRAS" height="100"><br>
             ALL REGION TRAVELLING SYSTEM
         </div>
 

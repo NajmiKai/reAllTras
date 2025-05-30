@@ -80,12 +80,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background: url('background.png') repeat;
-            background-size: 180px;
+            /* background-size: 180px; */
             min-height: 100vh;
             display: flex;
+            background-image: url('assets/background.jpg');
             align-items: center;
             justify-content: center;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
 
         .login-wrapper {
@@ -152,8 +155,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <div class="login-wrapper">
         <div class="login-title">
-            <img src="assets/ALLTRAS_logo.jpg" alt="ALLTRAS" height="60"><br>
-            ALL REGION TRAVELLING SYSTEM
+            <img src="assets/ALLTRAS.png" alt="ALLTRAS" height="120"><br>
+            ALL REGION TRAVELLING SYSTEM (ADMIN PANEL)
+        
         </div>
 
        <!-- <form id="loginForm" onsubmit="return handleLogin(event)">-->

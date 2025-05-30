@@ -15,22 +15,22 @@ include '../../../connection.php';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $wilayah_asal_id = $_POST['wilayah_asal_id'];
-        $markah = $_POST['markah'];
-        $hukuman_tatatertib = $_POST['hukuman_tatatertib'];
+        // $keputusan = $_POST['keputusan'];
         $admin_id = $_SESSION['admin_id'];
-        $status = 'Menunggu Pengesahan Pengesah CSM';
-        
+        $status = 'Kembali ke PBR CSM';
+
+
 
         $tarikh_keputusan = date('Y-m-d H:i:s');
         // 2. Update wilayah_asal
-        $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, markah_prestasi_user = ?, hukuman_tatatertib_user = ?, pegSulit_csm_id = ?, tarikh_keputusan_pegSulit_csm = ? WHERE id = ?");
-        $stmt_wilayah->bind_param("sssisi", $status, $markah, $hukuman_tatatertib, $admin_id, $tarikh_keputusan, $wilayah_asal_id);
+        $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ? WHERE id = ?");
+        $stmt_wilayah->bind_param("si", $status, $wilayah_asal_id);
         $stmt_wilayah->execute();
         $stmt_wilayah->close();
 
 
-        $sql = "SELECT * FROM admin WHERE role = 'Pengesah CSM'";
-        $result = $conn->query($sql);
+        // $sql = "SELECT * FROM user WHERE kp = ?";
+        // $result = $conn->query($sql);
         
         if ($result->num_rows > 0) {
 
@@ -56,8 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt_user->close();
 
             while ($data = $result->fetch_assoc()) {
-                $receiver_name = $data['Name'];
-                $receiver_email = $data['Email'];
+                $receiver_name = $userData['nama_first'] . ' ' . $userData['nama_last'];
+                $receiver_email = $userData['email'];
         
                 // Send email to each admin
                 $mail = new PHPMailer(true);
@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $mail->addAddress($receiver_email, $receiver_name);
         
                     $mail->isHTML(true);
-                    $mail->Subject = 'Permohonan Tambang Ziarah Wilayah (TZW) : Tindakan Pengesahan Permohonan';
+                    $mail->Subject = 'Permohonan Tambang Ziarah Wilayah (TZW) : Kuiri Permohonan ';
                     $mail->Body = "
                         <br><p>Assalamualaikum dan Salam sejahtera,</p>
                         <p>Tuan/Puan,</p><br>
@@ -84,10 +84,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <p><b>No.Kad Pengenalan :</b> $kp</p>
                         <p><b>Bahagian/Cawangan :</b> $bahagian</p><br>
         
-                        <p>Permohonan Tambang Ziarah Wilayah (TZW) oleh pegawai telah disemak dan dikemukakan untuk tindakan pengesahan tuan/puan.</p>
-                        <p>Sila klik pautan/butang di bawah untuk tindakan lanjut dan maklumat permohonan.</p>
+                        <p>Permohonan Tambang Ziarah Wilayah (TZW) oleh pegawai telah <b>DIKUIRI</b>. <br>
+
+                        <p>Mohon tuan/puan mengambil tindakan pembetulan dan menghantar semula permohonan untuk semakan lanjut.</p>
+                        <p>Sila klik pautan/butang di bawah untuk tindakan lanjut dan maklumat kuiri.</p>
         
-                        <p><a href='http://localhost/reAllTras/role/csm/pengesah/viewdetails.php?kp=$kp'><b><u>PAPAR MAKLUMAT PERMOHONAN</u></b></a></p><br>
+                        <p><a href='http://localhost/reAllTras/role/csm/pbr/viewdetailsdikuiri.php?kp=$kp'><b><u>PAPAR MAKLUMAT PERMOHONAN</u></b></a></p><br>
+
         
                         <p>Sekian, terima kasih.</p>
                         <p>Emel ini dijana secara automatik oleh <i>All Region Travelling System (ALLTRAS)</i></p>
@@ -103,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         } 
         
-        header("Location: wilayahAsal.php");
+        header("Location: permohonanIbuPejabat.php");
         exit();
     }
         
