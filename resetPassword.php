@@ -23,7 +23,7 @@ if (isset($_GET['token'])) {
         $confirmPassword = $_POST['confirm_password'];
 
         if ($newPassword !== $confirmPassword) {
-            echo "<p style='color:red'>Passwords do not match.</p>";
+            echo "<p style='color:red'>Kata laluan tidak sepadan.</p>";
         } else {
             $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
 

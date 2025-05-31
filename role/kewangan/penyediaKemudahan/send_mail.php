@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $wilayah_asal_id = $_POST['wilayah_asal_id'];
         $status_permohonan = $_POST['status_permohonan'];
         $admin_id = $_SESSION['admin_id'];
-        $status = 'Menunggu pengesahan pengesah kewangan';
+        $status = 'Permohonan diluluskan';
         $userKP = $_POST['userKP'];
 
 
@@ -39,8 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
 
-        
-
+    
         $tarikh_keputusan = date('Y-m-d H:i:s');
         // 2. Update wilayah_asal
         $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, penyediaKemudahan_kewangan_id = ?, tarikh_keputusan_penyediaKemudahan_kewangan = ? WHERE id = ?");
@@ -48,39 +47,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt_wilayah->execute();
         $stmt_wilayah->close();
 
-
-        // $sql = "SELECT * FROM user WHERE kp = ?";
-        // $result = $conn->query($sql);
-        
-        if ($result->num_rows > 0) {
-
-            // Fetch user details from wilayah_asal and user tables
+            // Fetch user details
             $stmt_user = $conn->prepare("
-            SELECT u.nama_first, u.nama_last, u.kp, u.bahagian
-            FROM wilayah_asal wa
-            JOIN user u ON wa.user_kp = u.kp
-            WHERE wa.id = ?
+                SELECT u.nama_first, u.nama_last, u.kp, u.bahagian, u.email
+                FROM wilayah_asal wa
+                JOIN user u ON wa.user_kp = u.kp
+                WHERE wa.id = ?
             ");
             $stmt_user->bind_param("i", $wilayah_asal_id);
             $stmt_user->execute();
             $result_user = $stmt_user->get_result();
 
             if ($result_user->num_rows > 0) {
-            $userData = $result_user->fetch_assoc();
-            $nama = $userData['nama_first'] . ' ' . $userData['nama_last'];
-            $kp = $userData['kp'];
-            $bahagian = $userData['bahagian'];
-            $userKP = $userData['kp'];
-            } else {
-            $nama = $kp = $bahagian = "Tidak Dikenal Pasti";
-            }
-            $stmt_user->close();
-
-            while ($data = $result->fetch_assoc()) {
-                $receiver_name = $userData['nama_first'] . ' ' . $userData['nama_last'];
+                $userData = $result_user->fetch_assoc();
+                $nama = $userData['nama_first'] . ' ' . $userData['nama_last'];
+                $kp = $userData['kp'];
+                $bahagian = $userData['bahagian'];
                 $receiver_email = $userData['email'];
-        
-                // Send email to each admin
+
+                if (!empty($receiver_email)) {
                 $mail = new PHPMailer(true);
                 try {
                     $mail->isSMTP();
@@ -91,10 +76,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $mail->SMTPSecure = 'tls';
                     $mail->Port = 587;
         
-                    $mail->setFrom($mail->Username, 'ALLTRAS System');
-                    $mail->addAddress($receiver_email, $receiver_name);
+                    $mail->setFrom($mail->Username);
+                    $mail->addAddress($receiver_email);
         
                     $mail->isHTML(true);
+
                     $mail->Subject = 'Permohonan Tambang Ziarah Wilayah (TZW) : Booking Number';
                     $mail->Body = "
                         <br><p>Assalamualaikum dan Salam sejahtera,</p>
@@ -117,6 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
                     $mail->send();
                     $_SESSION['status'] = 'success';
+
                 } catch (Exception $e) {
                     $_SESSION['status'] = 'fail';
                     $_SESSION['error'] = $mail->ErrorInfo;

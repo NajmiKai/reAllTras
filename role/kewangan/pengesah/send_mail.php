@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $wilayah_asal_id = $_POST['wilayah_asal_id'];
         $status_permohonan = $_POST['status_permohonan'];
         $admin_id = $_SESSION['admin_id'];
-        if ($status_permohonan === 'diterima') {
+        if ($status_permohonan === 'mencukupi') {
             $status = 'Menunggu pengesahan penyedia kemudahan kewangan';
 
         } else {

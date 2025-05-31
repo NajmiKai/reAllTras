@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $admin_id = $_SESSION['admin_id'];
 
         if ($status_permohonan === 'disokong') {
-        $status = 'Menunggu Pengesahan Penyemak1 HQ';
+        $status = 'Menunggu pengesahan penyemak1 HQ';
         } else {
             $status = 'Kembali ke PBR CSM';
         }

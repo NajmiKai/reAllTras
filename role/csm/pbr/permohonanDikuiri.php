@@ -35,7 +35,7 @@ $users = [];
 
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        $row['status'] = 'Permohonan Dikuiri'; // Optional: add custom status manually
+        $row['status'] = 'Permohonan dikuiri'; // Optional: add custom status manually
         $users[] = $row;
     }
 } else {

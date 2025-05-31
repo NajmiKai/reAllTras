@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             // Fetch user details from wilayah_asal and user tables
             $stmt_user = $conn->prepare("
-            SELECT u.nama_first, u.nama_last, u.kp, u.bahagian, u.email
+            SELECT u.nama_first, u.nama_last, u.kp, u.bahagian, u.email, wa.email_penyelia
             FROM wilayah_asal wa
             JOIN user u ON wa.user_kp = u.kp
             WHERE wa.id = ?
@@ -60,6 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $kp = $userData['kp'];
             $bahagian = $userData['bahagian'];
             $user_email = $userData['email'];
+            $penyelia_email = $userData['email_penyelia'];
             } else {
             $nama = $kp = $bahagian = "Tidak Dikenal Pasti";
             }
@@ -68,7 +69,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             while ($data = $result->fetch_assoc()) {
                 $receiver_name = $data['Name'];
                 $receiver_email = $data['Email'];
-                $KBPemohon = "hazim.mazni@customs.gov.my"; //example
 
                 // Send email to each admin
                 $mail = new PHPMailer(true);
@@ -81,9 +81,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $mail->SMTPSecure = 'tls';
                     $mail->Port = 587;
         
-                    $mail->setFrom($mail->Username, 'ALLTRAS System');
-                    $mail->addAddress($receiver_email, $receiver_name);
-                    $mail->addCC($KBPemohon); // CC recipient
+                    $mail->setFrom($mail->Username);
+                    $mail->addAddress($receiver_email);
+                    $mail->addCC($penyelia_email); // CC recipient
                     $mail->addCC($user_email); // CC recipient
 
         

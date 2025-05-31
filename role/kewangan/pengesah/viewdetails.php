@@ -50,7 +50,8 @@ include '../../../connection.php';
         $stmt->execute();
         $stmt->bind_result($pengesah_kewangan_id);
         if ($stmt->fetch()) {
-                if ($pengesah_kewangan_id === $admin_id || $pengesah_kewangan_id !== null) { 
+                // if ($pengesah_kewangan_id === $admin_id || $pengesah_kewangan_id !== null) { 
+                    if ($pengesah_kewangan_id === $admin_id ) { 
                 $isApproved = true;
             }
         }
@@ -382,6 +383,11 @@ include '../../../connection.php';
             <div class="card shadow-sm mb-4">
                 <div class="card-header" style="background-color: #d59e3e; color: white;">
                     <h5 class="mb-0"><strong>Pengesahan</strong></h5>
+                </div>
+
+                <div class="card-body">
+                <label class="form-label">Baki kewangan (RM) / Ulasan :</label>
+                <p class="form-control-static ps-2"><?= htmlspecialchars($application_data['ulasan_penyemakBaki_kewangan']) ?></p>
                 </div>
             <div class="card-body row">
                 <div class="col-md-6 mb-3">

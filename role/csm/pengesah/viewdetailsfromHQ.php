@@ -51,7 +51,7 @@ include '../../../connection.php';
         $stmt->bind_result($pengesah_csm2_id);
         if ($stmt->fetch()) {
             if ($pengesah_csm2_id === $admin_id || $pengesah_csm2_id !== null) { 
-                $isApproved = true;
+                $isApproved = false;
             }
         }
         $stmt->close();

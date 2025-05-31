@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $markah = $_POST['markah'];
         $hukuman_tatatertib = $_POST['hukuman_tatatertib'];
         $admin_id = $_SESSION['admin_id'];
-        $status = 'Menunggu Pengesahan Pengesah CSM';
+        $status = 'Menunggu pengesahan pengesah CSM';
         
 
         $tarikh_keputusan = date('Y-m-d H:i:s');

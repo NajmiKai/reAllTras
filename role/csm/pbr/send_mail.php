@@ -23,26 +23,72 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($keputusan === 'Tidak diluluskan') {
             $ulasan = $_POST['ulasan'] ?? null;
         }
-        
+
+
+    
         // 1. Handle Multiple File Uploads
         if (!empty($_FILES['dokumen']['name'][0])) {
             foreach ($_FILES['dokumen']['name'] as $key => $name) {
-                $dokumen_name = $_FILES['dokumen']['name'][$key]; // Original file name
-                $dokumen_tmp = $_FILES['dokumen']['tmp_name'][$key];
 
-                $upload_path = '../../../documents/' . basename($dokumen_name);
+                $file_name = $_FILES['dokumen']['name'][$key];               // file_name
+                $file_type = $_FILES['dokumen']['type'][$key];               // file_type
+                $file_size = $_FILES['dokumen']['size'][$key];               // file_size
+                $description = "Buku perkhidmatan";   
+            // Build unique filename
+            $file_extension = pathinfo($file_name, PATHINFO_EXTENSION);
+            // $unique_filename = uniqid() . '_' . $wilayah_asal_id . '_Buku_perkhidmatan.' . $file_extension;
+        
+            // Target directory for saving the file
+            // if (!is_dir($upload_dir)) {
+            //     mkdir($upload_dir, 0777, true);
+            // }
 
-                if (move_uploaded_file($dokumen_tmp, $upload_path)) {
-                    // Insert both file_name and file_path
-                    $stmt_doc = $conn->prepare("INSERT INTO documents (file_name, file_path, wilayah_asal_id) VALUES (?, ?, ?)");
-                    $stmt_doc->bind_param("ssi", $dokumen_name, $upload_path, $wilayah_asal_id);
-                    $stmt_doc->execute();
-                    $stmt_doc->close();
-                } 
+            $unique_filename = uniqid() . '_' . $wilayah_asal_id . '_' . str_replace(' ', '_', $description) . '.' . $file_extension;
+            
+            $dokumen_tmp = $_FILES['dokumen']['tmp_name'][$key];
+            $upload_dir = '../../../uploads/csm1/' . $wilayah_asal_id;
+            $target_path = $upload_dir . '/' . $unique_filename;
+
+        
+            if (move_uploaded_file($dokumen_tmp, $target_path)) {
+                // File path to be stored in DB (web-accessible)
+                $web_path = 'uploads/csm1/' . $wilayah_asal_id . '/' . $unique_filename;
+
+        
+                // Final INSERT query: each column matched correctly
+                $sql = "INSERT INTO documents (
+                            wilayah_asal_id,       -- INT
+                            file_name,             -- VARCHAR
+                            file_path,             -- VARCHAR
+                            file_type,             -- VARCHAR
+                            file_size,             -- INT
+                            description,           -- TEXT
+                            file_uploader_origin,  -- VARCHAR (FK removed)
+                            file_class_origin      -- ENUM
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, 'csm1')";
+        
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("isssiss",
+                    $wilayah_asal_id,
+                    $file_name,
+                    $web_path,
+                    $file_type,
+                    $file_size,
+                    $description,
+                    $admin_id // This must be set beforehand
+                );
+        
+                if ($stmt->execute()) {
+                    return true;
+                } else {
+                    error_log("DB error: " . $stmt->error);
+                }
+            } else {
+                error_log("Failed to move uploaded file.");
             }
-        }
-
-
+    }
+}
+    
 
         $tarikh_keputusan = date('Y-m-d H:i:s');
         // 2. Update wilayah_asal

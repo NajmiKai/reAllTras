@@ -385,18 +385,44 @@ include '../../../connection.php';
                 </div>
             </div>
 
+    
            
             <!-- Pengesahan -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header" style="background-color: #d59e3e; color: white;">
                     <h5 class="mb-0"><strong>Pengesahan</strong></h5>
                 </div>
+
+            <?php
+         
+            $penyemak_HQ1_id = $application_data['penyemak_HQ1_id'];
+
+            $sql_admin = "SELECT name FROM admin WHERE id = ?";
+            $stmt = $conn->prepare($sql_admin);
+            $stmt->bind_param("i", $penyemak_HQ1_id);
+            $stmt->execute();
+            $stmt->bind_result($penyemak_name);
+            $stmt->fetch();
+            $stmt->close();
+
+            ?>
+           
+            
+                         
+                
+
             <div class="card-body row">
                 <div class="col-md-6 mb-3">
+            
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Telah disemak oleh :</label>
+                <p class="form-control-static ps-2"><?= $penyemak_name ?></p>                    
+            </div>
+
                     <label for="status_select" class="form-label">Status Permohonan</label>
                     <select class="form-select" name="status_permohonan" id="status_select" required onchange="toggleUlasan()" <?php if ($isApproved) echo 'disabled'; ?>>
                         <option value="">-- Sila Pilih --</option>
-                        <option value="terima">Permohonan Diterima</option>
+                        <option value="diterima">Permohonan Diterima</option>
                         <option value="tidak diterima">Permohonan Tidak Diterima</option>
                     </select>
                 </div>

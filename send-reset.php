@@ -49,13 +49,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->addAddress($email, $nama);
 
             $mail->isHTML(true);
-            $mail->Subject = 'Reset Password Link';
+            $mail->Subject = 'Pautan Reset Kata Laluan';
             $mail->Body = "
-                <h3>Reset Password Request</h3>
-                <p>Hi $nama,</p>
-                <p>Click the link below to reset your password:</p>
+                <h3>Permintaan Reset Kata Laluan</h3>
+                <p>Salam dan selamat sejahtera $nama,</p>
+                <p>Sila klik pautan di bawah untuk menetapkan semula kata laluan anda:</p>
                 <p><a href='$resetLink'>$resetLink</a></p>
-                <p>If you did not request a password reset, please ignore this email.</p>
+                <p>Jika anda tidak membuat permintaan reset kata laluan, sila abaikan emel ini.</p>
             ";
 
             $mail->send();
@@ -66,10 +66,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           
 
         } catch (Exception $e) {
-            echo "<script>alert('Email sending failed: {$mail->ErrorInfo}'); window.location.href = 'forgotpassword.php';</script>";
+            echo "<script>alert('Email gagal dihantar: {$mail->ErrorInfo}'); window.location.href = 'forgotpassword.php';</script>";
         }
     } else {
-        echo "<script>alert('Email not found.'); window.location.href = 'forgotpassword.php';</script>";
+        echo "<script>alert('Email tidak dijumpai.'); window.location.href = 'forgotpassword.php';</script>";
     }
 }
 ?>

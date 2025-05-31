@@ -409,7 +409,7 @@ include '../../../connection.php';
                     <label for="status_select" class="form-label">Status Permohonan</label>
                     <select class="form-select" name="status_permohonan" id="status_select" required onchange="toggleUlasan()" <?php if ($isApproved) echo 'disabled'; ?>>
                         <option value="">-- Sila Pilih --</option>
-                        <option value="sokong">Disokong</option>
+                        <option value="disokong">Disokong</option>
                         <option value="tidak disokong">Tidak disokong</option>
                     </select>
                 </div>

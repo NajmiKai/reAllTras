@@ -385,6 +385,29 @@ include '../../../connection.php';
                 </div>
             </div>
 
+
+            <?php
+                // Get penyemak name
+                $penyemak_HQ1_id = $application_data['penyemak_HQ1_id'];
+                $sql_admin = "SELECT name FROM admin WHERE id = ?";
+                $stmt = $conn->prepare($sql_admin);
+                $stmt->bind_param("i", $penyemak_HQ1_id);
+                $stmt->execute();
+                $stmt->bind_result($penyemak_name);
+                $stmt->fetch();
+                $stmt->close();
+
+                 // Get pengesah name
+                $pengesah_HQ_id = $application_data['pengesah_HQ_id'];
+                $stmt = $conn->prepare($sql_admin);  
+                $stmt->bind_param("i", $pengesah_HQ_id);
+                $stmt->execute();
+                $stmt->bind_result($pengesah_name);
+                $stmt->fetch();
+                $stmt->close();
+
+            ?>
+
            
             <!-- Pengesahan -->
             <div class="card shadow-sm mb-4">
@@ -393,10 +416,21 @@ include '../../../connection.php';
                 </div>
             <div class="card-body row">
                 <div class="col-md-6 mb-3">
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Telah disemak oleh :</label>
+                    <p class="form-control-static ps-2"><?= $penyemak_name ?></p>                    
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Telah disahkan oleh :</label>
+                    <p class="form-control-static ps-2"><?= $pengesah_name ?></p>                    
+                </div>
+
                     <label for="status_select" class="form-label">Status Permohonan</label>
                     <select class="form-select" name="status_permohonan" id="status_select" required onchange="toggleUlasan()" <?php if ($isApproved) echo 'disabled'; ?>>
                         <option value="">-- Sila Pilih --</option>
-                        <option value="terima">Permohonan Diterima</option>
+                        <option value="diterima">Permohonan Diterima</option>
                         <option value="tidak diterima">Permohonan Tidak Diterima</option>
                     </select>
                 </div>
