@@ -1,4 +1,4 @@
-CREATE TABLE admin (
+CREATE TABLE `admin` (
   ID int(11) NOT NULL,
   Name varchar(255) NOT NULL,
   ICNo varchar(255) NOT NULL,
@@ -8,10 +8,26 @@ CREATE TABLE admin (
   Role varchar(255) NOT NULL,
   reset_token varchar(255) DEFAULT NULL,
   token_expiry datetime DEFAULT NULL
-)
+);
+
+CREATE TABLE `superAdmin` (
+  ID int(11) NOT NULL,
+  Name varchar(255) NOT NULL,
+  ICNo varchar(255) NOT NULL,
+  Email varchar(255) NOT NULL,
+  PhoneNo varchar(15) NOT NULL,
+  Password varchar(255) NOT NULL,
+  reset_token varchar(255) DEFAULT NULL,
+  token_expiry datetime DEFAULT NULL
+);
+
+CREATE TABLE `adminrole` (
+    ID int(11) NOT NULL,
+    role varchar(255) NOT NULL
+);
 
 -- Create user table
-CREATE TABLE IF NOT EXISTS user (
+CREATE TABLE `user` (
     id INT PRIMARY KEY AUTO_INCREMENT,
     nama_first VARCHAR(50) NOT NULL,
     nama_last VARCHAR(50) NOT NULL,
@@ -24,11 +40,10 @@ CREATE TABLE IF NOT EXISTS user (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     reset_token varchar(255) DEFAULT NULL,
     token_expiry datetime DEFAULT NULL
-
 );
 
 -- Create application table example
-CREATE TABLE IF NOT EXISTS wilayah_asal (
+CREATE TABLE `wilayah_asal` (
 
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_kp VARCHAR(20) NOT NULL UNIQUE,
@@ -103,11 +118,6 @@ CREATE TABLE IF NOT EXISTS wilayah_asal (
     kp_ketua_jabatan VARCHAR(50),
     tarikh_keputusan_ketua_jabatan TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    ulasan_csm1 TEXT,
-    ulasan_csm2 TEXT,
-    ulasan_hq TEXT,
-    ulasan_kewangan TEXT,
-
     status_permohonan ENUM('Belum Disemak','Selesai','Dikuiri', 'Tolak', 'Lulus') DEFAULT 'Belum Disemak',
     kedudukan_permohonan ENUM('Pemohon','CSM', 'HQ', 'CSM2', 'Kewangan') DEFAULT 'Pemohon',
 
@@ -151,13 +161,12 @@ CREATE TABLE IF NOT EXISTS wilayah_asal (
 
 
     FOREIGN KEY (user_kp) REFERENCES user(kp),
-    FOREIGN KEY (kp_ketua_jabatan) REFERENCES user(kp),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 -- Create table for children's information
-CREATE TABLE IF NOT EXISTS wilayah_asal_pengikut (
+CREATE TABLE `wilayah_asal_pengikut` (
     id INT PRIMARY KEY AUTO_INCREMENT,
 
     wilayah_asal_id INT NOT NULL,
@@ -175,18 +184,19 @@ CREATE TABLE IF NOT EXISTS wilayah_asal_pengikut (
 );
 
 -- Create table for document uploads
-CREATE TABLE IF NOT EXISTS documents (
+CREATE TABLE `documents` (
     id INT PRIMARY KEY AUTO_INCREMENT,
     wilayah_asal_id INT,
     file_name VARCHAR(255) NOT NULL,
     file_path VARCHAR(255) NOT NULL,
     file_type VARCHAR(50) NOT NULL,
     file_size INT NOT NULL,
-    file_class_origin ENUM('pemohon', 'csm1', 'csm2', 'hq', 'kewangan') DEFAULT 'pemohon',
-    file_uploader_origin VARCHAR(20) NOT NULL,
+    description TEXT,
+    file_origin ENUM('pemohon', 'csm1', 'csm2', 'hq', 'kewangan') DEFAULT 'pemohon',
+    file_origin_id VARCHAR(20) NOT NULL,
     upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     description TEXT,
-    FOREIGN KEY (wilayah_asal_id) REFERENCES wilayah_asal(id) ON DELETE CASCADE, 
+    FOREIGN KEY (wilayah_asal_id) REFERENCES wilayah_asal(id) ON DELETE CASCADE,
     FOREIGN KEY (file_uploader_origin) REFERENCES user(kp) ON DELETE CASCADE
 );
 
