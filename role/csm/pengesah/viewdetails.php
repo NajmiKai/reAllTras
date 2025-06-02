@@ -7,7 +7,21 @@ include '../../../connection.php';
         exit();
     }
 
+     // Set session timeout duration (in seconds)
+     $timeout_duration = 900; // 900 seconds = 15 minutes
 
+     // Check if the timeout is set and whether it has expired
+     if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY']) > $timeout_duration) {
+         // Session expired
+         session_unset();
+         session_destroy();
+         header("Location: /reAllTras/login.php?timeout=1");
+         exit();
+     }
+     // Update last activity time
+     $_SESSION['LAST_ACTIVITY'] = time();
+
+     
     $admin_name = $_SESSION['admin_name'];
     $admin_id = $_SESSION['admin_id'];
     $admin_role = $_SESSION['admin_role'];
@@ -120,7 +134,7 @@ include '../../../connection.php';
             <a href="permohonanIbuPejabat.php">Permohonan Ibu Pejabat</a>
         </div>
 
-        <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a>
+        <!-- <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a> -->
         <a href="profile.php"><i class="fas fa-user me-2"></i>Paparan Profil</a>
         <a href="../../../logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
     </div>
@@ -413,16 +427,15 @@ include '../../../connection.php';
                         <option value="tidak disokong">Tidak disokong</option>
                     </select>
                 </div>
-                <div class="col-md-8 mb-3" id="ulasan-section" style="display: none;">
-                    <label for="ulasan" class="form-label">Ulasan (jika dikuiri)</label>
-                    <textarea class="form-control" name="ulasan" id="ulasan" rows="4" placeholder="Nyatakan sebab dikuiri..."></textarea>
+                <div class="col-md-8 mb-3" id="ulasanDiv" style="display: none;">
+                    <label for="ulasanText" class="form-label">Ulasan (jika dikuiri)</label>
+                    <textarea class="form-control" name="ulasan" id="ulasanText" rows="4" placeholder="Nyatakan sebab dikuiri..."></textarea>
                 </div>
             </div>
         </div>
 
             </div>
             <input type="hidden" name="wilayah_asal_id" value="<?= $wilayah_asal_id ?>">
-            <input type="hidden" name="redirect_source" value="permohonanPengguna.php">
 
             <div class="d-flex justify-content-between mt-4">
                 <a href="permohonanPengguna.php" class="btn btn-secondary">
@@ -459,16 +472,18 @@ document.querySelector('.toggle-sidebar').addEventListener('click', function (e)
     }
 
     function toggleUlasan() {
-    const select = document.getElementById('status_select');
-    const ulasanDiv = document.getElementById('ulasan-section');
-    if (select.value === 'tidak disokong') {
-        ulasanDiv.style.display = 'block';
-        document.getElementById('ulasan').setAttribute('required', 'required');
-    } else {
-        ulasanDiv.style.display = 'none';
-        document.getElementById('ulasan').removeAttribute('required');
+        const select = document.getElementById('status_select');
+        const ulasanDiv = document.getElementById('ulasanDiv');
+        const ulasanText = document.getElementById('ulasanText');
+        
+        if (select.value === 'tidak disokong') {
+            ulasanDiv.style.display = 'block';
+            ulasanText.setAttribute('required', 'required');
+        } else {
+            ulasanDiv.style.display = 'none';
+            ulasanText.removeAttribute('required');
+        }
     }
-}
 </script>
 </body>
 </html>

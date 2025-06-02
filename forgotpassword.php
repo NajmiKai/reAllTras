@@ -18,12 +18,15 @@ $showSuccess = isset($_GET['status']) && $_GET['status'] === 'sent';
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background: url('background.png') repeat;
-            background-size: 180px;
+            /* background-size: 180px; */
             min-height: 100vh;
             display: flex;
+            background-image: url('assets/background.jpg');
             align-items: center;
             justify-content: center;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
 
         .login-wrapper {
@@ -96,7 +99,7 @@ $showSuccess = isset($_GET['status']) && $_GET['status'] === 'sent';
         <form method="POST" action="send-reset.php">
             <div class="mb-3">
                 <label for="email" class="form-label">Alamat Emel</label>
-                <input type="email" class="form-control" name="email" id="email" placeholder="cth: nama@email.com" required>
+                <input type="email" class="form-control" name="email" id="email" placeholder="Emel" required>
             </div>
 
             <button type="submit" class="btn btn-primary btn-login">Hantar Pautan Reset</button>

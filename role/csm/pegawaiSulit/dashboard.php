@@ -7,18 +7,66 @@ if (!isset($_SESSION['admin_id'])) {
     exit();
 }
 
+ // Set session timeout duration (in seconds)
+ $timeout_duration = 900; // 900 seconds = 15 minutes
+
+ // Check if the timeout is set and whether it has expired
+ if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY']) > $timeout_duration) {
+     // Session expired
+     session_unset();
+     session_destroy();
+     header("Location: /reAllTras/login.php?timeout=1");
+     exit();
+ }
+ // Update last activity time
+$_SESSION['LAST_ACTIVITY'] = time();
+
+$admin_id = $_SESSION['admin_id'];
 $admin_name = $_SESSION['admin_name'];
 $admin_role = $_SESSION['admin_role'];
 $admin_icNo = $_SESSION['admin_icNo'];
 $admin_email = $_SESSION['admin_email'];
 $admin_phoneNo = $_SESSION['admin_phoneNo'];
 
+
+// Function to count rows by table and status
+function countByStatus($conn, $table, $admin_id, $status = 'total') {
+    if ($status === 'total') {
+        // Count all rows for this admin_id without status filter
+        $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE pegSulit_csm_id = ? OR status = 'Menunggu pengesahan pegawai sulit CSM'";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("i", $admin_id);
+    } elseif ($status === 'Sedang diproses') {
+        $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE status = 'Menunggu pengesahan pegawai sulit CSM'";
+        $stmt = $conn->prepare($query);
+    } elseif ($status === 'Berjaya diproses') {
+        $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE pegSulit_csm_id = ? ";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("i", $admin_id);
+    } else {
+        return 0;
+    }
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+
+    return (int)$row['jumlah'];
+}
+
+
 $stats = [
-    "total" => ["Wilayah Asal" => 22, "Tugas Rasmi" => 12],
-    "processing" => ["Wilayah Asal" => 7, "Tugas Rasmi" => 12],
-    "approved" => ["Wilayah Asal" => 14, "Tugas Rasmi" => 0],
-    "rejected" => ["Wilayah Asal" => 14, "Tugas Rasmi" => 0]
+    'total' => [],
+    'processing' => [],
+    'approved' => [],
+    'rejected' => []
 ];
+
+// Fill the counts for Wilayah Asal
+$stats['total']['Wilayah Asal'] = countByStatus($conn, 'wilayah_asal', $admin_id, 'total');
+$stats['processing']['Wilayah Asal'] = countByStatus($conn, 'wilayah_asal', $admin_id, 'Sedang diproses');
+$stats['approved']['Wilayah Asal'] = countByStatus($conn, 'wilayah_asal', $admin_id, 'Berjaya diproses');
+$stats['rejected']['Wilayah Asal'] = 0;
 
 ?>
 <!DOCTYPE html>
@@ -60,7 +108,7 @@ $stats = [
         <a href="dashboard.php" class="active"> <i class="fas fa-home me-2"></i>Laman Utama</a>
         <h6 class="text mt-4">BORANG PERMOHONAN</h6>
         <a href="wilayahAsal.php"><i class="fas fa-tasks me-2"></i>Wilayah Asal</a>
-        <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a>
+        <!-- <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a> -->
         <a href="profile.php"><i class="fas fa-user me-2"></i>Paparan Profil</a>
         <a href="../../../logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
     </div>
@@ -72,6 +120,7 @@ $stats = [
 
         <div class="greeting-box">
             <?php  
+                date_default_timezone_set('Asia/Kuala_Lumpur');
                 $time = date('H');
                 if ($time < 12) {
                     $greeting = 'Selamat Pagi';
@@ -92,7 +141,6 @@ $stats = [
                     <i class="fas fa-user-plus"></i>
                     <h6>Jumlah Permohonan</h6>
                     <p>Wilayah Asal: <?= $stats['total']['Wilayah Asal'] ?></p>
-                    <p>Tugas Rasmi: <?= $stats['total']['Tugas Rasmi'] ?></p>
                 </div>
             </div>
             <div class="col-md-3">
@@ -100,7 +148,6 @@ $stats = [
                     <i class="fas fa-spinner"></i>
                     <h6>Sedang Diproses</h6>
                     <p>Wilayah Asal: <?= $stats['processing']['Wilayah Asal'] ?></p>
-                    <p>Tugas Rasmi: <?= $stats['processing']['Tugas Rasmi'] ?></p>
                 </div>
             </div>
             <div class="col-md-3">
@@ -108,7 +155,6 @@ $stats = [
                     <i class="fas fa-check-circle"></i>
                     <h6>Berjaya Diproses</h6>
                     <p>Wilayah Asal: <?= $stats['approved']['Wilayah Asal'] ?></p>
-                    <p>Tugas Rasmi: <?= $stats['approved']['Tugas Rasmi'] ?></p>
                 </div>
             </div>
             <div class="col-md-3">
@@ -116,7 +162,6 @@ $stats = [
                     <i class="fas fa-times-circle"></i>
                     <h6>Permohonan Dikuiri</h6>
                     <p>Wilayah Asal: <?= $stats['rejected']['Wilayah Asal'] ?></p>
-                    <p>Tugas Rasmi: <?= $stats['rejected']['Tugas Rasmi'] ?></p>
                 </div>
             </div> 
         </div>

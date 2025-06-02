@@ -2,10 +2,26 @@
 session_start();
 include '../../../connection.php';
 
+
+// Check if user is logged in
 if (!isset($_SESSION['admin_id'])) {
     header("Location: login.php");
     exit();
 }
+
+// Set session timeout duration (in seconds)
+$timeout_duration = 900; // 900 seconds = 15 minutes
+
+// Check if the timeout is set and whether it has expired
+if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY']) > $timeout_duration) {
+    // Session expired
+    session_unset();
+    session_destroy();
+    header("Location: /reAllTras/login.php?timeout=1");
+    exit();
+}
+// Update last activity time
+$_SESSION['LAST_ACTIVITY'] = time();
 
 $admin_id = $_SESSION['admin_id'];
 $admin_name = $_SESSION['admin_name'];
@@ -14,43 +30,49 @@ $admin_icNo = $_SESSION['admin_icNo'];
 $admin_email = $_SESSION['admin_email'];
 $admin_phoneNo = $_SESSION['admin_phoneNo'];
 
-// Initialize stats array
-$stats = [
-    "total" => ["Wilayah Asal" => 0],
-    "processing" => ["Wilayah Asal" => 0],
-    "approved" => ["Wilayah Asal" => 0],
-    "rejected" => ["Wilayah Asal" => 0]
-];
+
 
 // Function to count rows by table and status
-function countByStatus($conn, $table, $admin_id, $status = null) {
-    $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE pbr_csm1_id = ?";
-    $params = [$admin_id];
-
-    if ($status !== null) {
-        $query .= " AND status = ?";
-        $params[] = $status;
-    }
-
-    $stmt = $conn->prepare($query);
-    if (count($params) === 2) {
-        $stmt->bind_param("is", $params[0], $params[1]);
+function countByStatus($conn, $table, $admin_id, $status = 'total') {
+    if ($status === 'total') {
+        // Count all rows for this admin_id without status filter
+        $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE pbr_csm1_id = ? OR pbr_csm2_id = ? OR status = 'Menunggu pengesahan PBR CSM' OR status = 'Menunggu pengesahan PBR2 CSM' OR status IS NULL OR status = 'Kembali ke PBR CSM'";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("ii", $admin_id, $admin_id);
+    } elseif ($status === 'Sedang diproses') {
+        $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE status = 'Menunggu pengesahan PBR CSM' OR status IS NULL OR status = 'Menunggu pengesahan PBR2 CSM'";
+        $stmt = $conn->prepare($query);
+    } elseif ($status === 'Berjaya diproses') {
+        $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE pbr_csm1_id = ? OR pbr_csm2_id = ? ";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("ii", $admin_id, $admin_id);
+    } elseif ($status === 'Dikuiri') {
+        $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE status = 'Kembali ke PBR CSM'";
+        $stmt = $conn->prepare($query);
     } else {
-        $stmt->bind_param("i", $params[0]);
+        return 0;
     }
 
     $stmt->execute();
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
+
     return (int)$row['jumlah'];
 }
 
-// Wilayah Asal counts
-$stats['total']['Wilayah Asal'] = countByStatus($conn, 'wilayah_asal', $admin_id);
-$stats['processing']['Wilayah Asal'] = countByStatus($conn, 'wilayah_asal', $admin_id, 'processing');
-$stats['approved']['Wilayah Asal'] = countByStatus($conn, 'wilayah_asal', $admin_id, 'approved');
-$stats['rejected']['Wilayah Asal'] = countByStatus($conn, 'wilayah_asal', $admin_id, 'rejected');
 
+$stats = [
+    'total' => [],
+    'processing' => [],
+    'approved' => [],
+    'rejected' => []
+];
+
+// Fill the counts for Wilayah Asal
+$stats['total']['Wilayah Asal'] = countByStatus($conn, 'wilayah_asal', $admin_id, 'total');
+$stats['processing']['Wilayah Asal'] = countByStatus($conn, 'wilayah_asal', $admin_id, 'Sedang diproses');
+$stats['approved']['Wilayah Asal'] = countByStatus($conn, 'wilayah_asal', $admin_id, 'Berjaya diproses');
+$stats['rejected']['Wilayah Asal'] = countByStatus($conn, 'wilayah_asal', $admin_id, 'Dikuiri');
 
 $currentPage = basename($_SERVER['PHP_SELF']);
 $submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'permohonanIbuPejabat.php', 'permohonanDikuiri.php']);
@@ -120,6 +142,7 @@ $submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'permohonanIbuP
 
         <div class="greeting-box">
             <?php  
+                date_default_timezone_set('Asia/Kuala_Lumpur');
                 $time = date('H');
                 if ($time < 12) {
                     $greeting = 'Selamat Pagi';

@@ -2,10 +2,25 @@
 session_start();
 include '../../../connection.php';
 
+    // Check if user is logged in
     if (!isset($_SESSION['admin_id'])) {
         header("Location: /reAllTras/login.php");
         exit();
     }
+
+  // Set session timeout duration (in seconds)
+    $timeout_duration = 900; // 900 seconds = 15 minutes
+
+    // Check if the timeout is set and whether it has expired
+    if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY']) > $timeout_duration) {
+        // Session expired
+        session_unset();
+        session_destroy();
+        header("Location: /reAllTras/login.php?timeout=1");
+        exit();
+    }
+    // Update last activity time
+    $_SESSION['LAST_ACTIVITY'] = time();
 
     $admin_name = $_SESSION['admin_name'];
     $admin_id = $_SESSION['admin_id'];
@@ -45,7 +60,6 @@ include '../../../connection.php';
 
         $isApproved = false; // Assume false initially
 
-        // Example query: (replace with your actual logic)
         $sql = "SELECT pbr_csm1_id FROM wilayah_asal WHERE id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("i", $wilayah_asal_id);
@@ -53,7 +67,7 @@ include '../../../connection.php';
         $stmt->bind_result($pbr_csm1_id);
         if ($stmt->fetch()) {
             if ($pbr_csm1_id === $admin_id || $pbr_csm1_id !== null) { 
-                $isApproved = true;
+                $isApproved = false;
             }
         }
         $stmt->close();
@@ -410,13 +424,14 @@ include '../../../connection.php';
                     <select class="form-select" name="keputusan" id="keputusan" required onchange="toggleUlasan()" <?php if ($isApproved) echo 'disabled'; ?>>
                         <option value="">-- Sila Pilih --</option>
                         <option value="Diluluskan">Diluluskan</option>
-                        <option value="Tidak diluluskan">Dikuiri</option>
+                        <option value="Tidak diluluskan">Tidak diluluskan</option>
                     </select>
                 </div>
-                <div class="col-md-12 mb-3" id="ulasan" style="display: none;">
-                    <label for="ulasan" class="form-label">Ulasan (jika dikuiri)</label>
-                    <textarea class="form-control" name="ulasan" id="ulasan" rows="4" placeholder="Nyatakan sebab dikuiri..." <?php if ($isApproved) echo 'disabled'; ?>></textarea>
+                <div class="col-md-12 mb-3" id="ulasanDiv" style="display: none;">
+                    <label for="ulasanText" class="form-label">Ulasan (jika dikuiri)</label>
+                    <textarea class="form-control" name="ulasan" id="ulasanText" rows="4" placeholder="Nyatakan sebab dikuiri..." <?php if ($isApproved) echo 'disabled'; ?>></textarea>
                 </div>
+
             </div>
         </div>
 
@@ -459,16 +474,19 @@ document.querySelector('.toggle-sidebar').addEventListener('click', function (e)
     }
 
     function toggleUlasan() {
-    const select = document.getElementById('keputusan');
-    const ulasanDiv = document.getElementById('ulasan');
-    if (select.value === 'Tidak diluluskan') {
-        ulasanDiv.style.display = 'block';
-        document.getElementById('ulasan').setAttribute('required', 'required');
-    } else {
-        ulasanDiv.style.display = 'none';
-        document.getElementById('ulasan').removeAttribute('required');
+        const select = document.getElementById('keputusan');
+        const ulasanDiv = document.getElementById('ulasanDiv');
+        const ulasanText = document.getElementById('ulasanText');
+        
+        if (select.value === 'Tidak diluluskan') {
+            ulasanDiv.style.display = 'block';
+            ulasanText.setAttribute('required', 'required');
+        } else {
+            ulasanDiv.style.display = 'none';
+            ulasanText.removeAttribute('required');
+        }
     }
-}
+
 </script>
 </body>
 </html>

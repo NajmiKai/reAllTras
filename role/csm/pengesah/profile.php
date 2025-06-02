@@ -7,6 +7,20 @@ if (!isset($_SESSION['admin_id'])) {
     exit();
 }
 
+ // Set session timeout duration (in seconds)
+ $timeout_duration = 900; // 900 seconds = 15 minutes
+
+ // Check if the timeout is set and whether it has expired
+ if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY']) > $timeout_duration) {
+     // Session expired
+     session_unset();
+     session_destroy();
+     header("Location: /reAllTras/login.php?timeout=1");
+     exit();
+ }
+ // Update last activity time
+ $_SESSION['LAST_ACTIVITY'] = time();
+
 $currentPage = basename($_SERVER['PHP_SELF']);
 $submenuOpen = in_array($currentPage, ['perrmohonanPengguna.php', 'permohonanIbuPejabat.php']);
 $submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'perrmohonanIbuPejabat.php']);
@@ -54,6 +68,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user['email'] = $email;
         $user['phoneNo'] = $phoneNo;
         $user['icNo'] = $icNo;
+
+         // Update session data so the top navbar reflects the change
+         $_SESSION['admin_name'] = $name;
+         $_SESSION['admin_email'] = $email;
+         $_SESSION['admin_icNo'] = $icNo;
+         $_SESSION['admin_phoneNo'] = $phoneNo;
     } else {
         $success = "Ralat ketika mengemaskini profil.";
     }
@@ -112,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <a href="permohonanIbuPejabat.php">Permohonan Ibu Pejabat</a>
         </div>
 
-        <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a>
+        <!-- <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a> -->
         <a href="profile.php" class="active"><i class="fas fa-user me-2"></i>Paparan Profil</a>
         <a href="../../../logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
     </div>
@@ -121,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
-            <div class="card card-profile shadow-sm p-4" style="margin-top: 3rem;">
+            <div class="card card-profile shadow-sm p-4" style="margin-top: 3rem; margin-left: 250px;">
             <?php if (!empty($success)): ?>
                         <div class="alert alert-success text-center"><?= $success ?></div>
                     <?php endif; ?>

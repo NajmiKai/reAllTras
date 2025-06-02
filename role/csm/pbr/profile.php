@@ -2,10 +2,25 @@
 session_start();
 include '../../../connection.php';
 
+// Check if user is logged in
 if (!isset($_SESSION['admin_id'])) {
     header("Location: login.php");
     exit();
 }
+
+// Set session timeout duration (in seconds)
+$timeout_duration = 900; // 900 seconds = 15 minutes
+
+// Check if the timeout is set and whether it has expired
+if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY']) > $timeout_duration) {
+    // Session expired
+    session_unset();
+    session_destroy();
+    header("Location: /reAllTras/login.php?timeout=1");
+    exit();
+}
+// Update last activity time
+$_SESSION['LAST_ACTIVITY'] = time();
 
 $currentPage = basename($_SERVER['PHP_SELF']);
 $submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'permohonanIbuPejabat.php', 'permohonanDikuiri.php']);
@@ -53,6 +68,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user['email'] = $email;
         $user['phoneNo'] = $phoneNo;
         $user['icNo'] = $icNo;
+
+         // Update session data so the top navbar reflects the change
+         $_SESSION['admin_name'] = $name;
+         $_SESSION['admin_email'] = $email;
+         $_SESSION['admin_icNo'] = $icNo;
+         $_SESSION['admin_phoneNo'] = $phoneNo;
     } else {
         $success = "Ralat ketika mengemaskini profil.";
     }

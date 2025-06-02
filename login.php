@@ -2,6 +2,11 @@
 session_start();
 include 'connection.php'; 
 
+$timeoutMessage = '';
+if (isset($_GET['timeout']) && $_GET['timeout'] == 1) {
+    $timeoutMessage = "Your session has expired due to inactivity. Please log in again.";
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $password = $_POST['password'];
@@ -160,11 +165,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         </div>
 
-       <!-- <form id="loginForm" onsubmit="return handleLogin(event)">-->
+        <?php if (!empty($timeoutMessage)): ?>
+            <div style="color: red; margin-bottom: 10px;">
+                <?php echo $timeoutMessage; ?>
+            </div>
+        <?php endif; ?>
+
        <form id="loginForm" method="POST" action="">
             <div class="mb-3">
-                <label class="form-label">Email</label>
-                <input type="text" class="form-control" name="email" id="email" placeholder="Email" required>
+                <label class="form-label">Emel</label>
+                <input type="text" class="form-control" name="email" id="email" placeholder="Emel" required>
             </div>
 
             <div class="mb-3">

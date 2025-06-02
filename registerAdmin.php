@@ -45,8 +45,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background: url('background.png') repeat;
-            background-size: 180px;
+            /* background-size: 180px; */
+            min-height: 100vh;
+            display: flex;
+            background-image: url('assets/background.jpg');
+            align-items: center;
+            justify-content: center;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
 
         .form-wrapper {
@@ -113,8 +120,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div class="col-md-6">
-                <label class="form-label">Email</label>
-                <input type="email" class="form-control" name="email" placeholder="Email" required>
+                <label class="form-label">Emel</label>
+                <input type="email" class="form-control" name="email" placeholder="Emel" required>
             </div>
             <div class="col-md-6">
                 <label class="form-label">No Telefon</label>
@@ -131,9 +138,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div class="col-md-12">
-            <label class="form-label">Bahagian</label>
+            <label class="form-label">Peranan Admin</label>
             <select class="form-select" name="role">
-                <option selected disabled>Pilih Bahagian</option>
+                <option selected disabled>Pilih peranan</option>
                 <?php
             
                 $sql = "SELECT role FROM adminRole";

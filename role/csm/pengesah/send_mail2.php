@@ -32,8 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $tarikh_keputusan = date('Y-m-d H:i:s');
         // 2. Update wilayah_asal
-        $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, pengesah_csm2_id = ?, tarikh_keputusan_pengesah_csm2 = ? WHERE id = ?");
-        $stmt_wilayah->bind_param("sssi", $status, $admin_id, $tarikh_keputusan, $wilayah_asal_id);
+        $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?,  status_permohonan, kedudukan_permohonan, pengesah_csm2_id = ?, tarikh_keputusan_pengesah_csm2 = ? WHERE id = ?");
+        $stmt_wilayah->bind_param("sssssi", $status, "Lulus", "CSM2", $admin_id, $tarikh_keputusan, $wilayah_asal_id);
         $stmt_wilayah->execute();
         $stmt_wilayah->close();
 

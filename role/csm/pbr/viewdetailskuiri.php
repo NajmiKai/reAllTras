@@ -7,6 +7,20 @@ include '../../../connection.php';
         exit();
     }
 
+    // Set session timeout duration (in seconds)
+    $timeout_duration = 900; // 900 seconds = 15 minutes
+
+    // Check if the timeout is set and whether it has expired
+    if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY']) > $timeout_duration) {
+        // Session expired
+        session_unset();
+        session_destroy();
+        header("Location: /reAllTras/login.php?timeout=1");
+        exit();
+    }
+    // Update last activity time
+    $_SESSION['LAST_ACTIVITY'] = time();
+
     $admin_name = $_SESSION['admin_name'];
     $admin_id = $_SESSION['admin_id'];
     $admin_role = $_SESSION['admin_role'];

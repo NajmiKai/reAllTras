@@ -7,6 +7,20 @@ include '../../../connection.php';
         exit();
     }
 
+     // Set session timeout duration (in seconds)
+     $timeout_duration = 900; // 900 seconds = 15 minutes
+
+     // Check if the timeout is set and whether it has expired
+     if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY']) > $timeout_duration) {
+         // Session expired
+         session_unset();
+         session_destroy();
+         header("Location: /reAllTras/login.php?timeout=1");
+         exit();
+     }
+     // Update last activity time
+     $_SESSION['LAST_ACTIVITY'] = time();
+
     $admin_name = $_SESSION['admin_name'];
     $admin_id = $_SESSION['admin_id'];
     $admin_role = $_SESSION['admin_role'];
@@ -108,7 +122,7 @@ include '../../../connection.php';
         <a href="dashboard.php"> <i class="fas fa-home me-2"></i>Laman Utama</a>
         <h6 class="text mt-4">BORANG PERMOHONAN</h6>
         <a href="wilayahAsal.php" class="active"><i class="fas fa-tasks me-2"></i>Wilayah Asal</a>  
-        <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a>
+        <!-- <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a> -->
         <a href="profile.php"><i class="fas fa-user me-2"></i>Paparan Profil</a>
         <a href="../../../logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
     </div>

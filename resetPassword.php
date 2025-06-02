@@ -55,12 +55,15 @@ if (isset($_GET['token'])) {
 <style>
         body {
             font-family: 'Inter', sans-serif;
-            background: url('background.png') repeat;
-            background-size: 180px;
+            /* background-size: 180px; */
             min-height: 100vh;
             display: flex;
+            background-image: url('assets/background.jpg');
             align-items: center;
             justify-content: center;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
 
         .login-wrapper {
@@ -136,7 +139,7 @@ if (isset($_GET['token'])) {
 <body style="background-color: #f0f2f5;">
     <div class="login-wrapper">
     <div class="login-title">
-            <img src="assets/ALLTRAS_logo.jpg" alt="ALLTRAS" height="60"><br>
+            <img src="assets/ALLTRAS_logo.jpg" alt="ALLTRAS" height="100"><br>
             ALL REGION TRAVELLING SYSTEM
         </div>
 
