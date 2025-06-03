@@ -1,0 +1,5 @@
+# Ignore uploads directory
+uploads/
+
+# Ignore connection file
+connection.php 

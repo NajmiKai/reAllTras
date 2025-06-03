@@ -129,7 +129,7 @@ if (isset($_FILES['dokumen_sokongan'])) {
 
 if ($success) {
     $_SESSION['success'] = "Semua dokumen berjaya dimuat naik.";
-    header("Location: ../borangWA5.php");
+    header("Location: ../borangWA5.php?id=" . $wilayah_asal_id);
 } else {
     $_SESSION['error'] = implode("<br>", $error_messages);
     header("Location: ../borangWA4.php");
