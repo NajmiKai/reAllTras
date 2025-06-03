@@ -20,33 +20,77 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $status = 'Menunggu pengesahan PBR2 CSM';
 
 
-          // Handle File Uploads
-          if (!empty($_FILES['dokumen']['name'][0])) {
+          // 1. Handle Multiple File Uploads
+        if (!empty($_FILES['dokumen']['name'][0])) {
             foreach ($_FILES['dokumen']['name'] as $key => $name) {
-                $dokumen_name = $_FILES['dokumen']['name'][$key]; // Original file name
-                $dokumen_tmp = $_FILES['dokumen']['tmp_name'][$key];
 
-                $upload_path = '../../../documents/' . basename($dokumen_name);
-
-                if (move_uploaded_file($dokumen_tmp, $upload_path)) {
-                    // Insert both file_name and file_path
-                    $stmt_doc = $conn->prepare("INSERT INTO documents (file_name, file_path, wilayah_asal_id) VALUES (?, ?, ?)");
-                    $stmt_doc->bind_param("ssi", $dokumen_name, $upload_path, $wilayah_asal_id);
-                    $stmt_doc->execute();
-                    $stmt_doc->close();
-                } 
-            }
-        }
-
+                $file_name = $_FILES['dokumen']['name'][$key];               // file_name
+                $file_type = $_FILES['dokumen']['type'][$key];               // file_type
+                $file_size = $_FILES['dokumen']['size'][$key];               // file_size
+                $description = "Surat Kelulusan";  
+                 
+            // Build unique filename
+            $file_extension = pathinfo($file_name, PATHINFO_EXTENSION);
         
+            $unique_filename = uniqid() . '_' . $wilayah_asal_id . '_' . str_replace(' ', '_', $description) . '.' . $file_extension;
+            
+            $dokumen_tmp = $_FILES['dokumen']['tmp_name'][$key];
+            $upload_dir = '../../../uploads/hq';
+            $target_path = $upload_dir . '/' . $unique_filename;
+
+             // Create folder if it doesn't exist
+                if (!is_dir($upload_dir)) {
+                    mkdir($upload_dir, 0777, true);
+                }
+        
+            if (move_uploaded_file($dokumen_tmp, $target_path)) {
+                // File path to be stored in DB (web-accessible)
+                $web_path = '../../../uploads/hq/' . $unique_filename;
+
+                $sql = "INSERT INTO documents (
+                            wilayah_asal_id,       -- INT
+                            file_name,             -- VARCHAR
+                            file_path,             -- VARCHAR
+                            file_type,             -- VARCHAR
+                            file_size,             -- INT
+                            description,           -- TEXT
+                            file_uploader_origin,  -- VARCHAR
+                            file_class_origin      -- ENUM
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, 'hq')";
+        
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("isssiss",
+                    $wilayah_asal_id,
+                    $file_name,
+                    $web_path,
+                    $file_type,
+                    $file_size,
+                    $description,
+                    $admin_id 
+                );
+        
+                if ($stmt->execute()) {
+                    // return true;
+                } else {
+                    error_log("DB error: " . $stmt->error);
+                }
+            } else {
+                error_log("Failed to move uploaded file.");
+            }
+    }
+}
+
 
         $tarikh_keputusan = date('Y-m-d H:i:s');
+        $status_permohonan = "Lulus";
+        $kedudukan_permohonan = "HQ";
         // 2. Update wilayah_asal
-        $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?,  status_permohonan, kedudukan_permohonan,  penyemak_HQ2_id = ?, tarikh_keputusan_penyemak_HQ2 = ? WHERE id = ?");
-        $stmt_wilayah->bind_param("sssssi", $status, "Lulus", "HQ", $admin_id, $tarikh_keputusan, $wilayah_asal_id);
+        $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, status_permohonan = ?, kedudukan_permohonan = ?, penyemak_HQ2_id = ?, tarikh_keputusan_penyemak_HQ2 = ? WHERE id = ?");
+        $stmt_wilayah->bind_param("sssssi", $status, $status_permohonan, $kedudukan_permohonan, $admin_id, $tarikh_keputusan, $wilayah_asal_id);
         $stmt_wilayah->execute();
         $stmt_wilayah->close();
 
+    
 
         $sql = "SELECT * FROM admin WHERE role = 'PBR CSM'";
         $result = $conn->query($sql);

@@ -1,3 +1,88 @@
+<?php
+session_start();
+include '../../../connection.php';
+
+if (!isset($_SESSION['admin_id'])) {
+  header("Location: login.php");
+  exit();
+}
+
+// Set session timeout duration (in seconds)
+$timeout_duration = 900; // 900 seconds = 15 minutes
+
+// Check if the timeout is set and whether it has expired
+if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY']) > $timeout_duration) {
+   // Session expired
+   session_unset();
+   session_destroy();
+   header("Location: /reAllTras/login.php?timeout=1");
+   exit();
+}
+// Update last activity time
+$_SESSION['LAST_ACTIVITY'] = time();
+
+
+$admin_name = $_SESSION['admin_name'];
+$admin_id = $_SESSION['admin_id'];
+$admin_role = $_SESSION['admin_role'];
+$admin_icNo = $_SESSION['admin_icNo'];
+$admin_email = $_SESSION['admin_email'];
+$admin_phoneNo = $_SESSION['admin_phoneNo'];
+
+
+if (isset($_GET['kp'])) {
+  $kp = $_GET['kp'];
+
+// Fetch user data from database
+$sql = "SELECT * FROM user JOIN wilayah_asal ON user.kp = wilayah_asal.user_kp WHERE user.kp = ? ";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $kp);
+$stmt->execute();
+$result = $stmt->get_result();
+$application_data = $result->fetch_assoc();
+
+
+setlocale(LC_TIME, 'ms_MY'); // Optional: for Malay locale (if supported)
+date_default_timezone_set('Asia/Kuala_Lumpur'); // Set timezone
+
+$bulan_malay = [
+    'January' => 'Januari',
+    'February' => 'Februari',
+    'March' => 'Mac',
+    'April' => 'April',
+    'May' => 'Mei',
+    'June' => 'Jun',
+    'July' => 'Julai',
+    'August' => 'Ogos',
+    'September' => 'September',
+    'October' => 'Oktober',
+    'November' => 'November',
+    'December' => 'Disember'
+];
+
+// Get today's date parts
+$day = date("j");                // Day of month without leading zero (1-31)
+$english_month = date("F");     // Full month name in English (e.g., "March")
+$month_malay = $bulan_malay[$english_month]; // Translate to Malay
+$year = date("Y");              // Full year (e.g., "2025")
+
+$full_date = "$day $month_malay $year";
+
+// Islamic date formatter
+// $today = date('Y-m-d'); // format: 2025-06-03
+// $api = "http://api.aladhan.com/v1/gToH?date=$today";
+
+// $response = file_get_contents($api);
+// $data = json_decode($response, true);
+
+// if ($data && $data['code'] == 200) {
+//     $hijri = $data['data']['hijri']['date']; // e.g. "26-11-1446"
+//     $day = $data['data']['hijri']['day'];
+//     $month = $data['data']['hijri']['month']['ar']; // Arabic
+//     $year = $data['data']['hijri']['year'];
+
+?>
+
 <!DOCTYPE html>
 <html lang="ms">
 <head>
@@ -14,21 +99,35 @@
         text-align: justify;
       }
 
-      body {
+      .footer-line {
+      -webkit-print-color-adjust: exact; /* For Safari/Chrome */
+      print-color-adjust: exact;         /* For Firefox */
+    }
+
+      html, body {
         margin: 0;
         font-family: "Arial", serif;
         font-size: 11pt;
-        /* text-align: justify; */
+        height: 297mm; /* height of A4 */
+        position: relative;
+        text-align: justify;
       }
 
-      .footer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      text-align: center;
-      font-size: 9pt;
-    }
+      .page-break {
+        page-break-before: always;
+      }
+
+      footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        font-size: 9pt;
+        text-align: center;
+        border-top: 1px solid black;
+        padding-top: 5px;
+        background: white;
+      }
 
       .no-print {
         display: none;
@@ -39,8 +138,16 @@
       font-family: "Arial", serif;
       margin: 20mm;
       font-size: 11pt;
+      margin-top: 10px !important;
+      padding-top: 10px !important;
       /* text-align: justify; */
     }
+
+    header, .logo-area, .letterhead {
+      margin-top: 0 !important;
+      padding-top: 0 !important;
+    }
+
 
     img {
     max-width: 100px !important; /* Resize large images */
@@ -50,7 +157,6 @@
     table {
     width: 80%;
       border: none;
-      margin-top: 5px;
     }
 
     td {
@@ -86,12 +192,12 @@
 
 <div style="display: flex; justify-content: space-between; align-items: flex-start;">
   <!-- Left Logo -->
-  <div style="flex: 0 0 100px;">
+  <div style="flex: 0 0 80px;">
     <img src="../../../assets/JKDMLogo.png" alt="JKDM" width="100">
   </div>
 
   <!-- Middle Address -->
-  <div style="flex: 1; padding: 0 20px; font-size: 9pt;">
+  <div style="flex: 5; padding: 0 10px; font-size: 12px;">
     <p><b>JABATAN KASTAM DIRAJA MALAYSIA</b><br>
     Ibu Pejabat Kastam Diraja Malaysia<br>
     Bahagian Khidmat Pengurusan dan Sumber Manusia<br>
@@ -102,9 +208,9 @@
   </div>
 
   <!-- Right Contact Info -->
-  <div style="text-align: center; flex:0 0 220px; position: relative; top: 10px;">
+  <div style="text-align: center; flex:0 0 220px; position: relative; margin-top: -10px; margin-left: -40px;">
   <img src="../../../assets/JKDMLogo.png" alt="JKDM" width="80"><br>
-<div style="text-align: justify; font-size: 9pt;">
+<div style="text-align: justify; font-size: 12px;">
 <table style="text-align: left; width: 100%;">
 <col style="width: 40%;">
 <col style="width: 60%;">
@@ -125,38 +231,40 @@
   </div>
   </div>
 </div>
-<hr>
-<p>
-<table style="text-align: left; width: 50%;">
+<hr style="margin-bottom: 0px; margin-top: 0px;">
+<table style="text-align: left; width: 60%;">
   <colgroup>
     <col style="width: 10%;">
-    <col style="width: 40%;">
+    <col style="width: 50%;">
   </colgroup>
   <tr>
-    <td><b><strong>Ruj.Tuan</strong></b></td>
-    <td>: KE.WA(85)416/11Jld.13(70)</strong></td>
+    <td><strong>Ruj.Tuan &nbsp;</strong></td>
+    <td>:<span style="display:inline-block; width:150px;"></span>(<strong><span style="display:inline-block; width:30px;"></span></strong>)</td>
+
+    
   </tr>
   <tr>
-    <td><b><strong>Ruj. Kami</strong></b></td>
-    <td>: RMCD.500-9/5/24 Jld.11 (<strong>Qa</strong>)</strong></td>
+    <td><strong>Ruj. Kami &nbsp;</strong></td>
+    <td>:<span style="display:inline-block; width:150px;"></span>(<strong><span style="display:inline-block; width:30px;"></span></strong>)</td>
+
+    
   </tr>
   <tr>  
-    <td><b><strong>Tarikh</strong></b></td>
-    <td>: 10 Ramadan 1446H / Mac 2025</strong></td>
+    <td><strong>Tarikh &nbsp;</strong></td>
+    <td>:&nbsp; <?= $full_date ?></strong></td>
   </tr>
 </table>
-</p>
 
-<p>
+<br><p>
 Ketua Bahagian<br>
 Khidmat Pengurusan dan Sumber Manusia<br>
-Unit I, (WP Kuala Lumpur)<br>
-<u><strong>(u.p: Puan Aidiana binti Nordin)</strong></u>
+WP Kuala Lumpur<br>
+<strong>(u.p: <span style="display:inline-block; width:180px;"></span>)</strong>
 </p>
 
 <div class="section">
   <p>Puan,</p>
-  <p><strong>KELULUSAN KEMUDAHAN TAMBANG ZIARAH WILAYAH TAHUN 2025</strong>
+  <p style="margin-bottom: 0px; margin-top: 0px;"><strong>KELULUSAN KEMUDAHAN TAMBANG ZIARAH WILAYAH TAHUN 2025</strong></p>
 
   <table style="text-align: left;">
   <colgroup>
@@ -165,23 +273,22 @@ Unit I, (WP Kuala Lumpur)<br>
   </colgroup>
   <tr>
     <td><b>NAMA</b></td>
-    <td> <strong>: PUAN HASNIZA BT SAMSUDIN</strong></td>
+    <td> <strong>: <?= htmlspecialchars($application_data['nama_first'] . ' ' . $application_data['nama_last']) ?></strong></td>
   </tr>
   <tr>
     <td><b>JAWATAN</b></td>
-    <td> <strong>: PEMBANTU PENGUASA KASTAM GRED WK2</strong></td>
+    <td> <strong>: <?= htmlspecialchars($application_data['jawatan_gred']) ?></strong></td>
   </tr>
   <tr>  
     <td><b>WILAYAH ASAL</b></td>
-    <td> <strong>: SARAWAK</strong></td>
+    <td> <strong>: <?= htmlspecialchars($application_data['negeri_menetap']) ?></strong></td>
   </tr>
 </table>
-  </p>
 
-  <p>Dengan hormatnya saya diarahkan merujuk kepada perkara di atas.</p>
+  <br><p>Dengan hormatnya saya diarahkan merujuk kepada perkara di atas.</p>
 
   <ol start="2">
-    <li> &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;Sukacita dimaklumkan bahawa permohonan pegawai di atas untuk menuntut Kemudahan Tambang Ziarah Wilayah adalah <strong>DILULUSKAN</strong> oleh Ketua Jabatan seperti berikut:</li>
+    <li> &nbsp;&nbsp; Sukacita dimaklumkan bahawa permohonan pegawai di atas untuk menuntut Kemudahan Tambang Ziarah Wilayah adalah <strong>DILULUSKAN</strong> oleh Ketua Jabatan seperti berikut:</li>
   </ol>
 
   <table class="table table-bordered table-penempatan" style="border-collapse: collapse; border: 1px solid black;">
@@ -193,43 +300,118 @@ Unit I, (WP Kuala Lumpur)<br>
     <tr>
       <td><strong>Tarikh penempatan di wilayah penempatan</strong></td>
       <td>:</td>
-      <td>06 November 2009</td>
+      <?php 
+      // Convert to timestamp
+      $date = strtotime($application_data['tarikh_lapor_diri']);
+
+      // Format date as "dd Month yyyy" in Malay
+      setlocale(LC_TIME, 'ms_MY.UTF-8'); // Set Malay locale
+
+      // Format date using strftime
+    $tarikh_lapor_diri = strftime('%d %B %Y', $date);
+
+    // Check if month name is in English (fallback check)
+    if (preg_match('/January|February|March|April|May|June|July|August|September|October|November|December/', $tarikh_lapor_diri)) {
+        // Malay months map
+        $months = [
+            'January' => 'Januari',
+            'February' => 'Februari',
+            'March' => 'Mac',
+            'April' => 'April',
+            'May' => 'Mei',
+            'June' => 'Jun',
+            'July' => 'Julai',
+            'August' => 'Ogos',
+            'September' => 'September',
+            'October' => 'Oktober',
+            'November' => 'November',
+            'December' => 'Disember',
+        ];
+    
+        $tarikh_lapor_diri = strtr($tarikh_lapor_diri, $months);
+    }
+      ?>
+      <td><?=$tarikh_lapor_diri?></td>
     </tr>
     <tr>
+
+    <?php
+    $currentYear = date("Y");
+    ?>
       <td><strong>Tempoh penggunaan</strong></td>
       <td>:</td>
-      <td>01 Januari 2025 hingga 31 Disember 2025</td>
+      <td>01 Januari <?php echo $currentYear; ?> hingga 31 Disember <?php echo $currentYear; ?></td>
     </tr>
     <tr>
       <td><strong>Jenis kemudahan</strong></td>
       <td>:</td>
-        <td>Diri sendiri/Pasangan/anak ke ibu negeri/bandar utama di wilayah menetap ibu bapa yang diisytiharkan</td>
+        <td>
+        <?php
+          if ($application_data['jenis_permohonan'] == 'diri_sendiri') {
+              echo 'Diri sendiri/ pasangan/ anak ke ibu negeri/ bandar utama di wilayah menetap ibu bapa yang diisytiharkan/ wilayah lain';
+          } else {
+              echo 'Keluarga pegawai dari ibu negeri/ bandar utama di wilayah menetap ibu bapa yang diisytiharkan/ wilayah lain';
+          }?>
+        </td>
     </tr>
     <tr>
       <td><strong>Tarikh penggunaan</strong></td>
       <td>:</td>
-      <td>02 April 2025</td>
+      <?php 
+      // Convert to timestamp
+      $date = strtotime($application_data['tarikh_penerbangan_pergi']);
+
+      // Format date as "dd Month yyyy" in Malay
+      setlocale(LC_TIME, 'ms_MY.UTF-8'); // Set Malay locale
+
+      // Format date using strftime
+    $tarikh_penggunaan = strftime('%d %B %Y', $date);
+
+    // Check if month name is in English (fallback check)
+    if (preg_match('/January|February|March|April|May|June|July|August|September|October|November|December/', $tarikh_penggunaan)) {
+        // Malay months map
+        $months = [
+            'January' => 'Januari',
+            'February' => 'Februari',
+            'March' => 'Mac',
+            'April' => 'April',
+            'May' => 'Mei',
+            'June' => 'Jun',
+            'July' => 'Julai',
+            'August' => 'Ogos',
+            'September' => 'September',
+            'October' => 'Oktober',
+            'November' => 'November',
+            'December' => 'Disember',
+        ];
+        // Replace English month with Malay month
+        $tarikh_penggunaan = strtr($tarikh_penggunaan, $months);
+    }
+      ?>
+      <td><?=$tarikh_penggunaan?></td>
     </tr>
   </table>
 
   <ol start="3">
     <li>
-    &nbsp;&nbsp; &nbsp;&nbsp;  &nbsp;&nbsp;  Untuk makluman, kemudahan Tambang Ziarah Wilayah diberi <strong>sekali dalam tempoh (1) tahun kalendar</strong>. Kemudahan yang tidak digunakan dalam tempoh satu (1) tahun kalendar akan luput dan tidak boleh dibawa ke tahun berikutnya. Tarikh pegawai boleh menggunakan kemudahan seterusnya ialah mulai <strong>01 Januari 2026</strong> hingga <strong>31 Disember 2026</strong>.
+    &nbsp;&nbsp; Untuk makluman, kemudahan Tambang Ziarah Wilayah diberi <strong>sekali dalam tempoh (1) tahun kalendar</strong>. Kemudahan yang tidak digunakan dalam tempoh satu (1) tahun kalendar akan luput dan tidak boleh dibawa ke tahun berikutnya. Tarikh pegawai boleh menggunakan kemudahan seterusnya ialah mulai <strong>01 Januari 2026</strong> hingga <strong>31 Disember 2026</strong>.
     </li>
     <br><li>
-    &nbsp;&nbsp; &nbsp;&nbsp;  &nbsp;&nbsp;Bersama-sama ini dikembalikan borang permohonan yang telah diluluskan untuk tindakan pihak Puan selanjutnya. Kelulusan ini hendaklah direkodkan ke dalam Buku Perkhidmatan pegawai.
+    &nbsp;&nbsp; Bersama-sama ini dikembalikan borang permohonan yang telah diluluskan untuk tindakan pihak Puan selanjutnya. Kelulusan ini hendaklah direkodkan ke dalam Buku Perkhidmatan pegawai.
     </li>
   </ol>
 
-<br><br><br>
-<p><table style="text-align: left; width: 50%;">
+  <div class="page-break"></div>
+
+<br><br>
+<p><table style="text-align: left; width: 50%; margin-bottom: 70px;">
 <colgroup>
     <col style="width: 10%;">
     <col style="width: 40%;">
   </colgroup>
   <tr>
-    <td><b>Ruj.Kami</b></td>
-    <td>: RMCD.500-9/5/24 Jld.11 (<strong>Qa</strong>)</td>
+    <td>Ruj.Kami</td>
+    <td>:<span style="display:inline-block; width:150px;"></span>(<strong> <span style="display:inline-block; width:30px;"></span>  </strong>)</td>
   </tr>
 </table>
 </p>
@@ -243,7 +425,8 @@ Unit I, (WP Kuala Lumpur)<br>
 
 
 
-<strong>MOHD ZAIRI BIN MOHD YUNUS</strong><br>
+<br>
+(<span style="display:inline-block; width:200px;"></span>)<br>
 Bahagian Khidmat Pengurusan dan Sumber Manusia,<br>
 Cawangan Khidmat Pengurusan,<br>
 b.p Ketua Pengarah Kastam, <br>
@@ -254,15 +437,23 @@ Malaysia
 </div>
 
 
+<footer style="text-align: center;">
+  <div style="display: inline-block; text-align: center;">
+    <p style="font-size: 9pt; margin: 0;">CEKAP ‧ TANGKAS ‧ INTEGRITI</p>
+    <div style="height: 3px; background-color: yellow; margin-top: 2px;"></div>
+    <div style="height: 3px; background-color: blue; margin-top: 1px;"></div>
+  </div>
+</footer>
+
+<?php 
+}
+
+?>
 <script>
     window.onload = function() {
         window.print();
     };
 </script>
-<div class="footer">
-  <hr>
-  <p style="font-size: 9pt; text-align: center;">EKONOMI DIPELIHARA, SEMPADAN DIKAWAL</script></p>
-</div>
 
 </body>
 </html>

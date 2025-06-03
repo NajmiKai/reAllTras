@@ -43,7 +43,7 @@ $admin_phoneNo = $_SESSION['admin_phoneNo'];
 
 
 // Query user table
-$sql = "SELECT * FROM user JOIN wilayah_asal ON user.kp = wilayah_asal.user_kp WHERE status = 'Menunggu pengesahan Pegawai Sulit CSM'";
+$sql = "SELECT * FROM user JOIN wilayah_asal ON user.kp = wilayah_asal.user_kp WHERE status = 'Menunggu pengesahan pegawai sulit CSM'";
 $result = $conn->query($sql);
 
 $users = [];

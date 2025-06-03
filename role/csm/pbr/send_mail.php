@@ -2,7 +2,9 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
+// Enable error reporting to see the problem
 ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 require '../../../PHPMailer/src/Exception.php';
@@ -17,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $wilayah_asal_id = $_POST['wilayah_asal_id'];
         $keputusan = $_POST['keputusan'];
         $admin_id = $_SESSION['admin_id'];
-        $status = 'Menunggu Pengesahan Pegawai Sulit CSM';
+        $status = 'Menunggu pengesahan pegawai sulit CSM';
 
         $ulasan = null;
         if ($keputusan === 'Tidak diluluskan') {
@@ -36,26 +38,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $description = "Buku perkhidmatan";   
             // Build unique filename
             $file_extension = pathinfo($file_name, PATHINFO_EXTENSION);
-            // $unique_filename = uniqid() . '_' . $wilayah_asal_id . '_Buku_perkhidmatan.' . $file_extension;
         
-            // Target directory for saving the file
-            // if (!is_dir($upload_dir)) {
-            //     mkdir($upload_dir, 0777, true);
-            // }
-
             $unique_filename = uniqid() . '_' . $wilayah_asal_id . '_' . str_replace(' ', '_', $description) . '.' . $file_extension;
             
             $dokumen_tmp = $_FILES['dokumen']['tmp_name'][$key];
-            $upload_dir = '../../../uploads/csm1/' . $wilayah_asal_id;
+            $upload_dir = '../../../uploads/csm1';
             $target_path = $upload_dir . '/' . $unique_filename;
 
+             // Create folder if it doesn't exist
+                if (!is_dir($upload_dir)) {
+                    mkdir($upload_dir, 0777, true);
+                }
         
             if (move_uploaded_file($dokumen_tmp, $target_path)) {
                 // File path to be stored in DB (web-accessible)
-                $web_path = 'uploads/csm1/' . $wilayah_asal_id . '/' . $unique_filename;
+                $web_path = '../../../uploads/csm1/' . $unique_filename;
 
-        
-                // Final INSERT query: each column matched correctly
                 $sql = "INSERT INTO documents (
                             wilayah_asal_id,       -- INT
                             file_name,             -- VARCHAR
@@ -63,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             file_type,             -- VARCHAR
                             file_size,             -- INT
                             description,           -- TEXT
-                            file_uploader_origin,  -- VARCHAR (FK removed)
+                            file_uploader_origin,  -- VARCHAR
                             file_class_origin      -- ENUM
                         ) VALUES (?, ?, ?, ?, ?, ?, ?, 'csm1')";
         
@@ -75,11 +73,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $file_type,
                     $file_size,
                     $description,
-                    $admin_id // This must be set beforehand
+                    $admin_id 
                 );
         
                 if ($stmt->execute()) {
-                    return true;
+                    // return true;
                 } else {
                     error_log("DB error: " . $stmt->error);
                 }
@@ -139,8 +137,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $mail->SMTPSecure = 'tls';
                     $mail->Port = 587;
         
-                    $mail->setFrom($mail->Username, 'ALLTRAS System');
-                    $mail->addAddress($receiver_email, $receiver_name);
+                    $mail->setFrom($mail->Username);
+                    $mail->addAddress($receiver_email);
         
                     $mail->isHTML(true);
                     $mail->Subject = 'Permohonan Tambang Ziarah Wilayah (TZW) : Tindakan Semakan Permohonan';

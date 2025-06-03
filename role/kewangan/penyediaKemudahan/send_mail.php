@@ -15,35 +15,76 @@ include '../../../connection.php';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $wilayah_asal_id = $_POST['wilayah_asal_id'];
-        $status_permohonan = $_POST['status_permohonan'];
         $admin_id = $_SESSION['admin_id'];
         $status = 'Permohonan diluluskan';
-        $userKP = $_POST['userKP'];
 
 
-          // Handle File Uploads
-          if (!empty($_FILES['dokumen']['name'][0])) {
+           // 1. Handle Multiple File Uploads
+           if (!empty($_FILES['dokumen']['name'][0])) {
             foreach ($_FILES['dokumen']['name'] as $key => $name) {
-                $dokumen_name = $_FILES['dokumen']['name'][$key]; // Original file name
-                $dokumen_tmp = $_FILES['dokumen']['tmp_name'][$key];
 
-                $upload_path = '../../../documents/' . basename($dokumen_name);
+                $file_name = $_FILES['dokumen']['name'][$key];               // file_name
+                $file_type = $_FILES['dokumen']['type'][$key];               // file_type
+                $file_size = $_FILES['dokumen']['size'][$key];               // file_size
+                $description = "E-tiket";   
+            // Build unique filename
+            $file_extension = pathinfo($file_name, PATHINFO_EXTENSION);
+        
+            $unique_filename = uniqid() . '_' . $wilayah_asal_id . '_' . str_replace(' ', '_', $description) . '.' . $file_extension;
+            
+            $dokumen_tmp = $_FILES['dokumen']['tmp_name'][$key];
+            $upload_dir = '../../../uploads/kewangan';
+            $target_path = $upload_dir . '/' . $unique_filename;
 
-                if (move_uploaded_file($dokumen_tmp, $upload_path)) {
-                    // Insert both file_name and file_path
-                    $stmt_doc = $conn->prepare("INSERT INTO documents (file_name, file_path, wilayah_asal_id) VALUES (?, ?, ?)");
-                    $stmt_doc->bind_param("ssi", $dokumen_name, $upload_path, $wilayah_asal_id);
-                    $stmt_doc->execute();
-                    $stmt_doc->close();
-                } 
+             // Create folder if it doesn't exist
+                if (!is_dir($upload_dir)) {
+                    mkdir($upload_dir, 0777, true);
+                }
+        
+            if (move_uploaded_file($dokumen_tmp, $target_path)) {
+                // File path to be stored in DB (web-accessible)
+                $web_path = '../../../uploads/kewangan/' . $unique_filename;
+
+                $sql = "INSERT INTO documents (
+                            wilayah_asal_id,       -- INT
+                            file_name,             -- VARCHAR
+                            file_path,             -- VARCHAR
+                            file_type,             -- VARCHAR
+                            file_size,             -- INT
+                            description,           -- TEXT
+                            file_uploader_origin,  -- VARCHAR
+                            file_class_origin      -- ENUM
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, 'kewangan')";
+        
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("isssiss",
+                    $wilayah_asal_id,
+                    $file_name,
+                    $web_path,
+                    $file_type,
+                    $file_size,
+                    $description,
+                    $admin_id 
+                );
+        
+                if ($stmt->execute()) {
+                    // return true;
+                } else {
+                    error_log("DB error: " . $stmt->error);
+                }
+            } else {
+                error_log("Failed to move uploaded file.");
             }
-        }
+    }
+}
 
     
         $tarikh_keputusan = date('Y-m-d H:i:s');
-        // 2. Update wilayah_asal
-        $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?,  status_permohonan, kedudukan_permohonan, penyediaKemudahan_kewangan_id = ?, tarikh_keputusan_penyediaKemudahan_kewangan = ? WHERE id = ?");
-        $stmt_wilayah->bind_param("sssssi", $status, "Lulus", "Kewangan", $admin_id, $tarikh_keputusan, $wilayah_asal_id);
+        $status_permohonan = "Selesai";
+        $kedudukan_permohonan = "Kewangan";
+
+        $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?,  status_permohonan = ?, kedudukan_permohonan = ?, penyediaKemudahan_kewangan_id = ?, tarikh_keputusan_penyediaKemudahan_kewangan = ? WHERE id = ?");
+        $stmt_wilayah->bind_param("sssssi", $status, $status_permohonan, $kedudukan_permohonan, $admin_id, $tarikh_keputusan, $wilayah_asal_id);
         $stmt_wilayah->execute();
         $stmt_wilayah->close();
 

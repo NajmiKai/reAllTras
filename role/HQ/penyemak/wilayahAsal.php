@@ -139,12 +139,12 @@ if ($result->num_rows > 0) {
                                     <td>
                                         <a class="button" href="viewdetails2.php?kp=<?= $user['kp'] ?>">View Details</a>
                                         <div style="margin-top: 10px;">
-                                            <button type="button" onclick="openAndPrint()">
+                                            <button type="button" onclick="openAndPrint('<?= $user['kp'] ?>')">
                                                 Cetak Memo Kelulusan
                                             </button>
                                         </div> 
                                     </td>
-                                <?php } elseif ($user['status'] == 'Kembali ke penyemak HQ'){ ?>
+                                <?php } elseif ($user['status'] == 'Permohonan dikuiri'){ ?>
                                     <td>
                                         <a class="button" href="viewdetailsdikuiri.php?kp=<?= $user['kp'] ?>">View Details</a>
                                     </td>
@@ -172,15 +172,14 @@ if ($result->num_rows > 0) {
         document.getElementById('sidebar').classList.toggle('hidden');
     });
 
-    function openAndPrint() {
-    // Open suratKelulusan.php in a new window
-    const printWindow = window.open('suratKelulusan.php');
 
-    // Wait until the new page loads, then call print
-    printWindow.onload = function() {
-        printWindow.print();
-    };
-}
+    function openAndPrint(kp) {
+        const printWindow = window.open('suratKelulusan.php?kp=' + encodeURIComponent(kp));
+
+        printWindow.onload = function() {
+            printWindow.print();
+        };
+    }   
 
 </script>
 </body>

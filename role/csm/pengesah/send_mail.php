@@ -29,30 +29,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $ulasan = $_POST['ulasan'] ?? null;
         }
         
-        // 1. Handle Multiple File Uploads
-        // if (!empty($_FILES['dokumen']['name'][0])) {
-        //     foreach ($_FILES['dokumen']['name'] as $key => $name) {
-        //         $dokumen_name = $_FILES['dokumen']['name'][$key]; // Original file name
-        //         $dokumen_tmp = $_FILES['dokumen']['tmp_name'][$key];
-
-        //         $upload_path = '../../../documents/' . basename($dokumen_name);
-
-        //         if (move_uploaded_file($dokumen_tmp, $upload_path)) {
-        //             // Insert both file_name and file_path
-        //             $stmt_doc = $conn->prepare("INSERT INTO documents (file_name, file_path, wilayah_asal_id) VALUES (?, ?, ?)");
-        //             $stmt_doc->bind_param("ssi", $dokumen_name, $upload_path, $wilayah_asal_id);
-        //             $stmt_doc->execute();
-        //             $stmt_doc->close();
-        //         } 
-        //     }
-        // }
-
-
-
         $tarikh_keputusan = date('Y-m-d H:i:s');
-        // 2. Update wilayah_asal
-        $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, status_permohonan, kedudukan_permohonan, ulasan_pengesah_csm1 = ?, pengesah_csm1_id = ?, tarikh_keputusan_pengesah_csm1 = ? WHERE id = ?");
-        $stmt_wilayah->bind_param("ssssssi", $status, "Lulus", "CSM", $ulasan, $admin_id, $tarikh_keputusan, $wilayah_asal_id);
+        $status_permohonan = "Lulus";
+        $kedudukan_permohonan = "CSM";
+
+        $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, status_permohonan = ?, kedudukan_permohonan = ?, ulasan_pengesah_csm1 = ?, pengesah_csm1_id = ?, tarikh_keputusan_pengesah_csm1 = ? WHERE id = ?");
+        $stmt_wilayah->bind_param("ssssssi", $status, $status_permohonan, $kedudukan_permohonan, $ulasan, $admin_id, $tarikh_keputusan, $wilayah_asal_id);
         $stmt_wilayah->execute();
         $stmt_wilayah->close();
 

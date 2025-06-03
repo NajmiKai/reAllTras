@@ -407,7 +407,7 @@ include '../../../connection.php';
                 </div>
                 <div class="card-body row">
                     <div class="col-md-6 mb-3"><br>
-                        <button type="button" onclick="openAndPrint()">
+                        <button type="button" onclick="openAndPrint('<?= htmlspecialchars($application_data['user_kp']) ?>')">
                             Cetak Borang
                         </button><br><br>
                     <!-- </div> -->
@@ -455,15 +455,13 @@ document.querySelector('.toggle-sidebar').addEventListener('click', function (e)
     }
 
 
-function openAndPrint() {
-    // Open suratKelulusan.php in a new window
-    const printWindow = window.open('suratKelulusan.php');
+ function openAndPrint(kp) {
+        const printWindow = window.open('suratKelulusan.php?kp=' + encodeURIComponent(kp));
 
-    // Wait until the new page loads, then call print
-    printWindow.onload = function() {
-        printWindow.print();
-    };
-}
+        printWindow.onload = function() {
+            printWindow.print();
+        };
+    }   
 </script>
 </body>
 </html>

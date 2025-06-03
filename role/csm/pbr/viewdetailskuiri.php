@@ -134,9 +134,9 @@ include '../../../connection.php';
         
         <!-- Submenu -->
         <div id="wilayahSubmenu" class="submenu" style="display: <?= $submenuOpen ? 'block' : 'none' ?>;">
-            <a href="permohonanPengguna.php" class="active">Permohonan Pengguna</a>
+            <a href="permohonanPengguna.php" >Permohonan Pengguna</a>
             <a href="permohonanIbuPejabat.php">Permohonan Ibu Pejabat</a>
-            <a href="permohonanDikuiri.php">Permohonan Dikuiri</a>
+            <a href="permohonanDikuiri.php" class="active">Permohonan Dikuiri</a>
         </div>
 
         <!-- <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a> -->
