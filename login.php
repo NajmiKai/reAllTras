@@ -155,6 +155,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             box-shadow: none;
             border-color: #ced4da;
         }
+
+        .super-admin-link {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            text-decoration: none;
+            color: #0d6efd;
+            font-size: 14px;
+        }
+
+        .super-admin-link:hover {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -197,6 +212,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         </form>
     </div>
+
+    <a href="loginSuperAdmin.php" class="super-admin-link">Super Admin Login</a>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script>

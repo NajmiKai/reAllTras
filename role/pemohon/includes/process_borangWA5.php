@@ -56,6 +56,19 @@ try {
     $result = $stmt->get_result();
     $user_data = $result->fetch_assoc();
 
+    // Get all PBR CSM admin emails
+    $sql_csm = "SELECT Email, Name FROM admin WHERE Role = 'PBR CSM'";
+    $result_csm = $conn->query($sql_csm);
+    $csm_emails = [];
+    if ($result_csm && $result_csm->num_rows > 0) {
+        while ($csm_data = $result_csm->fetch_assoc()) {
+            $csm_emails[] = [
+                'email' => $csm_data['Email'],
+                'name' => $csm_data['Name']
+            ];
+        }
+    }
+
     // Format dates
     $tarikh_pergi = date('d/m/Y', strtotime($user_data['tarikh_penerbangan_pergi']));
     $tarikh_balik = date('d/m/Y', strtotime($user_data['tarikh_penerbangan_balik']));
@@ -73,6 +86,11 @@ try {
 
         $mail->setFrom($mail->Username, 'ALLTRAS System');
         $mail->addAddress($user_data['email'], $user_data['nama_first'] . ' ' . $user_data['nama_last']);
+        
+        // Add all PBR CSM admins as CC recipients
+        foreach ($csm_emails as $csm) {
+            $mail->addCC($csm['email'], $csm['name']);
+        }
 
         $mail->isHTML(true);
         $mail->Subject = 'Permohonan Tambang Ziarah Wilayah (TZW) : Tindakan Semakan Permohonan';
