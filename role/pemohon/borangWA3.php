@@ -18,7 +18,7 @@ $result = $stmt->get_result();
 $user_data = $result->fetch_assoc();
 
 if (!$user_data) {
-    header("Location: ../../login.php");
+    header("Location: ../../loginUser.php");
     exit();
 }
 
@@ -239,7 +239,7 @@ $user_phoneNo = $user_data['phone'];
                             <input type="text" class="form-control" name="end_point" required>
                         </div>
                         <div class="col-12 mb-3">
-                            <label class="form-label fw-bold">Tarikh Penerbangan Pasangan Lain? (Hanya berkait kepada orang berpasangan)</label>
+                            <label class="form-label fw-bold">Tarikh Penerbangan Pasangan Lain? <span style="font-size: 0.9em; font-style: italic; color: #666;">(Hanya berkait kepada orang berpasangan)</span></label>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="partner_flight_type" id="partner_same" value="same" checked onchange="togglePartnerDates('same')">
                                 <label class="form-check-label" for="partner_same">

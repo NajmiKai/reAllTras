@@ -91,20 +91,30 @@ $user_phoneNo = $user_data['phone'];
                 <div class="status-tracker">
                     <?php
                     // Get the latest application status for the user
-                    $status_sql = "SELECT kedudukan_permohonan, status_permohonan, ulasan_csm1, ulasan_csm2, ulasan_hq, ulasan_kewangan FROM wilayah_asal WHERE user_kp = ? ORDER BY id DESC LIMIT 1";
+                    $status_sql = "SELECT id, kedudukan_permohonan, status_permohonan, tarikh_keputusan_csm1, ulasan_pbr_csm1, tarikh_keputusan_pengesah_csm1, ulasan_pengesah_csm1, tarikh_keputusan_pengesah_csm2, ulasan_pengesah_csm2, ulasan_pelulus_HQ, tarikh_keputusan_pelulus_HQ, tarikh_keputusan_penyediaKemudahan_kewangan 
+                                 FROM wilayah_asal 
+                                 WHERE user_kp = ? 
+                                 ORDER BY id DESC LIMIT 1";
                     $status_stmt = $conn->prepare($status_sql);
                     $status_stmt->bind_param("i", $user_icNo);
                     $status_stmt->execute();
                     $status_result = $status_stmt->get_result();
                     $application_data = $status_result->fetch_assoc();
 
+                    // Check if user has any application and its status
+                    $has_application = !empty($application_data['id']);
+                    $is_pending_review = $has_application && $application_data['status_permohonan'] === 'Belum Disemak';
+
                     // Extract status and ulasan data
                     $current_status = $application_data['kedudukan_permohonan'] ?? 'Pemohon';
                     $application_status = $application_data['status_permohonan'] ?? 'Belum Disemak';
-                    $ulasan_csm1 = $application_data['ulasan_csm1'] ?? null;
-                    $ulasan_csm2 = $application_data['ulasan_csm2'] ?? null;
-                    $ulasan_hq = $application_data['ulasan_hq'] ?? null;
-                    $ulasan_kewangan = $application_data['ulasan_kewangan'] ?? null;
+                    $tarikh_keputusan_csm1 = $application_data['tarikh_keputusan_csm1'] ?? null;
+                    $ulasan_csm1 = $application_data['ulasan_pbr_csm1'] ?? null;
+                    $ulasan_pengesah_csm1 = $application_data['ulasan_pengesah_csm1'] ?? null;
+                    $ulasan_pengesah_csm2 = $application_data['ulasan_pengesah_csm2'] ?? null;
+                    $ulasan_hq = $application_data['ulasan_pelulus_HQ'] ?? null;
+                    $tarikh_keputusan_hq = $application_data['tarikh_keputusan_pelulus_HQ'] ?? null;
+                    $tarikh_keputusan_kewangan = $application_data['tarikh_keputusan_penyediaKemudahan_kewangan'] ?? null;
 
                     // Determine status color class
                     $status_color_class = '';
@@ -132,7 +142,7 @@ $user_phoneNo = $user_data['phone'];
                     $stages = [
                         'Pemohon' => ['icon' => 'fa-user', 'label' => 'Pemohon'],
                         'CSM' => ['icon' => 'fa-users', 'label' => 'CSM'],
-                        'HQ' => ['icon' => 'fa-user-tie', 'label' => 'KB KPSM'],
+                        'HQ' => ['icon' => 'fa-building', 'label' => 'Ibu Pejabat'],
                         'CSM2' => ['icon' => 'fa-users', 'label' => 'CSM'],
                         'Kewangan' => ['icon' => 'fa-money-bill', 'label' => 'Kewangan'],
                         'Selesai' => ['icon' => 'fa-check-circle', 'label' => 'Keputusan']
@@ -164,42 +174,82 @@ $user_phoneNo = $user_data['phone'];
                 <!-- Detailed Status and Ulasan Section -->
                 <div class="card-body mt-4 text-center-custom">
                     <h5 class="card-title mb-3">Status Terperinci Permohonan</h5>
-                    <p class="<?= $status_color_class ?>"><strong>Status Semasa:</strong> <?= htmlspecialchars($application_status) ?></p>
+                    
+                    <?php if (!$has_application): ?>
+                        <div class="alert alert-info">
+                            <p>Anda belum membuat permohonan. Sila lengkapkan borang permohonan untuk meneruskan.</p>
+                            <a href="borangWA.php" class="btn btn-primary">Buat Permohonan</a>
+                        </div>
+                    <?php elseif ($is_pending_review): ?>
+                        <div class="alert alert-warning">
+                            <p>Permohonan anda sedang menunggu untuk disemak.</p>
+                        </div>
+                    <?php else: ?>
+                        <p class="<?= $status_color_class ?>"><strong>Status Semasa:</strong> <?= htmlspecialchars($application_status) ?></p>
 
-                    <?php
-                    $ulasan_to_display = "Tiada Kuiri / Ulasan buat masa ini";
-                    $ulasan_label = "Ulasan:";
+                        <?php
+                        $ulasan_to_display = "Tiada Kuiri / Ulasan buat masa ini";
+                        $show_download_button = false;
 
-                    switch ($current_status) {
-                        case 'CSM':
-                            $ulasan_to_display = !empty($ulasan_csm1) ? $ulasan_csm1 : "Tiada Kuiri / Ulasan buat masa ini";
-                            $ulasan_label = "Ulasan Cawangan Sumber Manusia (CSM):";
-                            break;
-                        case 'HQ':
-                            $ulasan_to_display = !empty($ulasan_hq) ? $ulasan_hq : "Tiada Kuiri / Ulasan buat masa ini";
-                            $ulasan_label = "Ulasan Ketua Bahagian KPSM (HQ):";
-                            break;
-                        case 'CSM2':
-                            $ulasan_to_display = !empty($ulasan_csm2) ? $ulasan_csm2 : "Tiada Kuiri / Ulasan buat masa ini";
-                             $ulasan_label = "Ulasan Cawangan Sumber Manusia (CSM):";
-                            break;
-                        case 'Kewangan':
-                            $ulasan_to_display = !empty($ulasan_kewangan) ? $ulasan_kewangan : "Tiada Kuiri / Ulasan buat masa ini";
-                            $ulasan_label = "Ulasan Cawangan Kewangan:";
-                            break;
-                        // No ulasan to display for 'Pemohon' or 'Selesai' based on the request
-                        default:
-                            $ulasan_to_display = "Tiada Kuiri / Ulasan buat masa ini";
-                            $ulasan_label = "Ulasan:";
-                            break;
-                    }
-                    ?>
+                        switch ($current_status) {
+                            case 'Pemohon':
+                                if ($is_pending_review) {
+                                    $ulasan_to_display = "Permohonan anda sedang menunggu untuk disemak.";
+                                } else {
+                                    $ulasan_to_display = "Permohonan anda sedang diproses.";
+                                }
+                                break;
 
-                    <div class="mt-3">
-                        <h6><strong><?= htmlspecialchars($ulasan_label) ?></strong></h6>
-                        <p><?= nl2br(htmlspecialchars($ulasan_to_display)) ?></p>
-                    </div>
+                            case 'CSM':
+                                if (!empty($ulasan_pengesah_csm1)) {
+                                    $ulasan_to_display = $ulasan_pengesah_csm1;
+                                } elseif (!empty($ulasan_csm1)) {
+                                    $ulasan_to_display = $ulasan_csm1;
+                                } else {
+                                    $ulasan_to_display = "Tiada Kuiri atau Tindakan Diperlukan";
+                                }
+                                break;
 
+                            case 'HQ':
+                                if ($application_status === 'Lulus') {
+                                    $ulasan_to_display = "Permohonan Diluluskan";
+                                } elseif ($application_status === 'Tolak') {
+                                    $ulasan_to_display = "Permohonan Ditolak";
+                                } else {
+                                    $ulasan_to_display = "Permohonan sedang diproses di Ibu Pejabat";
+                                }
+                                break;
+
+                            case 'CSM2':
+                                if (!empty($ulasan_pengesah_csm2)) {
+                                    $ulasan_to_display = $ulasan_pengesah_csm2;
+                                } else {
+                                    $ulasan_to_display = "Tiada Kuiri atau Tindakan Diperlukan";
+                                }
+                                break;
+
+                            case 'Kewangan':
+                                if ($application_status === 'Selesai' && !empty($tarikh_keputusan_kewangan)) {
+                                    $ulasan_to_display = "Permohonan Selesai, Waran Udara sedia untuk dimuat turun";
+                                    $show_download_button = true;
+                                } else {
+                                    $ulasan_to_display = "Permohonan sedang diproses di Cawangan Kewangan";
+                                }
+                                break;
+
+                            default:
+                                $ulasan_to_display = "Tiada Kuiri / Ulasan buat masa ini";
+                                break;
+                        }
+                        ?>
+
+                        <div class="mt-3">
+                            <p><?= nl2br(htmlspecialchars($ulasan_to_display)) ?></p>
+                            <?php if ($show_download_button): ?>
+                                <a href="wilayahAsal.php" class="btn btn-primary mt-2">Muat Turun Waran Udara</a>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

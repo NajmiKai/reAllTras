@@ -24,7 +24,7 @@ $user_data = $result->fetch_assoc();
 
 if (!$user_data) {
     error_log("User data not found for ID: " . $user_id);
-    header("Location: ../../login.php");
+    header("Location: ../../loginUser.php");
     exit();
 }
 

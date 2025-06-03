@@ -48,7 +48,7 @@ function handleFileUpload($file, $upload_dir, $wilayah_asal_id, $user_kp, $descr
             $web_path = 'uploads/permohonan/' . $wilayah_asal_id . '/' . $unique_filename;
             
             // Insert into database
-            $sql = "INSERT INTO documents (wilayah_asal_id, file_name, file_path, file_type, file_size, description, file_uploader_origin, file_class_origin) 
+            $sql = "INSERT INTO documents (wilayah_asal_id, file_name, file_path, file_type, file_size, description, file_origin_id, file_origin) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, 'pemohon')";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("isssiss", $wilayah_asal_id, $file_name, $web_path, $file_type, $file_size, $description, $user_kp);
