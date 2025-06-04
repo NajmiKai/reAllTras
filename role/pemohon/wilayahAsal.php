@@ -514,7 +514,7 @@ function getUlasan($wilayah_asal_data, $kedudukan) {
                             </div>
                         </div>
                         <div class="actions">
-                            <a href="../../<?= htmlspecialchars($doc['file_path']) ?>" target="_blank" class="btn btn-sm btn-primary">
+                            <a href="/reAllTras/<?= str_replace('../../../', '', htmlspecialchars($doc['file_path'])) ?>" target="_blank" class="btn btn-sm btn-primary">
                                 <i class="fas fa-eye"></i>
                             </a>
                         </div>
