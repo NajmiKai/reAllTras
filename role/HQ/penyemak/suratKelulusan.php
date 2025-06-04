@@ -61,10 +61,10 @@ $bulan_malay = [
 ];
 
 // Get today's date parts
-$day = date("j");                // Day of month without leading zero (1-31)
-$english_month = date("F");     // Full month name in English (e.g., "March")
-$month_malay = $bulan_malay[$english_month]; // Translate to Malay
-$year = date("Y");              // Full year (e.g., "2025")
+$day = date("j");                
+$english_month = date("F");     
+$month_malay = $bulan_malay[$english_month]; 
+$year = date("Y");             
 
 $full_date = "$day $month_malay $year";
 
@@ -81,13 +81,19 @@ $full_date = "$day $month_malay $year";
 //     $month = $data['data']['hijri']['month']['ar']; // Arabic
 //     $year = $data['data']['hijri']['year'];
 
+$fullName = $application_data['nama_first'] . ' ' . $application_data['nama_last'];
+$fullNameCleaned = preg_replace('/[^A-Za-z0-9\- ]/', '', $fullName);
+$fullNameCleaned = str_replace(' ', '_', $fullNameCleaned);
+
+$filename = "Kelulusan Kemudahan Tambang Ziarah Wilayah_" . $fullNameCleaned . ".pdf";
+
 ?>
 
 <!DOCTYPE html>
 <html lang="ms">
 <head>
   <meta charset="UTF-8">
-  <title>Kelulusan Kemudahan Tambang Ziarah Wilayah</title>
+  <title><?= htmlspecialchars($filename) ?></title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -102,6 +108,20 @@ $full_date = "$day $month_malay $year";
       .footer-line {
       -webkit-print-color-adjust: exact; /* For Safari/Chrome */
       print-color-adjust: exact;         /* For Firefox */
+    }
+
+    .print-footer-bar {
+      height: 3px;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .yellow-bar {
+      background-color: yellow;
+    }
+
+    .blue-bar {
+      background-color: blue;
     }
 
       html, body {
@@ -440,8 +460,8 @@ Malaysia
 <footer style="text-align: center;">
   <div style="display: inline-block; text-align: center;">
     <p style="font-size: 9pt; margin: 0;">CEKAP ‧ TANGKAS ‧ INTEGRITI</p>
-    <div style="height: 3px; background-color: yellow; margin-top: 2px;"></div>
-    <div style="height: 3px; background-color: blue; margin-top: 1px;"></div>
+    <div class="print-footer-bar yellow-bar" style="height: 3px; background-color: yellow; margin-top: 2px;"></div>
+    <div class="print-footer-bar yellow-bar" style="height: 3px; background-color: blue;"></div>
   </div>
 </footer>
 
