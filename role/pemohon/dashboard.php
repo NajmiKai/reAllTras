@@ -101,6 +101,9 @@ $user_phoneNo = $user_data['phone'];
                     $status_result = $status_stmt->get_result();
                     $application_data = $status_result->fetch_assoc();
 
+                    // Set wilayah_asal_id variable
+                    $wilayah_asal_id = $application_data['id'];
+
                     // Check if user has any application and its status
                     $has_application = !empty($application_data['id']);
                     $is_pending_review = $has_application && $application_data['status_permohonan'] === 'Belum Disemak';
@@ -145,12 +148,19 @@ $user_phoneNo = $user_data['phone'];
                         'HQ' => ['icon' => 'fa-building', 'label' => 'Ibu Pejabat'],
                         'CSM2' => ['icon' => 'fa-users', 'label' => 'CSM'],
                         'Kewangan' => ['icon' => 'fa-money-bill', 'label' => 'Kewangan'],
-                        'Selesai' => ['icon' => 'fa-check-circle', 'label' => 'Keputusan']
+                        'Keputusan' => ['icon' => 'fa-check-circle', 'label' => 'Keputusan']
                     ];
 
                     $current_index = array_search($current_status, array_keys($stages));
                     if ($current_status === 'Kewangan') {
                         $current_index = 4;
+                    }
+                    // If status is Selesai and position is Pemohon, show Keputusan
+                    if ($application_status === 'Selesai' && $current_status === 'Pemohon') {
+                        $current_status = 'Keputusan';
+                        $current_index = 5;
+                        $show_download_button = true;
+                        $ulasan_to_display = "Permohonan Selesai, E-tiket sedia untuk dimuat turun";
                     }
                     ?>
 
@@ -244,9 +254,24 @@ $user_phoneNo = $user_data['phone'];
                         ?>
 
                         <div class="mt-3">
+                            
                             <p><?= nl2br(htmlspecialchars($ulasan_to_display)) ?></p>
-                            <?php if ($show_download_button): ?>
-                                <a href="wilayahAsal.php" class="btn btn-primary mt-2">Muat Turun Waran Udara</a>
+                            <?php if ($show_download_button): 
+                                // Fetch E-ticket document
+                                $eticket_sql = "SELECT * FROM documents WHERE wilayah_asal_id = ? AND description = 'E-tiket' ORDER BY upload_date DESC LIMIT 1";
+                                $eticket_stmt = $conn->prepare($eticket_sql);
+                                $eticket_stmt->bind_param("i", $wilayah_asal_id);
+                                $eticket_stmt->execute();
+                                $eticket_result = $eticket_stmt->get_result();
+                                $eticket_doc = $eticket_result->fetch_assoc();
+                                
+                                if ($eticket_doc): ?>
+                                    <a href="/reAllTras/<?= str_replace('../../../', '', htmlspecialchars($eticket_doc['file_path'])) ?>" target="_blank" class="btn btn-primary mt-2">
+                                        <i class="fas fa-download me-2"></i>Muat Turun E-tiket
+                                    </a>
+                                <?php else: ?>
+                                    <a href="wilayahAsal.php" class="btn btn-primary mt-2">Lihat Permohonan</a>
+                                <?php endif; ?>
                             <?php endif; ?>
                         </div>
                     <?php endif; ?>
@@ -314,6 +339,8 @@ $user_phoneNo = $user_data['phone'];
         imageModal.show();
         });
     });
+
+    console.log('Wilayah Asal ID:', <?= json_encode($wilayah_asal_id) ?>);
 </script>
 </body>
 </html>

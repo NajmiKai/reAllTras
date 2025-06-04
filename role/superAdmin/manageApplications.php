@@ -45,6 +45,7 @@ $result = $conn->query($query);
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="../../assets/css/adminStyle.css">
+    <link rel="stylesheet" href="../../assets/css/adminLayout.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
 </head>
 <body>
@@ -71,9 +72,6 @@ $result = $conn->query($query);
             <div>
                 <a href="exportApplications.php" class="btn btn-success me-2">
                     <i class="fas fa-file-excel me-2"></i>Eksport
-                </a>
-                <a href="addApplication.php" class="btn btn-primary">
-                    <i class="fas fa-plus me-2"></i>Tambah Permohonan
                 </a>
             </div>
         </div>

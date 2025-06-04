@@ -41,13 +41,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
-            $mail->Username = 'haniszainee1105@gmail.com';
-            $mail->Password = 'eizx afua iazr efrl';
+            $mail->Username = 'alltras@customs.gov.my';  // your Gmail
+            $mail->Password = 'wyob jyxf gzsy gbax';     // Gmail App Password 
             $mail->SMTPSecure = 'tls';
             $mail->Port = 587;
 
-            $mail->setFrom('haniszainee1105@gmail.com', 'ALLTRAS');
-            $mail->addAddress($email, $nama);
+            $mail->setFrom($mail->Username);
+            $mail->addAddress($email);
 
             $mail->isHTML(true);
             $mail->Subject = 'Pautan Reset Kata Laluan Super Admin';

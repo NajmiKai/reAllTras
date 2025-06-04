@@ -79,13 +79,13 @@ try {
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'yunonajmi@gmail.com';  // Replace with your Gmail address
-        $mail->Password = 'bjoi oqtb fmjk cdpe';  // Replace with your App Password
+        $mail->Username = 'alltras@customs.gov.my';  // your Gmail
+        $mail->Password = 'wyob jyxf gzsy gbax';         // Gmail App Password 
         $mail->SMTPSecure = 'tls';
         $mail->Port = 587;
 
-        $mail->setFrom($mail->Username, 'ALLTRAS System');
-        $mail->addAddress($user_data['email'], $user_data['nama_first'] . ' ' . $user_data['nama_last']);
+        $mail->setFrom($mail->Username);
+        $mail->addAddress($user_data['email']);
         
         // Add all PBR CSM admins as CC recipients
         foreach ($csm_emails as $csm) {

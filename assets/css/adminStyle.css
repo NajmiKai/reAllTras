@@ -21,6 +21,8 @@ nav.navbar {
     transition: all 0.3s ease;
     z-index: 1000;
     position: fixed;
+    background-color: #000 !important; /* force black */
+    color: white;
 }
 
 .sidebar a {

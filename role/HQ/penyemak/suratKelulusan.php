@@ -181,7 +181,7 @@ $filename = "Kelulusan Kemudahan Tambang Ziarah Wilayah_" . $fullNameCleaned . "
 
     td {
       padding: 0px;
-      vertical-align: top;
+      vertical-align: middle;
     }
 
     .table-penempatan {
@@ -213,7 +213,7 @@ $filename = "Kelulusan Kemudahan Tambang Ziarah Wilayah_" . $fullNameCleaned . "
 <div style="display: flex; justify-content: space-between; align-items: flex-start;">
   <!-- Left Logo -->
   <div style="flex: 0 0 80px;">
-    <img src="../../../assets/JKDMLogo.png" alt="JKDM" width="100">
+    <img src="../../../assets/jataNegara.png" alt="jataNegara" width="100">
   </div>
 
   <!-- Middle Address -->
@@ -414,7 +414,7 @@ WP Kuala Lumpur<br>
 
   <ol start="3">
     <li>
-    &nbsp;&nbsp; Untuk makluman, kemudahan Tambang Ziarah Wilayah diberi <strong>sekali dalam tempoh (1) tahun kalendar</strong>. Kemudahan yang tidak digunakan dalam tempoh satu (1) tahun kalendar akan luput dan tidak boleh dibawa ke tahun berikutnya. Tarikh pegawai boleh menggunakan kemudahan seterusnya ialah mulai <strong>01 Januari 2026</strong> hingga <strong>31 Disember 2026</strong>.
+    &nbsp;&nbsp; &nbsp;&nbsp; Untuk makluman, kemudahan Tambang Ziarah Wilayah diberi <strong>sekali dalam tempoh (1) tahun kalendar</strong>. Kemudahan yang tidak digunakan dalam tempoh satu (1) tahun kalendar akan luput dan tidak boleh dibawa ke tahun berikutnya. Tarikh pegawai boleh menggunakan kemudahan seterusnya ialah mulai <strong>01 Januari 2026</strong> hingga <strong>31 Disember 2026</strong>.
     </li>
     <br><li>
     &nbsp;&nbsp; Bersama-sama ini dikembalikan borang permohonan yang telah diluluskan untuk tindakan pihak Puan selanjutnya. Kelulusan ini hendaklah direkodkan ke dalam Buku Perkhidmatan pegawai.
@@ -459,9 +459,9 @@ Malaysia
 
 <footer style="text-align: center;">
   <div style="display: inline-block; text-align: center;">
-    <p style="font-size: 9pt; margin: 0;">CEKAP ‧ TANGKAS ‧ INTEGRITI</p>
+    <b><p style="font-size: 9pt; margin: 0;">CEKAP ‧ TANGKAS ‧ INTEGRITI</p></b>
     <div class="print-footer-bar yellow-bar" style="height: 3px; background-color: yellow; margin-top: 2px;"></div>
-    <div class="print-footer-bar yellow-bar" style="height: 3px; background-color: blue;"></div>
+    <div class="print-footer-bar blue-bar" style="height: 3px; background-color: blue;"></div>
   </div>
 </footer>
 
