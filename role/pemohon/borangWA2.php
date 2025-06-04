@@ -23,7 +23,7 @@ $result = $stmt->get_result();
 $user_data = $result->fetch_assoc();
 
 if (!$user_data) {
-    header("Location: ../../login.php");
+    header("Location: ../../loginUser.php");
     exit();
 }
 

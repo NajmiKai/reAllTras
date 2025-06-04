@@ -1,59 +1,143 @@
 <?php
 session_start();
 include '../../../connection.php';
+require '../../../PHPMailer/src/Exception.php';
+require '../../../PHPMailer/src/PHPMailer.php';
+require '../../../PHPMailer/src/SMTP.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    try {
-        // Check if wilayah_asal_id exists in session
-        if (!isset($_SESSION['wilayah_asal_id'])) {
-            throw new Exception("Session data not found. Please start from the beginning.");
-        }
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
-        $wilayah_asal_id = $_SESSION['wilayah_asal_id'];
+// Enable error reporting
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-        // Prepare the SQL statement
-        $sql = "UPDATE wilayah_asal SET 
-            pengesahan = 1,
-            tarikh_hantar = NOW()
-            WHERE id = ?";
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../../loginUser.php");
+    exit();
+}
 
-        $stmt = $conn->prepare($sql);
-        
-        // Bind parameters
-        $stmt->bind_param("i", $wilayah_asal_id);
+// Check if wilayah_asal_id exists
+if (!isset($_POST['wilayah_asal_id'])) {
+    $_SESSION['error'] = "ID Wilayah Asal tidak dijumpai.";
+    header("Location: ../borangWA5.php");
+    exit();
+}
 
-        // Execute the statement
-        if ($stmt->execute()) {
-            // Clear session data
-            unset($_SESSION['wilayah_asal_id']);
-            unset($_SESSION['borangWA_data']);
-            unset($_SESSION['officer_info']);
-            unset($_SESSION['parent_info']);
-            unset($_SESSION['flight_info']);
-            unset($_SESSION['document_info']);
+$wilayah_asal_id = $_POST['wilayah_asal_id'];
+$user_id = $_SESSION['user_id'];
 
-            // Set success message
-            $_SESSION['success'] = "Permohonan berjaya dihantar.";
-            
-            // Redirect to dashboard
-            header("Location: ../dashboard.php");
-            exit();
-        } else {
-            throw new Exception("Error executing statement: " . $stmt->error);
-        }
-    } catch (Exception $e) {
-        // Log the error
-        error_log("Error in process_borangWA5.php: " . $e->getMessage());
-        
-        // Set error message in session
-        $_SESSION['error'] = "Ralat semasa menghantar permohonan. Sila cuba lagi.";
-        
-        // Redirect back to form with error
-        header("Location: ../borangWA5.php");
-        exit();
+// Start transaction
+$conn->begin_transaction();
+
+try {
+    // Update confirmation status and date
+    $sql = "UPDATE wilayah_asal SET pengesahan_user = true, tarikh_pengesahan_user = NOW() WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $wilayah_asal_id);
+    
+    if (!$stmt->execute()) {
+        throw new Exception("Gagal mengemaskini status pengesahan.");
     }
-} else {
-    // If not POST request, redirect back to form
+
+    // Commit transaction
+    $conn->commit();
+
+    // Get user details for email
+    $sql = "SELECT u.nama_first, u.nama_last, u.kp, u.bahagian, u.email, wa.jawatan_gred,
+            wa.tarikh_penerbangan_pergi, wa.tarikh_penerbangan_balik, wa.start_point, wa.end_point
+            FROM user u 
+            JOIN wilayah_asal wa ON u.kp = wa.user_kp 
+            WHERE wa.id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $wilayah_asal_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user_data = $result->fetch_assoc();
+
+    // Get all PBR CSM admin emails
+    $sql_csm = "SELECT Email, Name FROM admin WHERE Role = 'PBR CSM'";
+    $result_csm = $conn->query($sql_csm);
+    $csm_emails = [];
+    if ($result_csm && $result_csm->num_rows > 0) {
+        while ($csm_data = $result_csm->fetch_assoc()) {
+            $csm_emails[] = [
+                'email' => $csm_data['Email'],
+                'name' => $csm_data['Name']
+            ];
+        }
+    }
+
+    // Format dates
+    $tarikh_pergi = date('d/m/Y', strtotime($user_data['tarikh_penerbangan_pergi']));
+    $tarikh_balik = date('d/m/Y', strtotime($user_data['tarikh_penerbangan_balik']));
+
+    // Send email
+    $mail = new PHPMailer(true);
+    try {
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com';
+        $mail->SMTPAuth = true;
+        $mail->Username = 'yunonajmi@gmail.com';  // Replace with your Gmail address
+        $mail->Password = 'bjoi oqtb fmjk cdpe';  // Replace with your App Password
+        $mail->SMTPSecure = 'tls';
+        $mail->Port = 587;
+
+        $mail->setFrom($mail->Username, 'ALLTRAS System');
+        $mail->addAddress($user_data['email'], $user_data['nama_first'] . ' ' . $user_data['nama_last']);
+        
+        // Add all PBR CSM admins as CC recipients
+        foreach ($csm_emails as $csm) {
+            $mail->addCC($csm['email'], $csm['name']);
+        }
+
+        $mail->isHTML(true);
+        $mail->Subject = 'Permohonan Tambang Ziarah Wilayah (TZW) : Tindakan Semakan Permohonan';
+        $mail->Body = "
+            <br><p>Assalamualaikum dan Salam sejahtera,</p>
+            <p>Tuan/Puan,</p><br>
+            <p><b>Permohonan Kemudahan Tambang Ziarah Wilayah</b></p><br>
+
+            <p><b>Nama Pegawai :</b> {$user_data['nama_first']} {$user_data['nama_last']}</p>
+            <p><b>No.Kad Pengenalan :</b> {$user_data['kp']}</p>
+            <p><b>Bahagian/Cawangan :</b> {$user_data['bahagian']}</p><br>
+            <p><b>Destinasi Ziarah :</b> {$user_data['end_point']}</p><br>
+            <p><b>Maklumat Perjalanan :</b><br>
+            Tarikh Penerbangan Pergi: {$tarikh_pergi}<br>
+            Tarikh Penerbangan Balik: {$tarikh_balik}<br>
+            Lokasi Berlepas: {$user_data['start_point']}<br>
+            Lokasi Tiba: {$user_data['end_point']}</p><br>
+
+            <p>Mohon pihak tuan/puan untuk menyemak maklumat pemohon dan mengambil tindakan sewajarnya.</p>
+            <p>Sila klik pautan/butang di bawah untuk tindakan lanjut dan maklumat permohonan.</p>
+
+            <p><a href='http://localhost/reAllTras/role/csm/pegawaiSulit/viewdetails.php?kp={$user_data['kp']}'><b><u>PAPAR MAKLUMAT PERMOHONAN</u></b></a></p><br>
+
+            <p>Sekian, terima kasih.</p>
+            <p>Emel ini dijana secara automatik oleh <i>All Region Travelling System (ALLTRAS)</i></p>
+            <p>Jabatan Kastam Diraja Malaysia</p>
+        ";
+
+        $mail->send();
+    } catch (Exception $e) {
+        // Log email error but don't stop the process
+        error_log("Email sending failed: " . $mail->ErrorInfo);
+    }
+
+    // Clear session data
+    unset($_SESSION['wilayah_asal_id']);
+    unset($_SESSION['borangWA_data']);
+    unset($_SESSION['parent_info']);
+
+    $_SESSION['success'] = "Permohonan anda telah berjaya dihantar. Sila tunggu untuk kelulusan.";
+    header("Location: ../dashboard.php");
+    exit();
+
+} catch (Exception $e) {
+    // Rollback transaction on error
+    $conn->rollback();
+    $_SESSION['error'] = $e->getMessage();
     header("Location: ../borangWA5.php");
     exit();
 }

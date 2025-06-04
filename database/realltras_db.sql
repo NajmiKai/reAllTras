@@ -195,24 +195,6 @@ CREATE TABLE `documents` (
     file_origin ENUM('pemohon', 'csm1', 'csm2', 'hq', 'kewangan') DEFAULT 'pemohon',
     file_origin_id VARCHAR(20) NOT NULL,
     upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    description TEXT,
     FOREIGN KEY (wilayah_asal_id) REFERENCES wilayah_asal(id) ON DELETE CASCADE,
-    FOREIGN KEY (file_uploader_origin) REFERENCES user(kp) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS wa_csm1 (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    wilayah_asal_id INT NOT NULL UNIQUE,
-    documents_id INT NOT NULL UNIQUE,
-    id_csm_pengawai_sulit INT UNIQUE,
-    id_csm_pbr INT UNIQUE,
-    id_csm_pengesah INT UNIQUE,
-
-    FOREIGN KEY (id_csm_pengawai_sulit) REFERENCES user(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_csm_pbr) REFERENCES user(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_csm_pengesah) REFERENCES user(id) ON DELETE CASCADE,
-    FOREIGN KEY (wilayah_asal_id) REFERENCES wilayah_asal(id) ON DELETE CASCADE,
-    FOREIGN KEY (documents_id) REFERENCES documents(id) ON DELETE CASCADE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    FOREIGN KEY (file_origin_id) REFERENCES user(kp) ON DELETE CASCADE
 );

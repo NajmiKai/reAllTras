@@ -17,11 +17,6 @@ nav.navbar {
 }
 
 .sidebar {
-    background-color: #212529;
-    color: white;
-    min-height: 100vh;
-    padding: 70px 20px;
-    flex-shrink: 0;
     width: 250px;
     transition: all 0.3s ease;
     z-index: 1000;
@@ -232,13 +227,15 @@ input[type="file"] {
 
 .col.p-4 {
     margin-left: 250px; /* same as sidebar width */
-  }
+    padding: 20px !important; /* Adjusted padding */
+}
 
-  .col.lg-8 {
+.col.lg-8 {
     margin-left: 250px; /* same as sidebar width */
-  }
+    padding: 20px !important; /* Adjusted padding */
+}
 
-  @media (max-width: 768px) {
+@media (max-width: 768px) {
     .sidebar {
       position: relative;
       width: 100%;
