@@ -119,7 +119,7 @@ if ($result->num_rows > 0) {
     <div class="col p-4">
     <br><br>
 
-    <h5 class="mb-3">Senarai Pemohon Wilayah Asal (Pengguna)</h5>
+    <h5 class="mb-3">Senarai Pemohon Wilayah Asal (Ibu Pejabat)</h5>
             <div class="card shadow-sm">
                 <div class="card-body">
                     <table class="table table-hover" id="myTable">
