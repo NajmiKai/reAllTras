@@ -57,7 +57,7 @@ if (isset($_GET['token'])) {
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
             display: flex;
-            background-image: url('assets/background.jpg');
+            background-image: url('assets/3329.jpg');
             align-items: center;
             justify-content: center;
             background-size: cover;

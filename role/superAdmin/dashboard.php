@@ -38,7 +38,7 @@ function countTotalAdmins($conn) {
 
 // Function to count total users
 function countTotalUsers($conn) {
-    $query = "SELECT COUNT(*) AS total FROM users";
+    $query = "SELECT COUNT(*) AS total FROM user";
     $result = $conn->query($query);
     $row = $result->fetch_assoc();
     return $row['total'];

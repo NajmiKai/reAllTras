@@ -1,0 +1,81 @@
+/* Admin Layout Structure */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f5f7fa;
+    margin: 0;
+    padding: 0;
+}
+
+/* Main Container */
+.main-container {
+    display: flex;
+    min-height: 100vh;
+    padding-top: 60px; /* Add padding to account for fixed navbar */
+}
+
+/* Navbar */
+nav.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+    height: 60px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background-color: #212529;
+    min-height: 100vh;
+    padding: 20px;
+    position: fixed;
+    top: 60px; /* Start below navbar */
+    left: 0;
+    bottom: 0;
+    z-index: 1020;
+    transition: all 0.3s ease;
+}
+
+.sidebar.hidden {
+    margin-left: -250px;
+}
+
+/* Content Area */
+.content-wrapper {
+    flex: 1;
+    margin-left: 250px;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.sidebar.hidden + .content-wrapper {
+    margin-left: 0;
+}
+
+/* Page Header */
+.page-header {
+    margin-bottom: 20px;
+    padding: 0 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sidebar {
+        margin-left: -250px;
+    }
+    
+    .sidebar.show {
+        margin-left: 0;
+    }
+    
+    .content-wrapper {
+        margin-left: 0;
+    }
+    
+    .navbar {
+        left: 0;
+    }
+} 

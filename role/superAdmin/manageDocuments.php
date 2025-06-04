@@ -64,26 +64,6 @@ $result = $conn->query($query);
 </head>
 <body>
 
-<!-- Top Navbar -->
-<nav class="navbar navbar-expand navbar-light bg-light shadow-sm px-3 mb-4 w-100">
-    <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-            <a class="nav-link toggle-sidebar" href="#" role="button"><i class="fas fa-bars"></i></a>
-        </li>
-    </ul>
-
-    <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-            <span class="nav-link fw-semibold"><?= htmlspecialchars($_SESSION['super_admin_name']) ?> (Super Admin)</span>
-        </li>
-        <li class="nav-item d-none d-sm-inline-block">
-            <a href="../../logout.php" class="nav-link text-danger">
-                <i class="fas fa-sign-out-alt me-1"></i> Log Keluar
-            </a>
-        </li>
-    </ul>
-</nav>
-
 <div class="main-container">
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
