@@ -123,6 +123,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             box-shadow: none;
             border-color: #ced4da;
         }
+
+        .user-link {
+            position: fixed;
+            bottom: 60px;
+            right: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .user-link:hover {
+            background-color: #5a6268;
+            color: white;
+            opacity: 1;
+        }
+
+        .admin-login-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .admin-login-btn:hover {
+            background-color: #5a6268;
+            color: white;
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -163,6 +207,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         </form>
     </div>
+
+    <a href="loginUser.php" class="user-link">User Login</a><br>
+    <a href="login.php" class="admin-login-btn">Admin Login</a>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>

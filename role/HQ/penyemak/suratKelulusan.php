@@ -1,6 +1,11 @@
 <?php
 session_start();
 include '../../../connection.php';
+require 'vendor/autoload.php';
+
+
+use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\IOFactory;
 
 if (!isset($_SESSION['admin_id'])) {
   header("Location: login.php");
@@ -111,7 +116,7 @@ $filename = "Kelulusan Kemudahan Tambang Ziarah Wilayah_" . $fullNameCleaned . "
     }
 
     .print-footer-bar {
-      height: 3px;
+      height: 4px;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }

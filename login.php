@@ -158,16 +158,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         .super-admin-link {
             position: fixed;
-            bottom: 20px;
+            bottom: 60px;
             right: 20px;
             opacity: 0;
             transition: opacity 0.3s ease;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
             text-decoration: none;
-            color: #0d6efd;
             font-size: 14px;
         }
 
         .super-admin-link:hover {
+            background-color: #5a6268;
+            color: white;
+            opacity: 1;
+        }
+
+        .admin-login-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .admin-login-btn:hover {
+            background-color: #5a6268;
+            color: white;
             opacity: 1;
         }
     </style>
@@ -213,7 +242,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </form>
     </div>
 
-    <a href="loginSuperAdmin.php" class="super-admin-link">Super Admin Login</a>
+    <a href="loginSuperAdmin.php" class="super-admin-link">Super Admin Login</a><br>
+    <a href="loginUser.php" class="admin-login-btn">User Login</a>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script>
