@@ -169,6 +169,13 @@ $user_role = $user_data['bahagian'];
                         </div>
                         <input type="file" class="form-control" name="dokumen_pegawai" accept=".pdf,.jpg,.jpeg,.png" required>
                     </div>
+                    <div class="document-item mt-3">
+                        <div class="document-title">
+                            <h6 class="mb-0">Lampiran II</h6>
+                            <i class="fas fa-check-circle uploaded"></i>
+                        </div>
+                        <input type="file" class="form-control" name="lampiran_ii" accept=".pdf,.jpg,.jpeg,.png" required>
+                    </div>
                 </div>
             </div>
 

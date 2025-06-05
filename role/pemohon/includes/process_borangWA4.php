@@ -75,6 +75,17 @@ if (!isset($_FILES['dokumen_pegawai']) || $_FILES['dokumen_pegawai']['error'] ==
     }
 }
 
+// Handle Lampiran II (Required)
+if (!isset($_FILES['lampiran_ii']) || $_FILES['lampiran_ii']['error'] === UPLOAD_ERR_NO_FILE) {
+    $success = false;
+    $error_messages[] = "Lampiran II diperlukan.";
+} else {
+    if (!handleFileUpload($_FILES['lampiran_ii'], $upload_dir, $wilayah_asal_id, $user_kp, 'Lampiran II')) {
+        $success = false;
+        $error_messages[] = "Gagal memuat naik Lampiran II.";
+    }
+}
+
 // Handle Dokumen Pasangan (Optional)
 if (isset($_FILES['dokumen_pasangan']) && $_FILES['dokumen_pasangan']['error'] !== UPLOAD_ERR_NO_FILE) {
     if (!handleFileUpload($_FILES['dokumen_pasangan'], $upload_dir, $wilayah_asal_id, $user_kp, 'Dokumen Pasangan')) {
