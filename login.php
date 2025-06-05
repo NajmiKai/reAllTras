@@ -88,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             /* background-size: 180px; */
             min-height: 100vh;
             display: flex;
-            background-image: url('assets/background.jpg');
+            background-image: url('assets/backgroundAllTras.png');
             align-items: center;
             justify-content: center;
             background-size: cover;

@@ -137,32 +137,36 @@ $stats['rejected']['Wilayah Asal'] = 0;
 
         <div class="row g-4 mb-4">
             <div class="col-md-3">
+            <a href="wilayahAsalList.php?status=total" class="text-decoration-none text-white">
                 <div class="card-box bg-primary">
                     <i class="fas fa-user-plus"></i>
                     <h6>Jumlah Permohonan</h6>
                     <p>Wilayah Asal: <?= $stats['total']['Wilayah Asal'] ?></p>
-                </div>
+                </div></a>
             </div>
             <div class="col-md-3">
+            <a href="wilayahAsalList.php?status=processing" class="text-decoration-none text-white">
                 <div class="card-box bg-success">
                     <i class="fas fa-spinner"></i>
                     <h6>Sedang Diproses</h6>
                     <p>Wilayah Asal: <?= $stats['processing']['Wilayah Asal'] ?></p>
-                </div>
+                </div></a>
             </div>
             <div class="col-md-3">
+            <a href="wilayahAsalList.php?status=approved" class="text-decoration-none text-white">
                 <div class="card-box bg-warning">
                     <i class="fas fa-check-circle"></i>
                     <h6>Berjaya Diproses</h6>
                     <p>Wilayah Asal: <?= $stats['approved']['Wilayah Asal'] ?></p>
-                </div>
+                </div></a>
             </div>
             <div class="col-md-3">
+            <a href="wilayahAsalList.php?status=rejected" class="text-decoration-none text-white">
                 <div class="card-box bg-danger">
                     <i class="fas fa-times-circle"></i>
                     <h6>Permohonan Dikuiri</h6>
                     <p>Wilayah Asal: <?= $stats['rejected']['Wilayah Asal'] ?></p>
-                </div>
+                </div></a>
             </div> 
         </div>
 

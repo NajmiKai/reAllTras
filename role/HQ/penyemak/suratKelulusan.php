@@ -1,11 +1,7 @@
 <?php
 session_start();
 include '../../../connection.php';
-require 'vendor/autoload.php';
 
-
-use PhpOffice\PhpWord\PhpWord;
-use PhpOffice\PhpWord\IOFactory;
 
 if (!isset($_SESSION['admin_id'])) {
   header("Location: login.php");
@@ -264,13 +260,13 @@ $filename = "Kelulusan Kemudahan Tambang Ziarah Wilayah_" . $fullNameCleaned . "
   </colgroup>
   <tr>
     <td><strong>Ruj.Tuan &nbsp;</strong></td>
-    <td>:<span style="display:inline-block; width:150px;"></span>(<strong><span style="display:inline-block; width:30px;"></span></strong>)</td>
+    <td>:<span style="display:inline-block; width:150px;"></span>(<strong><span style="display:inline-block; width:40px;"></span></strong>)</td>
 
     
   </tr>
   <tr>
     <td><strong>Ruj. Kami &nbsp;</strong></td>
-    <td>:<span style="display:inline-block; width:150px;"></span>(<strong><span style="display:inline-block; width:30px;"></span></strong>)</td>
+    <td>:<span style="display:inline-block; width:150px;"></span>(<strong><span style="display:inline-block; width:40px;"></span></strong>)</td>
 
     
   </tr>
@@ -284,7 +280,7 @@ $filename = "Kelulusan Kemudahan Tambang Ziarah Wilayah_" . $fullNameCleaned . "
 Ketua Bahagian<br>
 Khidmat Pengurusan dan Sumber Manusia<br>
 WP Kuala Lumpur<br>
-<strong>(u.p: <span style="display:inline-block; width:180px;"></span>)</strong>
+<strong>(u.p: <span style="display:inline-block; width:200px;"></span>)</strong>
 </p>
 
 <div class="section">
@@ -316,7 +312,7 @@ WP Kuala Lumpur<br>
     <li> &nbsp;&nbsp; Sukacita dimaklumkan bahawa permohonan pegawai di atas untuk menuntut Kemudahan Tambang Ziarah Wilayah adalah <strong>DILULUSKAN</strong> oleh Ketua Jabatan seperti berikut:</li>
   </ol>
 
-  <table class="table table-bordered table-penempatan" style="border-collapse: collapse; border: 1px solid black;">
+  <table class="table table-bordered table-penempatan" style="border-collapse: collapse; border: 1px solid black; margin-top:-10px;">
   <colgroup>
     <col style="width: 33%;">
     <col style="width: 3%;">
@@ -436,7 +432,7 @@ WP Kuala Lumpur<br>
   </colgroup>
   <tr>
     <td>Ruj.Kami</td>
-    <td>:<span style="display:inline-block; width:150px;"></span>(<strong> <span style="display:inline-block; width:30px;"></span>  </strong>)</td>
+    <td>:<span style="display:inline-block; width:150px;"></span>(<strong> <span style="display:inline-block; width:40px;"></span>  </strong>)</td>
   </tr>
 </table>
 </p>
