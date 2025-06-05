@@ -174,7 +174,7 @@ if ($result->num_rows > 0) {
 
 
     function openAndPrint(kp) {
-        const printWindow = window.open('suratKelulusan2.php?kp=' + encodeURIComponent(kp));
+        const printWindow = window.open('suratKelulusan.php?kp=' + encodeURIComponent(kp));
 
         printWindow.onload = function() {
             printWindow.print();
