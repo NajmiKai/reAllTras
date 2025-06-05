@@ -102,7 +102,7 @@ $user_phoneNo = $user_data['phone'];
                     $application_data = $status_result->fetch_assoc();
 
                     // Set wilayah_asal_id variable
-                    $wilayah_asal_id = $application_data['id'];
+                    $wilayah_asal_id = $application_data['id'] ?? null;
 
                     // Check if user has any application and its status
                     $has_application = !empty($application_data['id']);
