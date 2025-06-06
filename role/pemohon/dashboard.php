@@ -143,23 +143,23 @@ $user_phoneNo = $user_data['phone'];
                         if ($application_data['kedudukan_permohonan'] === 'CSM')
 
                             if($application_data['status_permohonan'] === 'Belum Disemak'){
-                                $current_stage = 'CSM'
+                                $current_stage = 'CSM';
                                 $show_description = false;
                             }
                             else if ($application_data['status_permohonan'] === 'Selesai'){
-                                $current_stage = 'HQ'
+                                $current_stage = 'HQ';
                                 $show_description = false;
                             }
                             else if ($application_data['status_permohonan'] === 'Tolak'){
-                                $current_stage = 'CSM'
+                                $current_stage = 'CSM';
                                 $show_description = false;
                             }
                             else if ($application_data['status_permohonan'] === 'Lulus'){
-                                $current_stage = 'CSM'
+                                $current_stage = 'CSM';
                                 $show_description = false;
                             }
                             else if ($application_data['status_permohonan'] === 'Dikuiri'){
-                                $current_stage = 'CSM'
+                                $current_stage = 'CSM';
                                 $show_description = false;
                             }
 
