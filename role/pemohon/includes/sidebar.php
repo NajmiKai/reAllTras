@@ -7,7 +7,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <a href="dashboard.php" <?= $current_page === 'dashboard.php' ? 'class="active"' : '' ?>>
         <i class="fas fa-home me-2"></i>Laman Utama
     </a>
-    <h6 class="text mt-4"></h6>
     <a href="wilayahAsal.php" <?= $current_page === 'wilayahAsal.php' ? 'class="active"' : '' ?>>
         <i class="fas fa-map-marker-alt me-2"></i>Wilayah Asal
     </a>

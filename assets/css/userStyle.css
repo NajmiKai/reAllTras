@@ -20,7 +20,7 @@
         background-color: #212529;
         color: white;
         min-height: 100vh;
-        padding: 70px 20px;
+        padding: 30px 20px;
         flex-shrink: 0;
         width: 250px;
         transition: all 0.3s ease;

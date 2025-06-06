@@ -71,7 +71,7 @@ $kedudukan_permohonan = $wilayah_asal_data['kedudukan_permohonan'];
 function getUlasan($wilayah_asal_data, $kedudukan) {
     switch ($kedudukan) {
         case 'CSM':
-            return $wilayah_asal_data['ulasan_pengesah_csm1'] ?? $wilayah_asal_data['ulasan_pbr_csm1'] ?? null;
+            return $wilayah_asal_data['ulasan_pbr_csm1'] ?? null;
         case 'CSM2':
             return $wilayah_asal_data['ulasan_pengesah_csm2'] ?? null;
         case 'HQ':

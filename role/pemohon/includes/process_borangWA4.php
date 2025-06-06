@@ -94,6 +94,14 @@ if (isset($_FILES['dokumen_pasangan']) && $_FILES['dokumen_pasangan']['error'] !
     }
 }
 
+// Handle Sijil Perkahwinan (Optional)
+if (isset($_FILES['sijil_perkahwinan']) && $_FILES['sijil_perkahwinan']['error'] !== UPLOAD_ERR_NO_FILE) {
+    if (!handleFileUpload($_FILES['sijil_perkahwinan'], $upload_dir, $wilayah_asal_id, $user_kp, 'Sijil Perkahwinan')) {
+        $success = false;
+        $error_messages[] = "Gagal memuat naik Sijil Perkahwinan.";
+    }
+}
+
 // Handle Dokumen Pengikut (Multiple)
 if (isset($_FILES['dokumen_pengikut'])) {
     foreach ($_FILES['dokumen_pengikut']['tmp_name'] as $key => $tmp_name) {

@@ -40,25 +40,6 @@ $user_phoneNo = $user_data['phone'];
 </head>
 <body>
 
-<!-- Top Navbar -->
-<nav class="navbar navbar-expand navbar-light bg-light shadow-sm px-3 mb-4 w-100">
-    <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-            <a class="nav-link toggle-sidebar" href="#" role="button"><i class="fas fa-bars"></i></a>
-        </li>
-    </ul>
-
-    <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-            <span class="nav-link fw-semibold"><?= htmlspecialchars($user_name) ?> (<?= htmlspecialchars($user_role) ?>)</span>
-        </li>
-        <li class="nav-item d-none d-sm-inline-block">
-            <a href="../../logoutUser.php" class="nav-link text-danger">
-                <i class="fas fa-sign-out-alt me-1"></i> Log Keluar
-            </a>
-        </li>
-    </ul>
-</nav>
 
 <div class="main-container">
     <!-- Sidebar -->
@@ -66,24 +47,10 @@ $user_phoneNo = $user_data['phone'];
 
     <!-- Main Content -->
     <div class="col p-4">
-        <h3 class="mb-3">Laman Utama</h3>
-
-        <div class="greeting-box">
-            <?php  
-                $time = date('H');
-                if ($time < 12) {
-                    $greeting = 'Selamat Pagi';
-                } elseif ($time < 15) {
-                    $greeting = 'Selamat Tengah Hari';
-                } elseif ($time < 19) {
-                    $greeting = 'Selamat Petang';    
-                } else {
-                    $greeting = 'Selamat Malam';
-                }
-            ?>
-            <strong>Hi, <?= $greeting ?>!</strong> <?= $user_name ?>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="mb-0">Laman Utama</h3>
+            <?php include 'includes/greeting.php'; ?>
         </div>
-
         <!-- Status Tracking Section -->
         <div class="card shadow-sm mb-4">
             <div class="card-body">
@@ -91,12 +58,11 @@ $user_phoneNo = $user_data['phone'];
                 <div class="status-tracker">
                     <?php
                     // Get the latest application status for the user
-                    $status_sql = "SELECT id, kedudukan_permohonan, status_permohonan, tarikh_keputusan_csm1, ulasan_pbr_csm1, tarikh_keputusan_pengesah_csm1, ulasan_pengesah_csm1, tarikh_keputusan_pengesah_csm2, ulasan_pengesah_csm2, ulasan_pelulus_HQ, tarikh_keputusan_pelulus_HQ, tarikh_keputusan_penyediaKemudahan_kewangan 
-                                 FROM wilayah_asal 
+                    $status_sql = "SELECT * FROM wilayah_asal 
                                  WHERE user_kp = ? 
                                  ORDER BY id DESC LIMIT 1";
                     $status_stmt = $conn->prepare($status_sql);
-                    $status_stmt->bind_param("i", $user_icNo);
+                    $status_stmt->bind_param("s", $user_icNo);
                     $status_stmt->execute();
                     $status_result = $status_stmt->get_result();
                     $application_data = $status_result->fetch_assoc();
@@ -104,63 +70,105 @@ $user_phoneNo = $user_data['phone'];
                     // Set wilayah_asal_id variable
                     $wilayah_asal_id = $application_data['id'] ?? null;
 
-                    // Check if user has any application and its status
-                    $has_application = !empty($application_data['id']);
-                    $is_pending_review = $has_application && $application_data['status_permohonan'] === 'Belum Disemak';
-
-                    // Extract status and ulasan data
-                    $current_status = $application_data['kedudukan_permohonan'] ?? 'Pemohon';
-                    $application_status = $application_data['status_permohonan'] ?? 'Belum Disemak';
-                    $tarikh_keputusan_csm1 = $application_data['tarikh_keputusan_csm1'] ?? null;
-                    $ulasan_csm1 = $application_data['ulasan_pbr_csm1'] ?? null;
-                    $ulasan_pengesah_csm1 = $application_data['ulasan_pengesah_csm1'] ?? null;
-                    $ulasan_pengesah_csm2 = $application_data['ulasan_pengesah_csm2'] ?? null;
-                    $ulasan_hq = $application_data['ulasan_pelulus_HQ'] ?? null;
-                    $tarikh_keputusan_hq = $application_data['tarikh_keputusan_pelulus_HQ'] ?? null;
-                    $tarikh_keputusan_kewangan = $application_data['tarikh_keputusan_penyediaKemudahan_kewangan'] ?? null;
-
-                    // Determine status color class
-                    $status_color_class = '';
-                    switch ($application_status) {
-                        case 'Belum Disemak':
-                            $status_color_class = 'status-belum-disemak';
-                            break;
-                        case 'Selesai':
-                            $status_color_class = 'status-selesai';
-                            break;
-                        case 'Dikuiri':
-                            $status_color_class = 'status-dikuiri';
-                            break;
-                        case 'Tolak':
-                            $status_color_class = 'status-tolak';
-                            break;
-                        case 'Lulus':
-                            $status_color_class = 'status-lulus';
-                            break;
-                        default:
-                            $status_color_class = ''; // Default or no special class
-                            break;
-                    }
-
+                    // Define stages
                     $stages = [
                         'Pemohon' => ['icon' => 'fa-user', 'label' => 'Pemohon'],
                         'CSM' => ['icon' => 'fa-users', 'label' => 'CSM'],
                         'HQ' => ['icon' => 'fa-building', 'label' => 'Ibu Pejabat'],
                         'CSM2' => ['icon' => 'fa-users', 'label' => 'CSM'],
                         'Kewangan' => ['icon' => 'fa-money-bill', 'label' => 'Kewangan'],
-                        'Keputusan' => ['icon' => 'fa-check-circle', 'label' => 'Keputusan']
+                        'Selesai' => ['icon' => 'fa-check-circle', 'label' => 'Selesai']
                     ];
 
-                    $current_index = array_search($current_status, array_keys($stages));
-                    if ($current_status === 'Kewangan') {
-                        $current_index = 4;
-                    }
-                    // If status is Selesai and position is Pemohon, show Keputusan
-                    if ($application_status === 'Selesai' && $current_status === 'Pemohon') {
-                        $current_status = 'Keputusan';
-                        $current_index = 5;
-                        $show_download_button = true;
-                        $ulasan_to_display = "Permohonan Selesai, E-tiket sedia untuk dimuat turun";
+                    // Determine current stage and status
+                    $current_stage = 'Pemohon';
+                    $show_description = false;
+                    $description = '';
+                    $action_button = null;
+
+                    if ($wilayah_asal_id) {
+                        
+                        //Stage UI (Pemohon)
+                        if (!$application_data['wilayah_asal_form_fill'] || $application_data['wilayah_asal_from_stage'] !== 'Hantar') {
+                            $current_stage = 'Pemohon';
+                            $show_description = true;
+                            
+                            switch ($application_data['wilayah_asal_from_stage']) {
+                                case 'Empty':
+                                    $description = "Anda belum membuat permohonan!";
+                                    $action_button = ['text' => 'Buat Permohonan', 'link' => 'borangWA.php'];
+                                    break;
+                                case 'BorangWA':
+                                    $description = "Borang ini belum lengkap! Sila lengkapkan untuk menghantar permohonan";
+                                    $action_button = ['text' => 'Lengkapkan Borang', 'link' => 'borangWA.php'];
+                                    break;
+                                case 'BorangWA2':
+                                    $description = "Borang ini belum lengkap! Sila lengkapkan untuk menghantar permohonan";
+                                    $action_button = ['text' => 'Lengkapkan Borang', 'link' => 'borangWA2.php'];
+                                    break;
+                                case 'BorangWA3':
+                                    $description = "Borang ini belum lengkap! Sila lengkapkan untuk menghantar permohonan";
+                                    $action_button = ['text' => 'Lengkapkan Borang', 'link' => 'borangWA3.php'];
+                                    break;
+                                case 'BorangWA4':
+                                    $description = "Borang ini belum lengkap! Sila lengkapkan untuk menghantar permohonan";
+                                    $action_button = ['text' => 'Lengkapkan Borang', 'link' => 'borangWA4.php'];
+                                    break;
+                                case 'BorangWA5':
+                                    $description = "Borang ini belum lengkap! Sila lengkapkan untuk menghantar permohonan";
+                                    $action_button = ['text' => 'Lengkapkan Borang', 'link' => 'borangWA5.php'];
+                                    break;
+                            }
+                        } 
+                        else if ($application_data['kedudukan_permohonan'] === 'Pemohon' && $application_data['status_permohonan'] === 'Dikuiri') {
+                            
+                            $current_stage = 'Pemohon';
+                            $show_description = true;
+                            
+                            
+                            // Get CSM1's name from admin table
+                            $csm_sql = "SELECT a.Name FROM admin a WHERE a.ID = ?";
+                            $csm_stmt = $conn->prepare($csm_sql);
+                            $csm_stmt->bind_param("i", $application_data['pbr_csm1_id']);
+                            $csm_stmt->execute();
+                            $csm_result = $csm_stmt->get_result();
+                            $csm_data = $csm_result->fetch_assoc();
+                            $csm_name = $csm_data['Name'] ?? 'Unknown';
+
+                            $description = "Ulasan daripada " . $csm_name . " (Cawangan Sumber Manusia): " . $application_data['ulasan_pbr_csm1'];
+                            $action_button = ['text' => 'Lihat Permohonan', 'link' => 'wilayahAsal.php'];
+
+                        }
+
+                        if ($application_data['kedudukan_permohonan'] === 'CSM')
+
+                            if($application_data['status_permohonan'] === 'Belum Disemak'){
+                                $current_stage = 'CSM'
+                                $show_description = false;
+                            }
+                            else if ($application_data['status_permohonan'] === 'Selesai'){
+                                $current_stage = 'HQ'
+                                $show_description = false;
+                            }
+                            else if ($application_data['status_permohonan'] === 'Tolak'){
+                                $current_stage = 'CSM'
+                                $show_description = false;
+                            }
+                            else if ($application_data['status_permohonan'] === 'Lulus'){
+                                $current_stage = 'CSM'
+                                $show_description = false;
+                            }
+                            else if ($application_data['status_permohonan'] === 'Dikuiri'){
+                                $current_stage = 'CSM'
+                                $show_description = false;
+                            }
+
+                        //status_permohonan ENUM('Belum Disemak','Selesai','Dikuiri', 'Tolak', 'Lulus') DEFAULT 'Belum Disemak',
+                        //kedudukan_permohonan ENUM('Pemohon','CSM', 'HQ', 'CSM2', 'Kewangan') DEFAULT 'Pemohon',
+                        //Stage UI (CSM)
+                        
+
+                        }
                     }
                     ?>
 
@@ -168,8 +176,8 @@ $user_phoneNo = $user_data['phone'];
                         <div class="progress-line"></div>
                         <?php foreach ($stages as $key => $stage): ?>
                             <?php
-                            $is_active = array_search($key, array_keys($stages)) <= $current_index;
-                            $is_current = $key === $current_status;
+                            $is_active = array_search($key, array_keys($stages)) <= array_search($current_stage, array_keys($stages));
+                            $is_current = $key === $current_stage;
                             ?>
                             <div class="status-step <?= $is_active ? 'active' : '' ?> <?= $is_current ? 'current' : '' ?>">
                                 <div class="status-icon">
@@ -179,100 +187,20 @@ $user_phoneNo = $user_data['phone'];
                             </div>
                         <?php endforeach; ?>
                     </div>
-                </div>
 
-                <!-- Detailed Status and Ulasan Section -->
-                <div class="card-body mt-4 text-center-custom">
-                    <h5 class="card-title mb-3">Status Terperinci Permohonan</h5>
-                    
-                    <?php if (!$has_application): ?>
-                        <div class="alert alert-info">
-                            <p>Anda belum membuat permohonan. Sila lengkapkan borang permohonan untuk meneruskan.</p>
-                            <a href="borangWA.php" class="btn btn-primary">Buat Permohonan</a>
-                        </div>
-                    <?php elseif ($is_pending_review): ?>
-                        <div class="alert alert-warning">
-                            <p>Permohonan anda sedang menunggu untuk disemak.</p>
-                        </div>
-                    <?php else: ?>
-                        <p class="<?= $status_color_class ?>"><strong>Status Semasa:</strong> <?= htmlspecialchars($application_status) ?></p>
-
-                        <?php
-                        $ulasan_to_display = "Tiada Kuiri / Ulasan buat masa ini";
-                        $show_download_button = false;
-
-                        switch ($current_status) {
-                            case 'Pemohon':
-                                if ($is_pending_review) {
-                                    $ulasan_to_display = "Permohonan anda sedang menunggu untuk disemak.";
-                                } else {
-                                    $ulasan_to_display = "Permohonan anda sedang diproses.";
-                                }
-                                break;
-
-                            case 'CSM':
-                                if (!empty($ulasan_pengesah_csm1)) {
-                                    $ulasan_to_display = $ulasan_pengesah_csm1;
-                                } elseif (!empty($ulasan_csm1)) {
-                                    $ulasan_to_display = $ulasan_csm1;
-                                } else {
-                                    $ulasan_to_display = "Tiada Kuiri atau Tindakan Diperlukan";
-                                }
-                                break;
-
-                            case 'HQ':
-                                if ($application_status === 'Lulus') {
-                                    $ulasan_to_display = "Permohonan Diluluskan";
-                                } elseif ($application_status === 'Tolak') {
-                                    $ulasan_to_display = "Permohonan Ditolak";
-                                } else {
-                                    $ulasan_to_display = "Permohonan sedang diproses di Ibu Pejabat";
-                                }
-                                break;
-
-                            case 'CSM2':
-                                if (!empty($ulasan_pengesah_csm2)) {
-                                    $ulasan_to_display = $ulasan_pengesah_csm2;
-                                } else {
-                                    $ulasan_to_display = "Tiada Kuiri atau Tindakan Diperlukan";
-                                }
-                                break;
-
-                            case 'Kewangan':
-                                if ($application_status === 'Selesai' && !empty($tarikh_keputusan_kewangan)) {
-                                    $ulasan_to_display = "Permohonan Selesai, Waran Udara sedia untuk dimuat turun";
-                                    $show_download_button = true;
-                                } else {
-                                    $ulasan_to_display = "Permohonan sedang diproses di Cawangan Kewangan";
-                                }
-                                break;
-
-                            default:
-                                $ulasan_to_display = "Tiada Kuiri / Ulasan buat masa ini";
-                                break;
-                        }
-                        ?>
-
-                        <div class="mt-3">
-                            
-                            <p><?= nl2br(htmlspecialchars($ulasan_to_display)) ?></p>
-                            <?php if ($show_download_button): 
-                                // Fetch E-ticket document
-                                $eticket_sql = "SELECT * FROM documents WHERE wilayah_asal_id = ? AND description = 'E-tiket' ORDER BY upload_date DESC LIMIT 1";
-                                $eticket_stmt = $conn->prepare($eticket_sql);
-                                $eticket_stmt->bind_param("i", $wilayah_asal_id);
-                                $eticket_stmt->execute();
-                                $eticket_result = $eticket_stmt->get_result();
-                                $eticket_doc = $eticket_result->fetch_assoc();
-                                
-                                if ($eticket_doc): ?>
-                                    <a href="/reAllTras/<?= str_replace('../../../', '', htmlspecialchars($eticket_doc['file_path'])) ?>" target="_blank" class="btn btn-primary mt-2">
-                                        <i class="fas fa-download me-2"></i>Muat Turun E-tiket
-                                    </a>
-                                <?php else: ?>
-                                    <a href="wilayahAsal.php" class="btn btn-primary mt-2">Lihat Permohonan</a>
-                                <?php endif; ?>
-                            <?php endif; ?>
+                    <?php if ($show_description): ?>
+                        <div class="alert alert-info mt-4">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-info-circle fa-2x me-3"></i>
+                                <div>
+                                    <p class="mb-2"><?= $description ?></p>
+                                    <?php if ($action_button): ?>
+                                        <a href="<?= $action_button['link'] ?>" class="btn btn-primary">
+                                            <i class="fas fa-arrow-right me-2"></i><?= $action_button['text'] ?>
+                                        </a>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -323,11 +251,6 @@ $user_phoneNo = $user_data['phone'];
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    document.querySelector('.toggle-sidebar').addEventListener('click', function (e) {
-        e.preventDefault();
-        document.getElementById('sidebar').classList.toggle('hidden');
-    });
-
 
     // Image Modal
     const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
@@ -341,6 +264,7 @@ $user_phoneNo = $user_data['phone'];
     });
 
     console.log('Wilayah Asal ID:', <?= json_encode($wilayah_asal_id) ?>);
+    console.log('PBR CSM1 ID:', <?= json_encode($application_data['pbr_csm1_id'] ?? null) ?>);
 </script>
 </body>
 </html>

@@ -164,7 +164,7 @@ $user_role = $user_data['bahagian'];
                 <div class="card-body">
                     <div class="document-item">
                         <div class="document-title">
-                            <h6 class="mb-0">Salinan IC Pegawai</h6>
+                            <h6 class="mb-0">Salinan IC Pegawai / Sijil Kelahiran Pegawai</h6>
                             <i class="fas fa-check-circle uploaded"></i>
                         </div>
                         <input type="file" class="form-control" name="dokumen_pegawai" accept=".pdf,.jpg,.jpeg,.png" required>
@@ -182,15 +182,22 @@ $user_role = $user_data['bahagian'];
             <!-- Dokumen Pasangan -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header" style="background-color: #d59e3e; color: white;">
-                    <h5 class="mb-0">Dokumen Pasangan</h5>
+                    <h5 class="mb-0">Dokumen Pasangan <span style="font-size: 0.9em; font-style: italic; color: #666;">(Perlu dimuat naik yang berkenaan sahaja.)</span></h5>
                 </div>
                 <div class="card-body">
                     <div class="document-item">
                         <div class="document-title">
-                            <h6 class="mb-0">Salinan IC Pasangan</h6>
+                            <h6 class="mb-0">Salinan IC Pasangan / Sijil Kelahiran Pasangan</h6>
                             <i class="fas fa-check-circle"></i>
                         </div>
                         <input type="file" class="form-control" name="dokumen_pasangan" accept=".pdf,.jpg,.jpeg,.png">
+                    </div>
+                    <div class="document-item mt-3">
+                        <div class="document-title">
+                            <h6 class="mb-0">Sijil Perkahwinan / Kad Kahwin</h6>
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <input type="file" class="form-control" name="sijil_perkahwinan" accept=".pdf,.jpg,.jpeg,.png">
                     </div>
                 </div>
             </div>
@@ -204,7 +211,7 @@ $user_role = $user_data['bahagian'];
                     <div id="pengikut-container">
                         <div class="document-item">
                             <div class="document-title">
-                                <h6 class="mb-0">Salinan IC Pengikut</h6>
+                                <h6 class="mb-0">Salinan IC Pengikut / Sijil Kelahiran Pengikut</h6>
                                 <i class="fas fa-check-circle"></i>
                             </div>
                             <input type="file" class="form-control" name="dokumen_pengikut[]" accept=".pdf,.jpg,.jpeg,.png">
@@ -225,7 +232,14 @@ $user_role = $user_data['bahagian'];
                     <div id="sokongan-container">
                         <div class="document-item">
                             <div class="document-title">
-                                <h6 class="mb-0">Dokumen Sokongan</h6>
+                                <h6 class="mb-0">Dokumen Pengesahan Ayah</h6>
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <input type="file" class="form-control" name="dokumen_sokongan[]" accept=".pdf,.jpg,.jpeg,.png">
+                        </div>
+                        <div class="document-item mt-3">
+                            <div class="document-title">
+                                <h6 class="mb-0">Dokumen Pengesahan Ibu</h6>
                                 <i class="fas fa-check-circle"></i>
                             </div>
                             <input type="file" class="form-control" name="dokumen_sokongan[]" accept=".pdf,.jpg,.jpeg,.png">
@@ -308,10 +322,10 @@ $user_role = $user_data['bahagian'];
                 <h6 class="mb-0">Dokumen Sokongan</h6>
                 <i class="fas fa-check-circle"></i>
             </div>
-            <div class="d-flex flex-column">
+            <div class="d-flex">
                 <input type="file" class="form-control" name="dokumen_sokongan[]" accept=".pdf,.jpg,.jpeg,.png">
-                <button type="button" class="btn btn-danger mt-2" onclick="this.parentElement.parentElement.remove()">
-                    <i class="fas fa-times me-2"></i>Buang
+                <button type="button" class="btn btn-danger ms-2" onclick="this.parentElement.parentElement.remove()">
+                    <i class="fas fa-times"></i>
                 </button>
             </div>
         `;
