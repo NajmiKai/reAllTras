@@ -140,14 +140,14 @@ $user_phoneNo = $user_data['phone'];
 
                         }
 
-                        if ($application_data['kedudukan_permohonan'] === 'CSM')
+                        if ($application_data['kedudukan_permohonan'] === 'Pemohon'){
 
                             if($application_data['status_permohonan'] === 'Belum Disemak'){
                                 $current_stage = 'CSM';
                                 $show_description = false;
                             }
                             else if ($application_data['status_permohonan'] === 'Selesai'){
-                                $current_stage = 'HQ';
+                                $current_stage = 'CSM';
                                 $show_description = false;
                             }
                             else if ($application_data['status_permohonan'] === 'Tolak'){
@@ -155,7 +155,7 @@ $user_phoneNo = $user_data['phone'];
                                 $show_description = false;
                             }
                             else if ($application_data['status_permohonan'] === 'Lulus'){
-                                $current_stage = 'CSM';
+                                $current_stage = 'HQ';
                                 $show_description = false;
                             }
                             else if ($application_data['status_permohonan'] === 'Dikuiri'){
@@ -163,12 +163,41 @@ $user_phoneNo = $user_data['phone'];
                                 $show_description = false;
                             }
 
+                        } else
+                        if ($application_data['kedudukan_permohonan'] === 'CSM'){
+
+                            if($application_data['status_permohonan'] === 'Belum Disemak'){
+                                $current_stage = 'CSM';
+                                $show_description = false;
+                            }
+                            else if ($application_data['status_permohonan'] === 'Selesai'){
+                                $current_stage = 'CSM';
+                                $show_description = false;
+                            }
+                            else if ($application_data['status_permohonan'] === 'Tolak'){
+                                $current_stage = 'CSM';
+                                $show_description = false;
+                            }
+                            else if ($application_data['status_permohonan'] === 'Lulus'){
+                                $current_stage = 'HQ';
+                                $show_description = false;
+                            }
+                            else if ($application_data['status_permohonan'] === 'Dikuiri'){
+                                $current_stage = 'CSM';
+                                $show_description = false;
+                            }
+                            
+                        }else
+                        if{
+
+                        }else
+                        if{
+
+                        }
+
                         //status_permohonan ENUM('Belum Disemak','Selesai','Dikuiri', 'Tolak', 'Lulus') DEFAULT 'Belum Disemak',
                         //kedudukan_permohonan ENUM('Pemohon','CSM', 'HQ', 'CSM2', 'Kewangan') DEFAULT 'Pemohon',
                         //Stage UI (CSM)
-                        
-
-                        }
                     }
                     ?>
 
