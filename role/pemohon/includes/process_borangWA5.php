@@ -33,7 +33,14 @@ $conn->begin_transaction();
 
 try {
     // Update confirmation status and date
-    $sql = "UPDATE wilayah_asal SET pengesahan_user = true, tarikh_pengesahan_user = NOW() WHERE id = ?";
+    $sql = "UPDATE wilayah_asal SET 
+            pengesahan_user = true, 
+            tarikh_pengesahan_user = NOW(),
+            wilayah_asal_form_fill = true,
+            wilayah_asal_from_stage = 'Hantar',
+            status_permohonan = 'Belum Disemak',
+            kedudukan_permohonan = 'Pemohon'
+            WHERE id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $wilayah_asal_id);
     

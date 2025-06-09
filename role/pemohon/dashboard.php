@@ -94,10 +94,6 @@ $user_phoneNo = $user_data['phone'];
                             $show_description = true;
                             
                             switch ($application_data['wilayah_asal_from_stage']) {
-                                case 'BorangWA':
-                                    $description = "Borang ini belum lengkap! Sila lengkapkan untuk menghantar permohonan";
-                                    $action_button = ['text' => 'Lengkapkan Borang', 'link' => 'borangWA.php'];
-                                    break;
                                 case 'BorangWA2':
                                     $description = "Borang ini belum lengkap! Sila lengkapkan untuk menghantar permohonan";
                                     $action_button = ['text' => 'Lengkapkan Borang', 'link' => 'borangWA2.php'];
@@ -226,6 +222,13 @@ $user_phoneNo = $user_data['phone'];
                         //status_permohonan ENUM('Belum Disemak','Selesai','Dikuiri', 'Tolak', 'Lulus') DEFAULT 'Belum Disemak',
                         //kedudukan_permohonan ENUM('Pemohon','CSM', 'HQ', 'CSM2', 'Kewangan') DEFAULT 'Pemohon',
                         //Stage UI (CSM)
+                    } else {
+
+                        $current_stage = 'Pemohon';
+                        $show_description = true;
+                        $description = "Anda belum membuat permohonan!";
+                        $action_button = ['text' => 'Buat Permohonan', 'link' => 'borangWA.php'];
+
                     }
                     ?>
 
@@ -246,7 +249,7 @@ $user_phoneNo = $user_data['phone'];
                     </div>
 
                     <?php if ($show_description): ?>
-                        <div class="alert alert-info mt-4">
+                        <div class="alert <?= ($application_data['status_permohonan'] === 'Dikuiri' && $application_data['kedudukan_permohonan'] === 'Pemohon') ? 'alert-warning' : 'alert-info' ?> mt-4">
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-info-circle fa-2x me-3"></i>
                                 <div>

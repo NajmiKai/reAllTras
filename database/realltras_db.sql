@@ -11,7 +11,7 @@ CREATE TABLE `admin` (
 );
 
 CREATE TABLE `superAdmin` (
-  ID int(11) NOT NULL,
+  ID int(11) PRIMARY KEY AUTO_INCREMENT,
   Name varchar(255) NOT NULL,
   ICNo varchar(255) NOT NULL,
   Email varchar(255) NOT NULL,
@@ -200,4 +200,9 @@ CREATE TABLE `documents` (
     upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (wilayah_asal_id) REFERENCES wilayah_asal(id) ON DELETE CASCADE,
     FOREIGN KEY (file_origin_id) REFERENCES user(kp) ON DELETE CASCADE
+);
+
+CREATE TABLE `organisasi` (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nama_cawangan VARCHAR(255) NOT NULL
 );

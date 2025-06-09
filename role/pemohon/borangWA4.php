@@ -299,7 +299,7 @@ $user_role = $user_data['bahagian'];
         newItem.className = 'document-item';
         newItem.innerHTML = `
             <div class="document-title">
-                <h6 class="mb-0">Salinan IC Pengikut</h6>
+                <h6 class="mb-0">Salinan IC Pengikut / Sijil Kelahiran Pengikut</h6>
                 <i class="fas fa-check-circle"></i>
             </div>
             <div class="d-flex">

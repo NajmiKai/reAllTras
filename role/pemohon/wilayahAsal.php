@@ -2,10 +2,6 @@
 session_start();
 include '../../connection.php';
 
-// Set user ID in session if not set
-if (!isset($_SESSION['user_id'])) {
-    $_SESSION['user_id'] = 1; // Set default user ID to 1
-}
 
 // Fetch user data from database
 $user_id = $_SESSION['user_id'];
