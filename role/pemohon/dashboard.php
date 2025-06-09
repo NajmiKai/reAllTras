@@ -67,8 +67,25 @@ $user_phoneNo = $user_data['phone'];
                     $status_result = $status_stmt->get_result();
                     $application_data = $status_result->fetch_assoc();
 
-                    // Set wilayah_asal_id variable
-                    $wilayah_asal_id = $application_data['id'] ?? null;
+                    // Check if wilayah_asal_matang needs to be updated based on existing tarikh_pengesahan_user
+                    if ($application_data && $application_data['tarikh_pengesahan_user']) {
+                        $tarikh_pengesahan = new DateTime($application_data['tarikh_pengesahan_user']);
+                        $current_date = new DateTime();
+                        $next_year = clone $tarikh_pengesahan;
+                        $next_year->modify('+1 year');
+                        
+                        // If current date is in or after the next year, update wilayah_asal_matang
+                        if ($current_date >= $next_year && !$application_data['wilayah_asal_matang']) {
+                            $update_sql = "UPDATE wilayah_asal SET wilayah_asal_matang = true WHERE id = ?";
+                            $update_stmt = $conn->prepare($update_sql);
+                            $update_stmt->bind_param("i", $application_data['id']);
+                            $update_stmt->execute();
+                            $application_data['wilayah_asal_matang'] = true;
+                        }
+                    }
+
+                    // Set wilayah_asal_id variable - set to null if wilayah_asal_matang is true
+                    $wilayah_asal_id = ($application_data && !$application_data['wilayah_asal_matang']) ? $application_data['id'] : null;
 
                     // Define stages
                     $stages = [
@@ -132,7 +149,10 @@ $user_phoneNo = $user_data['phone'];
 
                         }
 
-                        //CSM STAGE UI
+                        //status_permohonan ENUM('Belum Disemak','Selesai','Dikuiri', 'Tolak', 'Lulus') DEFAULT 'Belum Disemak',
+                        //kedudukan_permohonan ENUM('Pemohon','CSM', 'HQ', 'CSM2', 'Kewangan') DEFAULT 'Pemohon',
+                        //Stage UI (CSM)
+
                         if ($application_data['kedudukan_permohonan'] === 'Pemohon'){
 
                             if($application_data['status_permohonan'] === 'Belum Disemak'){
@@ -148,7 +168,7 @@ $user_phoneNo = $user_data['phone'];
                                 $show_description = false;
                             }
                             else if ($application_data['status_permohonan'] === 'Lulus'){
-                                $current_stage = 'HQ';
+                                $current_stage = 'CSM';
                                 $show_description = false;
                             }
 
@@ -174,8 +194,9 @@ $user_phoneNo = $user_data['phone'];
                                 $current_stage = 'CSM';
                                 $show_description = false;
                             }
-                            
-                        } else if ($application_data['kedudukan_permohonan'] === 'CSM2') {
+
+                        } else if ($application_data['kedudukan_permohonan'] === 'HQ') {
+
                             if($application_data['status_permohonan'] === 'Belum Disemak'){
                                 $current_stage = 'CSM2';
                                 $show_description = false;
@@ -185,8 +206,9 @@ $user_phoneNo = $user_data['phone'];
                                 $show_description = false;
                             }
                             else if ($application_data['status_permohonan'] === 'Tolak'){
-                                $current_stage = 'CSM2';
-                                $show_description = false;
+                                $current_stage = 'HQ';
+                                $show_description = true;
+                                $description = "Harap Maaf, Permohonan anda ditolak.";
                             }
                             else if ($application_data['status_permohonan'] === 'Lulus'){
                                 $current_stage = 'Kewangan';
@@ -196,7 +218,8 @@ $user_phoneNo = $user_data['phone'];
                                 $current_stage = 'HQ';
                                 $show_description = false;
                             }
-                        } else if ($application_data['kedudukan_permohonan'] === 'Kewangan') {
+                            
+                        } else if ($application_data['kedudukan_permohonan'] === 'CSM2') {
                             if($application_data['status_permohonan'] === 'Belum Disemak'){
                                 $current_stage = 'Kewangan';
                                 $show_description = false;
@@ -210,7 +233,7 @@ $user_phoneNo = $user_data['phone'];
                                 $show_description = false;
                             }
                             else if ($application_data['status_permohonan'] === 'Lulus'){
-                                $current_stage = 'Selesai';
+                                $current_stage = 'Kewangan';
                                 $show_description = false;
                             }
                             else if ($application_data['status_permohonan'] === 'Dikuiri'){
@@ -219,9 +242,7 @@ $user_phoneNo = $user_data['phone'];
                             }
                         }
 
-                        //status_permohonan ENUM('Belum Disemak','Selesai','Dikuiri', 'Tolak', 'Lulus') DEFAULT 'Belum Disemak',
-                        //kedudukan_permohonan ENUM('Pemohon','CSM', 'HQ', 'CSM2', 'Kewangan') DEFAULT 'Pemohon',
-                        //Stage UI (CSM)
+                        
                     } else {
 
                         $current_stage = 'Pemohon';
@@ -247,14 +268,19 @@ $user_phoneNo = $user_data['phone'];
                             </div>
                         <?php endforeach; ?>
                     </div>
-
                     <?php if ($show_description): ?>
-                        <div class="alert <?= ($application_data['status_permohonan'] === 'Dikuiri' && $application_data['kedudukan_permohonan'] === 'Pemohon') ? 'alert-warning' : 'alert-info' ?> mt-4">
+                        <div class="alert <?= 
+                            ($application_data['status_permohonan'] === 'Dikuiri' && $application_data['kedudukan_permohonan'] === 'Pemohon') 
+                                ? 'alert-warning' 
+                                : (($application_data['status_permohonan'] === 'Tolak' && $application_data['kedudukan_permohonan'] === 'HQ') 
+                                    ? 'alert-danger' 
+                                    : 'alert-info') 
+                        ?> mt-4">
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-info-circle fa-2x me-3"></i>
                                 <div>
                                     <p class="mb-2"><?= $description ?></p>
-                                    <?php if ($action_button): ?>
+                                    <?php if ($action_button && ($application_data['status_permohonan'] !== 'Tolak' && $application_data['kedudukan_permohonan'] !== 'HQ')): ?>
                                         <a href="<?= $action_button['link'] ?>" class="btn btn-primary">
                                             <i class="fas fa-arrow-right me-2"></i><?= $action_button['text'] ?>
                                         </a>

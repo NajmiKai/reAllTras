@@ -122,7 +122,8 @@ CREATE TABLE `wilayah_asal` (
     kedudukan_permohonan ENUM('Pemohon','CSM', 'HQ', 'CSM2', 'Kewangan') DEFAULT 'Pemohon',
 
     wilayah_asal_form_fill boolean DEFAULT false,
-    wilayah_asal_from_stage ENUM ('Empty', 'BorangWA', 'BorangWA2', 'BorangWA3', 'BorangWA4', 'BorangWA5', 'Hantar')
+    wilayah_asal_from_stage ENUM ('Empty', 'BorangWA', 'BorangWA2', 'BorangWA3', 'BorangWA4', 'BorangWA5', 'Hantar'),
+    wilayah_asal_matang boolean DEFAULT false,
 
     status varchar(255) DEFAULT NULL,
     tarikh_keputusan_csm1 date DEFAULT NULL,

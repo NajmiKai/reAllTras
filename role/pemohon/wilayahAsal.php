@@ -62,20 +62,8 @@ while ($row = $doc_result->fetch_assoc()) {
 // Get the current status and position
 $status_permohonan = $wilayah_asal_data['status_permohonan'];
 $kedudukan_permohonan = $wilayah_asal_data['kedudukan_permohonan'];
+$ulasan = $wilayah_asal_data['ulasan_pbr_csm1'];
 
-// Function to get ulasan based on kedudukan
-function getUlasan($wilayah_asal_data, $kedudukan) {
-    switch ($kedudukan) {
-        case 'CSM':
-            return $wilayah_asal_data['ulasan_pbr_csm1'] ?? null;
-        case 'CSM2':
-            return $wilayah_asal_data['ulasan_pengesah_csm2'] ?? null;
-        case 'HQ':
-            return $wilayah_asal_data['ulasan_pelulus_HQ'] ?? null;
-        default:
-            return null;
-    }
-}
 
 ?>
 <!DOCTYPE html>
@@ -228,7 +216,6 @@ function getUlasan($wilayah_asal_data, $kedudukan) {
 
         <?php if ($status_permohonan === 'Dikuiri'): ?>
             <?php
-            $ulasan = getUlasan($wilayah_asal_data, $kedudukan_permohonan);
             if ($ulasan):
             ?>
             <div class="alert alert-warning mb-4">
@@ -248,7 +235,7 @@ function getUlasan($wilayah_asal_data, $kedudukan) {
                         <i class="fas fa-user me-2"></i>Maklumat Pegawai
                     </h5>
                     <?php if ($status_permohonan === 'Dikuiri'): ?>
-                    <a href="borangWA.php" class="btn btn-sm btn-light">
+                    <a href="wilayahAsalDikuiri.php?section=maklumat_pegawai" class="btn btn-sm btn-light">
                         <i class="fas fa-edit me-2"></i>Edit
                     </a>
                     <?php endif; ?>
@@ -331,7 +318,7 @@ function getUlasan($wilayah_asal_data, $kedudukan) {
                         <i class="fas fa-users me-2"></i>Maklumat Ibu Bapa
                     </h5>
                     <?php if ($status_permohonan === 'Dikuiri'): ?>
-                    <a href="borangWA2.php" class="btn btn-sm btn-light">
+                    <a href="wilayahAsalDikuiri.php?section=maklumat_ibubapa" class="btn btn-sm btn-light">
                         <i class="fas fa-edit me-2"></i>Edit
                     </a>
                     <?php endif; ?>
@@ -398,7 +385,7 @@ function getUlasan($wilayah_asal_data, $kedudukan) {
                         <i class="fas fa-plane me-2"></i>Maklumat Penerbangan
                     </h5>
                     <?php if ($status_permohonan === 'Dikuiri'): ?>
-                    <a href="borangWA3.php" class="btn btn-sm btn-light">
+                    <a href="wilayahAsalDikuiri.php?section=maklumat_pengikut" class="btn btn-sm btn-light">
                         <i class="fas fa-edit me-2"></i>Edit
                     </a>
                     <?php endif; ?>
@@ -449,7 +436,7 @@ function getUlasan($wilayah_asal_data, $kedudukan) {
                         <i class="fas fa-user-friends me-2"></i>Maklumat Pengikut
                     </h5>
                     <?php if ($status_permohonan === 'Dikuiri'): ?>
-                    <a href="borangWA3.php" class="btn btn-sm btn-light">
+                    <a href="wilayahAsalDikuiri.php?section=maklumat_pengikut" class="btn btn-sm btn-light">
                         <i class="fas fa-edit me-2"></i>Edit
                     </a>
                     <?php endif; ?>
@@ -492,7 +479,7 @@ function getUlasan($wilayah_asal_data, $kedudukan) {
                         <i class="fas fa-file-alt me-2"></i>Dokumen
                     </h5>
                     <?php if ($status_permohonan === 'Dikuiri'): ?>
-                    <a href="borangWA4.php" class="btn btn-sm btn-light">
+                    <a href="wilayahAsalDikuiri.php?section=dokumen" class="btn btn-sm btn-light">
                         <i class="fas fa-edit me-2"></i>Edit
                     </a>
                     <?php endif; ?>
