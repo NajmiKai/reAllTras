@@ -207,3 +207,30 @@ CREATE TABLE `organisasi` (
     id INT PRIMARY KEY AUTO_INCREMENT,
     nama_cawangan VARCHAR(255) NOT NULL
 );
+
+-- Create system_logs table for tracking all system activities
+CREATE TABLE `system_logs` (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    event_type ENUM('login', 'logout', 'document_upload', 'document_download', 'document_delete', 
+                   'status_change', 'data_update', 'data_create', 'data_delete', 'error') NOT NULL,
+    user_type ENUM('admin', 'superAdmin', 'user') NOT NULL,
+    user_id VARCHAR(20) NOT NULL,
+    action VARCHAR(255) NOT NULL,
+    description TEXT,
+    affected_table VARCHAR(50),
+    affected_record_id INT,
+    old_value TEXT,
+    new_value TEXT,
+    ip_address VARCHAR(45),
+    user_agent TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_user_lookup (user_type, user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Insert dummy system logs for testing with actual users
+INSERT INTO `system_logs` (event_type, user_type, user_id, action, description, affected_table, affected_record_id, ip_address, user_agent) VALUES
+('login', 'admin', '020511140514', 'User Login', 'Successful login attempt by PBR CSM', NULL, NULL, '192.168.1.100', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'),
+('document_upload', 'admin', '02051111111111', 'Document Upload', 'Uploaded travel document for review', 'documents', 1, '192.168.1.101', 'Chrome/91.0.4472.124'),
+('status_change', 'admin', '020300330023', 'Status Update', 'Changed application status to Lulus', 'wilayah_asal', 5, '192.168.1.102', 'Firefox/89.0'),
+('data_update', 'user', '010201100753', 'Profile Update', 'Updated personal information in KEWANGAN', 'user', 3, '192.168.1.103', 'Safari/14.1.1'),
+('document_download', 'admin', '020511140516', 'Document Download', 'Downloaded application form for HQ review', 'documents', 2, '192.168.1.104', 'Edge/91.0.864.59');

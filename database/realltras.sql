@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 09, 2025 at 09:04 PM
+-- Generation Time: Jun 10, 2025 at 10:40 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -192,7 +192,40 @@ CREATE TABLE `superadmin` (
 --
 
 INSERT INTO `superadmin` (`ID`, `Name`, `ICNo`, `Email`, `PhoneNo`, `Password`, `reset_token`, `token_expiry`) VALUES
-(1, 'Najmi HackerMang', '010201100753', 'yunonajmi@gmail.com', '0179813005', '$2y$10$NVcNRND0FpJv1CeSULw.3eVuUs6s02V4m/2RlIoF2wediUyTamrTC', NULL, NULL);
+(3, 'SUPER ADMIN CTM', '010100110100000101000100010011010100100101001110', 'yunonajmi@gmail.com', '0179813005', '$2y$10$u8QIHp5MmXEL2x92QqPGbetvItJSdWcxSURUbDNLdFk62ipycEZ7G', NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `system_logs`
+--
+
+CREATE TABLE `system_logs` (
+  `id` int(11) NOT NULL,
+  `event_type` enum('login','logout','document_upload','document_download','document_delete','status_change','data_update','data_create','data_delete','error') NOT NULL,
+  `user_type` enum('admin','superAdmin','user') NOT NULL,
+  `user_id` varchar(20) NOT NULL,
+  `action` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `affected_table` varchar(50) DEFAULT NULL,
+  `affected_record_id` int(11) DEFAULT NULL,
+  `old_value` text DEFAULT NULL,
+  `new_value` text DEFAULT NULL,
+  `ip_address` varchar(45) DEFAULT NULL,
+  `user_agent` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `system_logs`
+--
+
+INSERT INTO `system_logs` (`id`, `event_type`, `user_type`, `user_id`, `action`, `description`, `affected_table`, `affected_record_id`, `old_value`, `new_value`, `ip_address`, `user_agent`, `created_at`) VALUES
+(11, 'login', 'admin', '020511140514', 'User Login', 'Successful login attempt by PBR CSM', NULL, NULL, NULL, NULL, '192.168.1.100', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', '2025-06-10 20:34:08'),
+(12, 'document_upload', 'admin', '02051111111111', 'Document Upload', 'Uploaded travel document for review', 'documents', 1, NULL, NULL, '192.168.1.101', 'Chrome/91.0.4472.124', '2025-06-10 20:34:08'),
+(13, 'status_change', 'admin', '020300330023', 'Status Update', 'Changed application status to Lulus', 'wilayah_asal', 5, NULL, NULL, '192.168.1.102', 'Firefox/89.0', '2025-06-10 20:34:08'),
+(14, 'data_update', 'user', '010201100753', 'Profile Update', 'Updated personal information in KEWANGAN', 'user', 3, NULL, NULL, '192.168.1.103', 'Safari/14.1.1', '2025-06-10 20:34:08'),
+(15, 'document_download', 'admin', '020511140516', 'Document Download', 'Downloaded application form for HQ review', 'documents', 2, NULL, NULL, '192.168.1.104', 'Edge/91.0.864.59', '2025-06-10 20:34:08');
 
 -- --------------------------------------------------------
 
@@ -388,6 +421,13 @@ ALTER TABLE `superadmin`
   ADD PRIMARY KEY (`ID`);
 
 --
+-- Indexes for table `system_logs`
+--
+ALTER TABLE `system_logs`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_user_lookup` (`user_type`,`user_id`);
+
+--
 -- Indexes for table `user`
 --
 ALTER TABLE `user`
@@ -430,7 +470,13 @@ ALTER TABLE `organisasi`
 -- AUTO_INCREMENT for table `superadmin`
 --
 ALTER TABLE `superadmin`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `system_logs`
+--
+ALTER TABLE `system_logs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `user`

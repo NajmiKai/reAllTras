@@ -13,9 +13,9 @@ date_default_timezone_set('Asia/Kuala_Lumpur');
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $identifier = $_POST['identifier'];
 
-    // Check if user exists by email or IC
-    $stmt = $conn->prepare("SELECT * FROM superAdmin WHERE Email = ? OR ICNo = ?");
-    $stmt->bind_param("ss", $identifier, $identifier);
+    // Check if user exists by email only
+    $stmt = $conn->prepare("SELECT * FROM superAdmin WHERE Email = ?");
+    $stmt->bind_param("s", $identifier);
     $stmt->execute();
     $result = $stmt->get_result();
 

@@ -19,10 +19,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <a href="x" <?= $current_page === 'profile.php' ? 'class="active"' : '' ?>>
         <i class="fa fa-file-text me-2"></i>Pengendalian Wilayah Asal
     </a>
-    <a href="x" <?= $current_page === 'profile.php' ? 'class="active"' : '' ?>>
+    <a href="viewSystemLog.php" <?= $current_page === 'viewSystemLog.php' ? 'class="active"' : '' ?>>
         <i class="fa fa-archive me-2"></i>Log Sistem
     </a>
     <a href="../../logoutSuperAdmin.php">
         <i class="fas fa-sign-out-alt me-2"></i>Log Keluar
     </a>
-</div> 
+</div>

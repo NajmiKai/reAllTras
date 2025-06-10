@@ -24,6 +24,14 @@ $user_phoneNo = $user_data['PhoneNo'];
 // Fetch all users
 $users_sql = "SELECT * FROM user ORDER BY created_at DESC";
 $users_result = $conn->query($users_sql);
+
+// Fetch all bahagian from organisasi table
+$bahagian_sql = "SELECT nama_cawangan FROM organisasi ORDER BY nama_cawangan";
+$bahagian_result = $conn->query($bahagian_sql);
+$bahagian_list = [];
+while($bahagian = $bahagian_result->fetch_assoc()) {
+    $bahagian_list[] = $bahagian['nama_cawangan'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="ms">
@@ -33,6 +41,8 @@ $users_result = $conn->query($users_sql);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="../../assets/css/userStyle.css">
 </head>
 <body>
@@ -46,6 +56,12 @@ $users_result = $conn->query($users_sql);
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3 class="mb-0">Senarai Pengguna</h3>
             <?php include 'includes/greeting.php'; ?>
+        </div>
+
+        <div class="mb-4">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                <i class="fas fa-plus"></i> Tambah Pengguna
+            </button>
         </div>
 
         <!-- Users Table -->
@@ -126,7 +142,12 @@ $users_result = $conn->query($users_sql);
                     </div>
                     <div class="mb-3">
                         <label for="editBahagian" class="form-label">Bahagian</label>
-                        <input type="text" class="form-control" id="editBahagian" name="bahagian" required>
+                        <select class="form-select" id="editBahagian" name="bahagian" required>
+                            <option value="">Pilih Bahagian</option>
+                            <?php foreach($bahagian_list as $bahagian): ?>
+                            <option value="<?php echo htmlspecialchars($bahagian); ?>"><?php echo htmlspecialchars($bahagian); ?></option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label for="editPassword" class="form-label">Kata Laluan Baru (Kosongkan jika tidak mahu tukar)</label>
@@ -142,9 +163,82 @@ $users_result = $conn->query($users_sql);
     </div>
 </div>
 
+<!-- Add User Modal -->
+<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addUserModalLabel">Tambah Pengguna Baru</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addUserForm">
+                    <div class="mb-3">
+                        <label for="nama_first" class="form-label">Nama Pertama</label>
+                        <input type="text" class="form-control" id="nama_first" name="nama_first" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nama_last" class="form-label">Nama Akhir</label>
+                        <input type="text" class="form-control" id="nama_last" name="nama_last" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">No. Telefon</label>
+                        <input type="text" class="form-control" id="phone" name="phone">
+                    </div>
+                    <div class="mb-3">
+                        <label for="kp" class="form-label">No. KP</label>
+                        <input type="text" class="form-control" id="kp" name="kp" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="bahagian" class="form-label">Bahagian</label>
+                        <select class="form-select" id="bahagian" name="bahagian" required>
+                            <option value="">Pilih Bahagian</option>
+                            <?php foreach($bahagian_list as $bahagian): ?>
+                            <option value="<?php echo htmlspecialchars($bahagian); ?>"><?php echo htmlspecialchars($bahagian); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Kata Laluan</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-primary" onclick="addNewUser()">Tambah Pengguna</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
+// Initialize Select2 for bahagian dropdowns
+$(document).ready(function() {
+    $('#bahagian, #editBahagian').select2({
+        theme: 'bootstrap-5',
+        width: '100%',
+        placeholder: 'Cari bahagian...',
+        allowClear: true,
+        language: {
+            noResults: function() {
+                return "Tiada bahagian dijumpai";
+            },
+            searching: function() {
+                return "Mencari...";
+            }
+        }
+    });
+});
+
 function viewUser(userId) {
     // Fetch user details via AJAX
     fetch(`includes/getUserDetails.php?id=${userId}`)
@@ -157,7 +251,7 @@ function viewUser(userId) {
             document.getElementById('editEmail').value = data.email;
             document.getElementById('editPhone').value = data.phone;
             document.getElementById('editKp').value = data.kp;
-            document.getElementById('editBahagian').value = data.bahagian;
+            $('#editBahagian').val(data.bahagian).trigger('change'); // Update Select2
             document.getElementById('editPassword').value = ''; // Clear password field
             
             new bootstrap.Modal(document.getElementById('viewUserModal')).show();
@@ -212,6 +306,35 @@ function deleteUser(userId) {
         })
         .catch(error => console.error('Error:', error));
     }
+}
+
+function addNewUser() {
+    const form = document.getElementById('addUserForm');
+    const formData = new FormData(form);
+    
+    // Convert FormData to JSON
+    const jsonData = {};
+    formData.forEach((value, key) => {
+        jsonData[key] = value;
+    });
+
+    fetch('includes/addUser.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(jsonData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Pengguna berjaya ditambah');
+            location.reload();
+        } else {
+            alert('Ralat: ' + data.message);
+        }
+    })
+    .catch(error => console.error('Error:', error));
 }
 </script>
 </body>
