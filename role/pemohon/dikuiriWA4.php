@@ -3,6 +3,13 @@ include '../../connection.php';
 
 $wilayah_asal_id = $_SESSION['wilayah_asal_id'] ?? null;
 
+// Fetch existing documents for this wilayah_asal_id
+$documents_sql = "SELECT * FROM documents WHERE wilayah_asal_id = ? AND file_origin = 'pemohon' ORDER BY upload_date DESC";
+$documents_stmt = $conn->prepare($documents_sql);
+$documents_stmt->bind_param("i", $wilayah_asal_id);
+$documents_stmt->execute();
+$documents_result = $documents_stmt->get_result();
+
 // Check if user has wilayah_asal record
 $check_sql = "SELECT * FROM wilayah_asal WHERE id = ?";
 $check_stmt = $conn->prepare($check_sql);
@@ -95,7 +102,7 @@ $user_role = $user_data['bahagian'];
 
     <!-- Main Content -->
     <div class="col p-4">
-        <form action="includes/process_borangWA4.php" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+        <form action="includes/process_DikuiriWA4.php" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
             <input type="hidden" name="wilayah_asal_id" value="<?php echo htmlspecialchars($_SESSION['wilayah_asal_id']); ?>">
             
             <!-- Dokumen Dikuiri -->
@@ -104,6 +111,29 @@ $user_role = $user_data['bahagian'];
                     <h5 class="mb-0">Dokumen Dikuiri</h5>
                 </div>
                 <div class="card-body">
+                    <!-- Display existing documents -->
+                    <?php if ($documents_result->num_rows > 0): ?>
+                    <div class="mb-4">
+                        <h6>Dokumen Sedia Ada:</h6>
+                        <div class="list-group">
+                            <?php while ($doc = $documents_result->fetch_assoc()): ?>
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="fas fa-file me-2"></i>
+                                        <?php echo htmlspecialchars($doc['file_name']); ?>
+                                        <small class="text-muted ms-2">(<?php echo date('d/m/Y H:i', strtotime($doc['upload_date'])); ?>)</small>
+                                    </div>
+                                    <a href="../../<?php echo htmlspecialchars($doc['file_path']); ?>" target="_blank" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-eye"></i> Lihat
+                                    </a>
+                                </div>
+                            </div>
+                            <?php endwhile; ?>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
                     <div id="dikuiri-container">
                         <div class="document-item">
                             <div class="document-title">
@@ -111,7 +141,7 @@ $user_role = $user_data['bahagian'];
                                 <i class="fas fa-check-circle"></i>
                             </div>
                             <div class="d-flex">
-                                <input type="file" class="form-control" name="dokumen_dikuiri[]" accept=".pdf,.jpg,.jpeg,.png">
+                                <input type="file" class="form-control" name="dokumen_dikuiri[]" accept=".pdf,.jpg,.jpeg,.png" required>
                             </div>
                         </div>
                     </div>
@@ -174,7 +204,7 @@ $user_role = $user_data['bahagian'];
                 <i class="fas fa-check-circle"></i>
             </div>
             <div class="d-flex">
-                <input type="file" class="form-control" name="dokumen_dikuiri[]" accept=".pdf,.jpg,.jpeg,.png">
+                <input type="file" class="form-control" name="dokumen_dikuiri[]" accept=".pdf,.jpg,.jpeg,.png" required>
                 <button type="button" class="btn btn-danger ms-2" onclick="this.parentElement.parentElement.remove()">
                     <i class="fas fa-times"></i>
                 </button>

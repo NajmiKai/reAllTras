@@ -374,7 +374,9 @@ $ulasan = $wilayah_asal_data['ulasan_pbr_csm1'];
             </div>
             <div class="section-body">
                 <?php if ($wilayah_asal_data): ?>
-                    <div class="info-row">
+                    <!-- Pemohon's Flight Information -->
+                    <div class="info-row mb-4">
+                        <h6 class="text-primary mb-3">Pemohon</h6>
                         <div class="row">
                             <div class="col-md-6">
                                 <p class="info-label">Tarikh Penerbangan</p>
@@ -392,11 +394,14 @@ $ulasan = $wilayah_asal_data['ulasan_pbr_csm1'];
                             </div>
                         </div>
                     </div>
+
+                    <!-- Spouse's Flight Information -->
                     <?php if ($wilayah_asal_data['tarikh_penerbangan_pergi_pasangan']): ?>
-                    <div class="info-row">
+                    <div class="info-row mb-4">
+                        <h6 class="text-primary mb-3">Pasangan</h6>
                         <div class="row">
                             <div class="col-12">
-                                <p class="info-label">Tarikh Penerbangan Pasangan</p>
+                                <p class="info-label">Tarikh Penerbangan</p>
                                 <p class="info-value">
                                     <i class="fas fa-plane-departure me-2 text-primary"></i>Pergi: <?= date('d/m/Y', strtotime($wilayah_asal_data['tarikh_penerbangan_pergi_pasangan'])) ?><br>
                                     <i class="fas fa-plane-arrival me-2 text-success"></i>Balik: <?= date('d/m/Y', strtotime($wilayah_asal_data['tarikh_penerbangan_balik_pasangan'])) ?>
@@ -405,49 +410,32 @@ $ulasan = $wilayah_asal_data['ulasan_pbr_csm1'];
                         </div>
                     </div>
                     <?php endif; ?>
-                <?php endif; ?>
-            </div>
-        </div>
 
-        <!-- Maklumat Pengikut -->
-        <div class="section-card">
-            <div class="section-header">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
-                        <i class="fas fa-user-friends me-2"></i>Maklumat Pengikut
-                    </h5>
-                    <?php if ($status_permohonan === 'Dikuiri'): ?>
-                    <a href="wilayahAsalDikuiri.php?section=maklumat_pengikut" class="btn btn-sm btn-light">
-                        <i class="fas fa-edit me-2"></i>Edit
-                    </a>
-                    <?php endif; ?>
-                </div>
-            </div>
-            <div class="section-body">
-                <?php if ($pengikut_data): ?>
-                    <?php foreach ($pengikut_data as $index => $pengikut): ?>
-                    <div class="info-row">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <p class="info-label">Pengikut <?= $index + 1 ?></p>
-                                <p class="info-value">
-                                    <i class="fas fa-user me-2 text-primary"></i><?= htmlspecialchars($pengikut['nama_first_pengikut'] . ' ' . $pengikut['nama_last_pengikut']) ?><br>
-                                    <i class="fas fa-id-card me-2 text-secondary"></i>No. KP: <?= htmlspecialchars($pengikut['kp_pengikut']) ?><br>
-                                    <i class="fas fa-birthday-cake me-2 text-info"></i>Tarikh Lahir: <?= date('d/m/Y', strtotime($pengikut['tarikh_lahir_pengikut'])) ?>
-                                </p>
-                            </div>
-                            <div class="col-md-6">
-                                <p class="info-label">Tarikh Penerbangan</p>
-                                <p class="info-value">
-                                    <i class="fas fa-plane-departure me-2 text-primary"></i>Pergi: <?= date('d/m/Y', strtotime($pengikut['tarikh_penerbangan_pergi_pengikut'])) ?><br>
-                                    <i class="fas fa-plane-arrival me-2 text-success"></i>Balik: <?= date('d/m/Y', strtotime($pengikut['tarikh_penerbangan_balik_pengikut'])) ?>
-                                </p>
+                    <!-- Followers' Flight Information -->
+                    <?php if ($pengikut_data): ?>
+                        <?php foreach ($pengikut_data as $index => $pengikut): ?>
+                        <div class="info-row <?= $index < count($pengikut_data) - 1 ? 'mb-4' : '' ?>">
+                            <h6 class="text-primary mb-3">Pengikut <?= $index + 1 ?></h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="info-label">Maklumat Pengikut</p>
+                                    <p class="info-value">
+                                        <i class="fas fa-user me-2 text-primary"></i><?= htmlspecialchars($pengikut['nama_first_pengikut'] . ' ' . $pengikut['nama_last_pengikut']) ?><br>
+                                        <i class="fas fa-id-card me-2 text-secondary"></i>No. KP: <?= htmlspecialchars($pengikut['kp_pengikut']) ?><br>
+                                        <i class="fas fa-birthday-cake me-2 text-info"></i>Tarikh Lahir: <?= date('d/m/Y', strtotime($pengikut['tarikh_lahir_pengikut'])) ?>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="info-label">Tarikh Penerbangan</p>
+                                    <p class="info-value">
+                                        <i class="fas fa-plane-departure me-2 text-primary"></i>Pergi: <?= date('d/m/Y', strtotime($pengikut['tarikh_penerbangan_pergi_pengikut'])) ?><br>
+                                        <i class="fas fa-plane-arrival me-2 text-success"></i>Balik: <?= date('d/m/Y', strtotime($pengikut['tarikh_penerbangan_balik_pengikut'])) ?>
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <p class="text-muted">Tiada maklumat pengikut.</p>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 <?php endif; ?>
             </div>
         </div>

@@ -271,9 +271,11 @@ $user_phoneNo = $user_data['phone'];
                     </div>
                     <?php if ($show_description): ?>
                         <div class="alert <?= 
-                            ($application_data['status_permohonan'] === 'Dikuiri' && $application_data['kedudukan_permohonan'] === 'Pemohon') 
+                            ($application_data && isset($application_data['status_permohonan']) && isset($application_data['kedudukan_permohonan']) && 
+                            $application_data['status_permohonan'] === 'Dikuiri' && $application_data['kedudukan_permohonan'] === 'Pemohon') 
                                 ? 'alert-warning' 
-                                : (($application_data['status_permohonan'] === 'Tolak' && $application_data['kedudukan_permohonan'] === 'HQ') 
+                                : (($application_data && isset($application_data['status_permohonan']) && isset($application_data['kedudukan_permohonan']) && 
+                                    $application_data['status_permohonan'] === 'Tolak' && $application_data['kedudukan_permohonan'] === 'HQ') 
                                     ? 'alert-danger' 
                                     : 'alert-info') 
                         ?> mt-4">
@@ -281,7 +283,8 @@ $user_phoneNo = $user_data['phone'];
                                 <i class="fas fa-info-circle fa-2x me-3"></i>
                                 <div>
                                     <p class="mb-2"><?= $description ?></p>
-                                    <?php if ($action_button && ($application_data['status_permohonan'] !== 'Tolak' && $application_data['kedudukan_permohonan'] !== 'HQ')): ?>
+                                    <?php if ($action_button && (!$application_data || !isset($application_data['status_permohonan']) || !isset($application_data['kedudukan_permohonan']) || 
+                                        ($application_data['status_permohonan'] !== 'Tolak' && $application_data['kedudukan_permohonan'] !== 'HQ'))): ?>
                                         <a href="<?= $action_button['link'] ?>" class="btn btn-primary">
                                             <i class="fas fa-arrow-right me-2"></i><?= $action_button['text'] ?>
                                         </a>

@@ -63,19 +63,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Execute the statement
     if ($stmt->execute()) {
         // Success - redirect to next page
-        header("Location: wilayahAsal.php");
+        include 'process_Dikuiri_Update.php';
+        header("Location: dashboard.php");
         exit();
     } else {
         // Error occurred
         $_SESSION['error'] = "Ralat: " . $stmt->error;
-        header("Location: ../dikuiriWA2.php");
+        header("Location: dikuiriWA2.php");
         exit();
     }
 
     $stmt->close();
 } else {
     // If not POST request, redirect back to form
-    header("Location: ../dikuiriWA2.php");
+    header("Location: dikuiriWA2.php");
     exit();
 }
 
