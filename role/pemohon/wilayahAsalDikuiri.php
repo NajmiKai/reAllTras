@@ -15,7 +15,7 @@ $result = $stmt->get_result();
 $user_data = $result->fetch_assoc();
 
 if (!$user_data) {
-    header("Location: ../../login.php");
+    header("Location: ../../loginUser.php");
     exit();
 }
 
@@ -105,37 +105,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 
-<!-- Top Navbar -->
-<nav class="navbar navbar-expand navbar-light bg-light shadow-sm px-3 mb-4 w-100">
-    <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-            <a class="nav-link toggle-sidebar" href="#" role="button"><i class="fas fa-bars"></i></a>
-        </li>
-    </ul>
-
-    <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-            <span class="nav-link fw-semibold"><?= htmlspecialchars($user_name) ?> (<?= htmlspecialchars($user_role) ?>)</span>
-        </li>
-        <li class="nav-item d-none d-sm-inline-block">
-            <a href="../../logoutUser.php" class="nav-link text-danger">
-                <i class="fas fa-sign-out-alt me-1"></i> Log Keluar
-            </a>
-        </li>
-    </ul>
-</nav>
-
 <div class="main-container">
     <!-- Sidebar -->
     <?php include 'includes/sidebar.php'; ?>
 
     <!-- Main Content -->
     <div class="col p-4">
+        
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3 class="mb-0">Edit Wilayah Asal</h3>
-            <a href="wilayahAsal.php" class="btn btn-secondary">
-                <i class="fas fa-arrow-left me-2"></i>Kembali
-            </a>
         </div>
 
         <div class="section-card">

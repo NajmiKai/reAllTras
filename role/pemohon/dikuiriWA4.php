@@ -1,5 +1,4 @@
 <?php
-session_start();
 include '../../connection.php';
 
 $wilayah_asal_id = $_SESSION['wilayah_asal_id'] ?? null;
@@ -92,170 +91,13 @@ $user_role = $user_data['bahagian'];
 </head>
 <body>
 
-<!-- Top Navbar -->
-<nav class="navbar navbar-expand navbar-light bg-light shadow-sm px-3 mb-4 w-100">
-    <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-            <a class="nav-link toggle-sidebar" href="#" role="button"><i class="fas fa-bars"></i></a>
-        </li>
-    </ul>
-
-    <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-            <span class="nav-link fw-semibold"><?= htmlspecialchars($user_name) ?> (<?= htmlspecialchars($user_role) ?>)</span>
-        </li>
-        <li class="nav-item d-none d-sm-inline-block">
-            <a href="../../logoutUser.php" class="nav-link text-danger">
-                <i class="fas fa-sign-out-alt me-1"></i> Log Keluar
-            </a>
-        </li>
-    </ul>
-</nav>
-
 <div class="main-container">
-    <!-- Sidebar -->
-    <?php include 'includes/sidebar.php'; ?>
 
     <!-- Main Content -->
     <div class="col p-4">
-        <h3 class="mb-3">Muat Naik Dokumen</h3>
-        
-        <!-- Multi-step Indicator -->
-        <div class="multi-step-indicator mb-4">
-            <div class="step completed">
-                <div class="step-icon">
-                    <i class="fas fa-user"></i>
-                </div>
-                <div class="step-label">Maklumat Pegawai</div>
-            </div>
-            <div class="step-line"></div>
-            <div class="step completed">
-                <div class="step-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <div class="step-label">Maklumat Wilayah Menetap Ibu Bapa</div>
-            </div>
-            <div class="step-line"></div>
-            <div class="step completed">
-                <div class="step-icon">
-                    <i class="fas fa-plane"></i>
-                </div>
-                <div class="step-label">Maklumat Penerbangan</div>
-            </div>
-            <div class="step-line"></div>
-            <div class="step active">
-                <div class="step-icon">
-                    <i class="fas fa-file-upload"></i>
-                </div>
-                <div class="step-label">Muat Naik Dokumen</div>
-            </div>
-            <div class="step-line"></div>
-            <div class="step">
-                <div class="step-icon">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="step-label">Pengesahan Maklumat</div>
-            </div>
-        </div>
-
         <form action="includes/process_borangWA4.php" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
             <input type="hidden" name="wilayah_asal_id" value="<?php echo htmlspecialchars($_SESSION['wilayah_asal_id']); ?>">
             
-            <!-- Dokumen Pegawai -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-header" style="background-color: #d59e3e; color: white;">
-                    <h5 class="mb-0">Dokumen Pegawai <span class="text-danger">*</span></h5>
-                </div>
-                <div class="card-body">
-                    <div class="document-item">
-                        <div class="document-title">
-                            <h6 class="mb-0">Salinan IC Pegawai / Sijil Kelahiran Pegawai</h6>
-                            <i class="fas fa-check-circle uploaded"></i>
-                        </div>
-                        <input type="file" class="form-control" name="dokumen_pegawai" accept=".pdf,.jpg,.jpeg,.png" required>
-                    </div>
-                    <div class="document-item mt-3">
-                        <div class="document-title">
-                            <h6 class="mb-0">Lampiran II</h6>
-                            <i class="fas fa-check-circle uploaded"></i>
-                        </div>
-                        <input type="file" class="form-control" name="lampiran_ii" accept=".pdf,.jpg,.jpeg,.png" required>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Dokumen Pasangan -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-header" style="background-color: #d59e3e; color: white;">
-                    <h5 class="mb-0">Dokumen Pasangan <span style="font-size: 0.9em; font-style: italic; color: #666;">(Perlu dimuat naik yang berkenaan sahaja.)</span></h5>
-                </div>
-                <div class="card-body">
-                    <div class="document-item">
-                        <div class="document-title">
-                            <h6 class="mb-0">Salinan IC Pasangan / Sijil Kelahiran Pasangan</h6>
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <input type="file" class="form-control" name="dokumen_pasangan" accept=".pdf,.jpg,.jpeg,.png">
-                    </div>
-                    <div class="document-item mt-3">
-                        <div class="document-title">
-                            <h6 class="mb-0">Sijil Perkahwinan / Kad Kahwin</h6>
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <input type="file" class="form-control" name="sijil_perkahwinan" accept=".pdf,.jpg,.jpeg,.png">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Dokumen Pengikut -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-header" style="background-color: #d59e3e; color: white;">
-                    <h5 class="mb-0">Dokumen Pengikut</h5>
-                </div>
-                <div class="card-body">
-                    <div id="pengikut-container">
-                        <div class="document-item">
-                            <div class="document-title">
-                                <h6 class="mb-0">Salinan IC Pengikut / Sijil Kelahiran Pengikut</h6>
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                            <input type="file" class="form-control" name="dokumen_pengikut[]" accept=".pdf,.jpg,.jpeg,.png">
-                        </div>
-                    </div>
-                    <button type="button" class="btn btn-outline-primary btn-sm add-more-btn" onclick="addPengikut()">
-                        <i class="fas fa-plus me-2"></i>Tambah Pengikut
-                    </button>
-                </div>
-            </div>
-
-            <!-- Dokumen Sokongan -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-header" style="background-color: #d59e3e; color: white;">
-                    <h5 class="mb-0">Dokumen Sokongan</h5>
-                </div>
-                <div class="card-body">
-                    <div id="sokongan-container">
-                        <div class="document-item">
-                            <div class="document-title">
-                                <h6 class="mb-0">Dokumen Pengesahan Ayah</h6>
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                            <input type="file" class="form-control" name="dokumen_sokongan[]" accept=".pdf,.jpg,.jpeg,.png">
-                        </div>
-                        <div class="document-item mt-3">
-                            <div class="document-title">
-                                <h6 class="mb-0">Dokumen Pengesahan Ibu</h6>
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                            <input type="file" class="form-control" name="dokumen_sokongan[]" accept=".pdf,.jpg,.jpeg,.png">
-                        </div>
-                    </div>
-                    <button type="button" class="btn btn-outline-primary btn-sm add-more-btn" onclick="addSokongan()">
-                        <i class="fas fa-plus me-2"></i>Tambah Dokumen Sokongan
-                    </button>
-                </div>
-            </div>
-
             <!-- Dokumen Dikuiri -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header" style="background-color: #d59e3e; color: white;">
@@ -320,45 +162,6 @@ $user_role = $user_data['bahagian'];
         });
     });
 
-    // Add more pengikut
-    function addPengikut() {
-        const container = document.getElementById('pengikut-container');
-        const newItem = document.createElement('div');
-        newItem.className = 'document-item';
-        newItem.innerHTML = `
-            <div class="document-title">
-                <h6 class="mb-0">Salinan IC Pengikut / Sijil Kelahiran Pengikut</h6>
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <div class="d-flex">
-                <input type="file" class="form-control" name="dokumen_pengikut[]" accept=".pdf,.jpg,.jpeg,.png">
-                <button type="button" class="btn btn-danger ms-2" onclick="this.parentElement.parentElement.remove()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        `;
-        container.appendChild(newItem);
-    }
-
-    // Add more sokongan
-    function addSokongan() {
-        const container = document.getElementById('sokongan-container');
-        const newItem = document.createElement('div');
-        newItem.className = 'document-item';
-        newItem.innerHTML = `
-            <div class="document-title">
-                <h6 class="mb-0">Dokumen Sokongan</h6>
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <div class="d-flex">
-                <input type="file" class="form-control" name="dokumen_sokongan[]" accept=".pdf,.jpg,.jpeg,.png">
-                <button type="button" class="btn btn-danger ms-2" onclick="this.parentElement.parentElement.remove()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        `;
-        container.appendChild(newItem);
-    }
 
     // Add more dikuiri
     function addDikuiri() {
