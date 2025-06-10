@@ -42,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <title>Daftar Pengguna - ALLTRAS</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -86,6 +87,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .form-control {
             border-radius: 8px;
         }
+
+        .select2-container--default .select2-selection--single {
+            height: 38px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 38px;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 36px;
+        }
     </style>
 </head>
 <body>
@@ -122,17 +135,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="col-md-6">
                 <label class="form-label">Bahagian</label>
-                <select class="form-select" name="bahagian" required>
+                <select class="form-select select2" name="bahagian" required>
                     <option selected disabled>Pilih Bahagian</option>
-                    <optgroup label="Bahagian Khidmat Pengurusan dan Sumber Manusia">
-                        <option value="PENTADBIRAN AM">CAWANGAN PENTADBIRAN AM</option>
-                        <option value="KEWANGAN">CAWANGAN KEWANGAN</option>
-                        <option value="PEROLEHAN">CAWANGAN PEROLEHAN</option>
-                        <option value="SUMBER MANUSIA">CAWANGAN SUMBER MANUSIA</option>
-                        <option value="TEKNOLOGI MAKLUMAT">CAWANGAN TEKNOLOGI MAKLUMAT</option>
-                        <option value="LATIHAN DAN KORPORAT">CAWANGAN LATIHAN DAN KORPORAT</option>
-                    </optgroup>
-                    <!-- Add more options as needed -->
+                    <?php
+                    $query = "SELECT id, nama_cawangan FROM organisasi ORDER BY nama_cawangan";
+                    $result = $conn->query($query);
+                    while($row = $result->fetch_assoc()) {
+                        echo "<option value='" . htmlspecialchars($row['nama_cawangan']) . "'>" . htmlspecialchars($row['nama_cawangan']) . "</option>";
+                    }
+                    ?>
                 </select>
             </div>
 
@@ -146,14 +157,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div class="col-md-12 text-center mt-4">
+                <a href="loginUser.php" class="btn btn-secondary px-4">Kembali</a>
                 <button type="submit" class="btn btn-primary px-4">Daftar</button>
-            </div>
-            <div class="col-md-12 text-center mt-4">
-                <a href="loginUser.php" class="btn btn-primary px-4">Log Masuk Jika Sudah Mendaftar</a>
             </div>
         </div>
     </form>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.select2').select2({
+            placeholder: "Cari Bahagian...",
+            allowClear: true,
+            width: '100%'
+        });
+    });
+</script>
 
 </body>
 </html>
