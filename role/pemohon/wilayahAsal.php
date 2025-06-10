@@ -2,6 +2,8 @@
 session_start();
 include '../../connection.php';
 
+// Get wilayah_asal_id from session
+$wilayah_asal_id = $_SESSION['wilayah_asal_id'] ?? null;
 
 // Fetch user data from database
 $user_id = $_SESSION['user_id'];
@@ -24,9 +26,9 @@ $user_email = $user_data['email'];
 $user_phoneNo = $user_data['phone'];
 
 // Check if user has wilayah_asal record
-$check_sql = "SELECT * FROM wilayah_asal WHERE user_kp = ?";
+$check_sql = "SELECT * FROM wilayah_asal WHERE id = ?";
 $check_stmt = $conn->prepare($check_sql);
-$check_stmt->bind_param("s", $user_icNo);
+$check_stmt->bind_param("i", $wilayah_asal_id);
 $check_stmt->execute();
 $wilayah_asal_result = $check_stmt->get_result();
 $wilayah_asal_data = $wilayah_asal_result->fetch_assoc();
@@ -521,4 +523,4 @@ $ulasan = $wilayah_asal_data['ulasan_pbr_csm1'];
     });
 </script>
 </body>
-</html> 
+</html>

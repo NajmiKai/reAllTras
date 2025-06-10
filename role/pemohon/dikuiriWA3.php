@@ -2,9 +2,19 @@
 session_start();
 include '../../connection.php';
 
-// Check if required session data exists
-if (!isset($_SESSION['borangWA_data']) || !isset($_SESSION['parent_info'])) {
-    header("Location: borangWA.php");
+$wilayah_asal_id = $_SESSION['wilayah_asal_id'] ?? null;
+
+// Check if user has wilayah_asal record
+$check_sql = "SELECT * FROM wilayah_asal WHERE id = ?";
+$check_stmt = $conn->prepare($check_sql);
+$check_stmt->bind_param("i", $wilayah_asal_id);
+$check_stmt->execute();
+$wilayah_asal_result = $check_stmt->get_result();
+$wilayah_asal_data = $wilayah_asal_result->fetch_assoc();
+
+// If no wilayah_asal record exists, redirect to borangWA
+if (!$wilayah_asal_data) {
+    header("Location: dashboard.php");
     exit();
 }
 
@@ -147,15 +157,7 @@ $user_phoneNo = $user_data['phone'];
 
 <div class="main-container">
     <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <h6><img src="../../assets/ALLTRAS.png" alt="ALLTRAS" width="140" style="margin-left: 20px;"><br>ALL REGION TRAVELLING SYSTEM</h6><br>
-        <a href="dashboard.php"><i class="fas fa-home me-2"></i>Laman Utama</a>
-        <h6 class="text mt-4"></h6>
-        <a href="wilayahAsal.php"><i class="fas fa-map-marker-alt me-2"></i>Wilayah Asal</a>
-        <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a>
-        <a href="profile.php"><i class="fas fa-user me-2"></i>Paparan Profil</a>
-        <a href="../../logoutUser.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
-    </div>
+    <?php include 'includes/sidebar.php'; ?>
 
     <!-- Main Content -->
     <div class="col p-4">
@@ -199,89 +201,84 @@ $user_phoneNo = $user_data['phone'];
             </div>
         </div>
 
-        <form action="includes/process_borangWA3.php" method="POST" class="needs-validation" novalidate>
+        <form action="includes/process_DikuiriWA3.php" method="POST" class="needs-validation" novalidate>
             <!-- Flight Information -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header" style="background-color: #d59e3e; color: white;">
-                    <h5 class="mb-0">Maklumat Penerbangan</h5>
+                    <h5 class="mb-0"><i class="fas fa-plane me-2"></i>Maklumat Penerbangan</h5>
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
-                        <div class="col-12 mb-3">
-                            <label class="form-label fw-bold">Jenis Permohonan</label>
+                        <div class="col-md-12">
+                            <label class="form-label">Jenis Permohonan</label>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="jenis_permohonan" id="diri_sendiri" value="diri_sendiri" required>
-                                <label class="form-check-label" for="diri_sendiri">
-                                    Diri Sendiri/ Pasangan/ Anak Ke Wilayah Ditetapkan
-                                </label>
+                                <input class="form-check-input" type="radio" name="jenis_permohonan" id="permohonan_asal" value="Asal" <?= $wilayah_asal_data['jenis_permohonan'] === 'Asal' ? 'checked' : '' ?> required>
+                                <label class="form-check-label" for="permohonan_asal">Asal</label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="jenis_permohonan" id="keluarga" value="keluarga" required>
-                                <label class="form-check-label" for="keluarga">
-                                    Keluarga Pegawai ke Wilayah Berkhidmat
-                                </label>
+                                <input class="form-check-input" type="radio" name="jenis_permohonan" id="permohonan_balik" value="Balik" <?= $wilayah_asal_data['jenis_permohonan'] === 'Balik' ? 'checked' : '' ?> required>
+                                <label class="form-check-label" for="permohonan_balik">Balik</label>
                             </div>
                         </div>
+                        
                         <div class="col-md-6">
                             <label class="form-label">Tarikh Penerbangan Pergi</label>
-                            <input type="date" class="form-control" name="tarikh_penerbangan_pergi" required>
+                            <input type="date" class="form-control" name="tarikh_penerbangan_pergi" value="<?= htmlspecialchars($wilayah_asal_data['tarikh_penerbangan_pergi']) ?>" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Tarikh Penerbangan Balik</label>
-                            <input type="date" class="form-control" name="tarikh_penerbangan_balik" required>
+                            <input type="date" class="form-control" name="tarikh_penerbangan_balik" value="<?= htmlspecialchars($wilayah_asal_data['tarikh_penerbangan_balik']) ?>" required>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label">Titik Permulaan</label>
+                            <input type="text" class="form-control" name="start_point" value="<?= htmlspecialchars($wilayah_asal_data['start_point']) ?>" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Lapangan Terbang Berlepas</label>
-                            <input type="text" class="form-control" name="start_point" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Lapangan Terbang Tiba</label>
-                            <input type="text" class="form-control" name="end_point" required>
-                        </div>
-                        <div class="col-12 mb-3">
-                            <label class="form-label fw-bold">Tarikh Penerbangan Pasangan Lain? <span style="font-size: 0.9em; font-style: italic; color: #666;">(Untuk pegawai yang tidak berkenaan, Tanda Tidak)</span></label>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="partner_flight_type" id="partner_same" value="same" checked onchange="togglePartnerDates('same')">
-                                <label class="form-check-label" for="partner_same">
-                                    Tidak
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="partner_flight_type" id="partner_different" value="different" onchange="togglePartnerDates('different')">
-                                <label class="form-check-label" for="partner_different">
-                                    Ya
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-md-6 partner-dates" style="display: none;">
-                            <label class="form-label">Tarikh Penerbangan Pergi Pasangan</label>
-                            <input type="date" class="form-control" name="tarikh_penerbangan_pergi_pasangan">
-                        </div>
-                        <div class="col-md-6 partner-dates" style="display: none;">
-                            <label class="form-label">Tarikh Penerbangan Balik Pasangan</label>
-                            <input type="date" class="form-control" name="tarikh_penerbangan_balik_pasangan">
+                            <label class="form-label">Destinasi</label>
+                            <input type="text" class="form-control" name="end_point" value="<?= htmlspecialchars($wilayah_asal_data['end_point']) ?>" required>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Accompanying Persons -->
+            <!-- Partner Flight Information (if applicable) -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header" style="background-color: #d59e3e; color: white;">
-                    <h5 class="mb-0">Maklumat Pengikut</h5>
+                    <h5 class="mb-0"><i class="fas fa-user-friends me-2"></i>Maklumat Penerbangan Pasangan</h5>
                 </div>
                 <div class="card-body">
-                    <div id="followers-container">
-                        <!-- Followers will be added here dynamically -->
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Tarikh Penerbangan Pasangan</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="partner_flight_type" id="same_flight" value="same" 
+                                    <?= ($wilayah_asal_data['tarikh_penerbangan_pergi'] == $wilayah_asal_data['tarikh_penerbangan_pergi_pasangan']) ? 'checked' : '' ?> 
+                                    onchange="togglePartnerDates('same')">
+                                <label class="form-check-label" for="same_flight">Sama dengan tarikh penerbangan pemohon</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="partner_flight_type" id="different_flight" value="different" 
+                                    <?= ($wilayah_asal_data['tarikh_penerbangan_pergi'] != $wilayah_asal_data['tarikh_penerbangan_pergi_pasangan']) ? 'checked' : '' ?> 
+                                    onchange="togglePartnerDates('different')">
+                                <label class="form-check-label" for="different_flight">Berbeza dengan tarikh penerbangan pemohon</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 partner-dates" style="display: <?= ($wilayah_asal_data['tarikh_penerbangan_pergi'] != $wilayah_asal_data['tarikh_penerbangan_pergi_pasangan']) ? 'block' : 'none' ?>;">
+                            <label class="form-label">Tarikh Penerbangan Pergi Pasangan</label>
+                            <input type="date" class="form-control" name="tarikh_penerbangan_pergi_pasangan" value="<?= htmlspecialchars($wilayah_asal_data['tarikh_penerbangan_pergi_pasangan']) ?>">
+                        </div>
+                        <div class="col-md-6 partner-dates" style="display: <?= ($wilayah_asal_data['tarikh_penerbangan_pergi'] != $wilayah_asal_data['tarikh_penerbangan_pergi_pasangan']) ? 'block' : 'none' ?>;">
+                            <label class="form-label">Tarikh Penerbangan Balik Pasangan</label>
+                            <input type="date" class="form-control" name="tarikh_penerbangan_balik_pasangan" value="<?= htmlspecialchars($wilayah_asal_data['tarikh_penerbangan_balik_pasangan']) ?>">
+                        </div>
                     </div>
-                    <button type="button" class="btn btn-outline-primary mt-3" onclick="addFollower()">
-                        <i class="fas fa-plus me-2"></i>Tambah Pengikut
-                    </button>
                 </div>
             </div>
 
             <div class="d-flex justify-content-between mt-4">
-                <a href="borangWA2.php" class="btn btn-secondary">
+                <a href="wilayahAsal.php" class="btn btn-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Kembali
                 </a>
                 <button type="submit" class="btn btn-primary">
@@ -484,4 +481,4 @@ $user_phoneNo = $user_data['phone'];
     });
 </script>
 </body>
-</html> 
+</html>

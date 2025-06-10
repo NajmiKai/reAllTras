@@ -30,7 +30,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             poskod_menetap_ibu = ?,
             bandar_menetap_ibu = ?,
             negeri_menetap_ibu = ?,
-            ibu_negeri_bandar_dituju_ibu = ?
+            ibu_negeri_bandar_dituju_ibu = ?,
+            wilayah_asal_form_fill = true,
+            wilayah_asal_from_stage = 'Hantar',
+            status_permohonan = 'Belum Disemak',
+            kedudukan_permohonan = 'Pemohon'
             WHERE id = ?";
 
         $stmt = $conn->prepare($sql);
@@ -109,7 +113,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
             // Redirect to the next form
-            header("Location: ../borangWA3.php");
+            header("Location: ../wilayahAsal.php");
             exit();
         } else {
             throw new Exception("Error executing statement: " . $stmt->error);
@@ -122,12 +126,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['error'] = "Ralat semasa menyimpan data. Sila cuba lagi.";
         
         // Redirect back to form with error
-        header("Location: ../borangWA2.php");
+        header("Location: ../dikuiriWA2.php");
         exit();
     }
 } else {
     // If not POST request, redirect back to form
-    header("Location: ../borangWA2.php");
+    header("Location: ../dikuiriWA2.php");
     exit();
 }
 ?> 

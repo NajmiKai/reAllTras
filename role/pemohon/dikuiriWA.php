@@ -2,6 +2,24 @@
 session_start();
 include '../../connection.php';
 
+
+// Add after session_start() and include
+$wilayah_asal_id = $_SESSION['wilayah_asal_id'] ?? null;
+
+// Check if user has wilayah_asal record
+$check_sql = "SELECT * FROM wilayah_asal WHERE id = ?";
+$check_stmt = $conn->prepare($check_sql);
+$check_stmt->bind_param("i", $wilayah_asal_id);
+$check_stmt->execute();
+$wilayah_asal_result = $check_stmt->get_result();
+$wilayah_asal_data = $wilayah_asal_result->fetch_assoc();
+
+// If no wilayah_asal record exists, redirect to borangWA
+if (!$wilayah_asal_data) {
+    header("Location: dashboard.php");
+    exit();
+}
+
 // Set user ID in session if not set
 if (!isset($_SESSION['user_id'])) {
     $_SESSION['user_id'] = 1; // Set default user ID to 1
@@ -129,15 +147,7 @@ $user_phoneNo = $user_data['phone'];
 
 <div class="main-container">
     <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <h6><img src="../../assets/ALLTRAS.png" alt="ALLTRAS" width="140" style="margin-left: 20px;"><br>ALL REGION TRAVELLING SYSTEM</h6><br>
-        <a href="dashboard.php"><i class="fas fa-home me-2"></i>Laman Utama</a>
-        <h6 class="text mt-4"></h6>
-        <a href="wilayahAsal.php"><i class="fas fa-map-marker-alt me-2"></i>Wilayah Asal</a>
-        <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a>
-        <a href="profile.php"><i class="fas fa-user me-2"></i>Paparan Profil</a>
-        <a href="../../logoutUser.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
-    </div>
+    <?php include 'includes/sidebar.php'; ?>
 
     <!-- Main Content -->
     <div class="col p-4">
@@ -153,45 +163,9 @@ $user_phoneNo = $user_data['phone'];
             </div>
         <?php endif; ?>
 
-        <!-- Multi-step Indicator -->
-        <div class="multi-step-indicator mb-4">
-            <div class="step active">
-                <div class="step-icon">
-                    <i class="fas fa-user"></i>
-                </div>
-                <div class="step-label">Maklumat Pegawai</div>
-            </div>
-            <div class="step-line"></div>
-            <div class="step">
-                <div class="step-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <div class="step-label">Maklumat Wilayah Menetap Ibu Bapa</div>
-            </div>
-            <div class="step-line"></div>
-            <div class="step">
-                <div class="step-icon">
-                    <i class="fas fa-plane"></i>
-                </div>
-                <div class="step-label">Maklumat Penerbangan</div>
-            </div>
-            <div class="step-line"></div>
-            <div class="step">
-                <div class="step-icon">
-                    <i class="fas fa-file-upload"></i>
-                </div>
-                <div class="step-label">Muat Naik Dokumen</div>
-            </div>
-            <div class="step-line"></div>
-            <div class="step">
-                <div class="step-icon">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="step-label">Pengesahan Maklumat</div>
-            </div>
-        </div>
+        <form action="includes/process_DikuiriWA.php" method="POST" class="needs-validation" novalidate>
+            <input type="hidden" name="wilayah_asal_id" value="<?= $wilayah_asal_id ?>">
 
-        <form action="includes/process_borangWA.php" method="POST" class="needs-validation" novalidate>
             <!-- Personal Information -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header" style="background-color: #d59e3e; color: white;">
@@ -209,11 +183,11 @@ $user_phoneNo = $user_data['phone'];
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Jawatan & Gred</label>
-                            <input type="text" class="form-control" name="jawatan_gred" required>
+                            <input type="text" class="form-control" name="jawatan_gred" value="<?= htmlspecialchars($wilayah_asal_data['jawatan_gred']) ?>" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Email Ketua Cawangan <span style="font-size: 0.9em; font-style: italic; color: #666;">(Email Ketua Bahagian untuk KC dan Setaraf)</span></label>
-                            <input type="email" class="form-control" name="email_penyelia" required>
+                            <input type="email" class="form-control" name="email_penyelia" value="<?= htmlspecialchars($wilayah_asal_data['email_penyelia']) ?>" required>
                         </div>
                     </div>
                 </div>
@@ -228,23 +202,23 @@ $user_phoneNo = $user_data['phone'];
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Alamat 1</label>
-                            <input type="text" class="form-control" name="alamat_menetap_1" required>
+                            <input type="text" class="form-control" name="alamat_menetap_1" value="<?= htmlspecialchars($wilayah_asal_data['alamat_menetap_1']) ?>" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Alamat 2</label>
-                            <input type="text" class="form-control" name="alamat_menetap_2" required>
+                            <input type="text" class="form-control" name="alamat_menetap_2" value="<?= htmlspecialchars($wilayah_asal_data['alamat_menetap_2']) ?>">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Poskod</label>
-                            <input type="text" class="form-control" name="poskod_menetap" required>
+                            <input type="text" class="form-control" name="poskod_menetap" value="<?= htmlspecialchars($wilayah_asal_data['poskod_menetap']) ?>" required>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Bandar</label>
-                            <input type="text" class="form-control" name="bandar_menetap" required>
+                            <input type="text" class="form-control" name="bandar_menetap" value="<?= htmlspecialchars($wilayah_asal_data['bandar_menetap']) ?>" required>
                         </div>
                         <div class="col-md-5">
                             <label class="form-label">Negeri</label>
-                            <input type="text" class="form-control" name="negeri_menetap" required>
+                            <input type="text" class="form-control" name="negeri_menetap" value="<?= htmlspecialchars($wilayah_asal_data['negeri_menetap']) ?>" required>
                         </div>
                     </div>
                 </div>
@@ -259,23 +233,23 @@ $user_phoneNo = $user_data['phone'];
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Alamat 1</label>
-                            <input type="text" class="form-control" name="alamat_berkhidmat_1" required>
+                            <input type="text" class="form-control" name="alamat_berkhidmat_1" value="<?= htmlspecialchars($wilayah_asal_data['alamat_berkhidmat_1']) ?>" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Alamat 2</label>
-                            <input type="text" class="form-control" name="alamat_berkhidmat_2" required>
+                            <input type="text" class="form-control" name="alamat_berkhidmat_2" value="<?= htmlspecialchars($wilayah_asal_data['alamat_berkhidmat_2']) ?>">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Poskod</label>
-                            <input type="text" class="form-control" name="poskod_berkhidmat" required>
+                            <input type="text" class="form-control" name="poskod_berkhidmat" value="<?= htmlspecialchars($wilayah_asal_data['poskod_berkhidmat']) ?>" required>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Bandar</label>
-                            <input type="text" class="form-control" name="bandar_berkhidmat" required>
+                            <input type="text" class="form-control" name="bandar_berkhidmat" value="<?= htmlspecialchars($wilayah_asal_data['bandar_berkhidmat']) ?>" required>
                         </div>
                         <div class="col-md-5">
                             <label class="form-label">Negeri</label>
-                            <input type="text" class="form-control" name="negeri_berkhidmat" required>
+                            <input type="text" class="form-control" name="negeri_berkhidmat" value="<?= htmlspecialchars($wilayah_asal_data['negeri_berkhidmat']) ?>" required>
                         </div>
                     </div>
                 </div>
@@ -290,22 +264,22 @@ $user_phoneNo = $user_data['phone'];
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Tarikh Lapor Diri</label>
-                            <input type="date" class="form-control" name="tarikh_lapor_diri" required>
+                            <input type="date" class="form-control" name="tarikh_lapor_diri" value="<?= htmlspecialchars($wilayah_asal_data['tarikh_lapor_diri']) ?>" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Pernah Menggunakan Kemudahan Ini?</label>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="pernah_guna" value="ya" id="pernah_guna_ya" onchange="toggleTarikhTerakhir()">
+                                <input class="form-check-input" type="radio" name="pernah_guna" value="ya" id="pernah_guna_ya" onchange="toggleTarikhTerakhir()" <?= $wilayah_asal_data['tarikh_terakhir_kemudahan'] ? 'checked' : '' ?>>
                                 <label class="form-check-label" for="pernah_guna_ya">Ya</label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="pernah_guna" value="tidak" id="pernah_guna_tidak" onchange="toggleTarikhTerakhir()" checked>
+                                <input class="form-check-input" type="radio" name="pernah_guna" value="tidak" id="pernah_guna_tidak" onchange="toggleTarikhTerakhir()" <?= !$wilayah_asal_data['tarikh_terakhir_kemudahan'] ? 'checked' : '' ?>>
                                 <label class="form-check-label" for="pernah_guna_tidak">Tidak</label>
                             </div>
                         </div>
-                        <div class="col-md-6" id="tarikh_terakhir_container" style="display: none;">
+                        <div class="col-md-6" id="tarikh_terakhir_container" style="display: <?= $wilayah_asal_data['tarikh_terakhir_kemudahan'] ? 'block' : 'none' ?>;">
                             <label class="form-label">Tarikh Terakhir Menggunakan Kemudahan</label>
-                            <input type="date" class="form-control" name="tarikh_terakhir_kemudahan">
+                            <input type="date" class="form-control" name="tarikh_terakhir_kemudahan" value="<?= htmlspecialchars($wilayah_asal_data['tarikh_terakhir_kemudahan']) ?>">
                         </div>
                     </div>
                 </div>
@@ -322,35 +296,35 @@ $user_phoneNo = $user_data['phone'];
                             <label class="form-label fw-bold">Adakah Anda Mempunyai Pasangan?</label>
                             <div class="d-flex gap-4 mt-2">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="ada_pasangan" value="ya" id="ada_pasangan_ya" onchange="togglePartnerDetails()">
+                                    <input class="form-check-input" type="radio" name="ada_pasangan" value="ya" id="ada_pasangan_ya" onchange="togglePartnerDetails()" <?= $wilayah_asal_data['nama_first_pasangan'] ? 'checked' : '' ?>>
                                     <label class="form-check-label" for="ada_pasangan_ya">Ya</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="ada_pasangan" value="tidak" id="ada_pasangan_tidak" onchange="togglePartnerDetails()" checked>
+                                    <input class="form-check-input" type="radio" name="ada_pasangan" value="tidak" id="ada_pasangan_tidak" onchange="togglePartnerDetails()" <?= !$wilayah_asal_data['nama_first_pasangan'] ? 'checked' : '' ?>>
                                     <label class="form-check-label" for="ada_pasangan_tidak">Tidak</label>
                                 </div>
                             </div>
                         </div>
 
-                        <div id="partner_details_container" style="display: none;" class="mt-3">
+                        <div id="partner_details_container" style="display: <?= $wilayah_asal_data['nama_first_pasangan'] ? 'block' : 'none' ?>;" class="mt-3">
                             <div class="border rounded p-4 bg-light">
                                 <h6 class="mb-4 text-muted border-bottom pb-2">Maklumat Peribadi Pasangan</h6>
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label class="form-label">Nama Depan Pasangan</label>
-                                        <input type="text" class="form-control" name="nama_first_pasangan" maxlength="50">
+                                        <input type="text" class="form-control" name="nama_first_pasangan" value="<?= htmlspecialchars($wilayah_asal_data['nama_first_pasangan']) ?>" maxlength="50">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Nama Belakang Pasangan</label>
-                                        <input type="text" class="form-control" name="nama_last_pasangan" maxlength="50">
+                                        <input type="text" class="form-control" name="nama_last_pasangan" value="<?= htmlspecialchars($wilayah_asal_data['nama_last_pasangan']) ?>" maxlength="50">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">No. KP Pasangan</label>
-                                        <input type="text" class="form-control" name="no_kp_pasangan" maxlength="14" id="no_kp_pasangan" oninput="formatIC(this)" title="Format: XXXXXX-XX-XXXX">
+                                        <input type="text" class="form-control" name="no_kp_pasangan" value="<?= htmlspecialchars($wilayah_asal_data['no_kp_pasangan']) ?>" maxlength="14" id="no_kp_pasangan" oninput="formatIC(this)" title="Format: XXXXXX-XX-XXXX">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Wilayah Menetap Pasangan</label>
-                                        <input type="text" class="form-control" name="wilayah_menetap_pasangan" maxlength="50">
+                                        <input type="text" class="form-control" name="wilayah_menetap_pasangan" value="<?= htmlspecialchars($wilayah_asal_data['wilayah_menetap_pasangan']) ?>" maxlength="50">
                                     </div>
                                 </div>
                             </div>
@@ -360,20 +334,20 @@ $user_phoneNo = $user_data['phone'];
                                 <div class="row g-3">
                                     <div class="col-12">
                                         <label class="form-label">Alamat</label>
-                                        <input type="text" class="form-control mb-2" name="alamat_berkhidmat_1_pasangan" placeholder="Alamat 1" maxlength="100">
-                                        <input type="text" class="form-control" name="alamat_berkhidmat_2_pasangan" placeholder="Alamat 2" maxlength="100">
+                                        <input type="text" class="form-control mb-2" name="alamat_berkhidmat_1_pasangan" value="<?= htmlspecialchars($wilayah_asal_data['alamat_berkhidmat_1_pasangan']) ?>" placeholder="Alamat 1" maxlength="100">
+                                        <input type="text" class="form-control" name="alamat_berkhidmat_2_pasangan" value="<?= htmlspecialchars($wilayah_asal_data['alamat_berkhidmat_2_pasangan']) ?>" placeholder="Alamat 2" maxlength="100">
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">Poskod</label>
-                                        <input type="text" class="form-control" name="poskod_berkhidmat_pasangan" maxlength="10" pattern="[0-9]{5}" title="5 digit poskod">
+                                        <input type="text" class="form-control" name="poskod_berkhidmat_pasangan" value="<?= htmlspecialchars($wilayah_asal_data['poskod_berkhidmat_pasangan']) ?>" maxlength="10" pattern="[0-9]{5}" title="5 digit poskod">
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">Bandar</label>
-                                        <input type="text" class="form-control" name="bandar_berkhidmat_pasangan" maxlength="50">
+                                        <input type="text" class="form-control" name="bandar_berkhidmat_pasangan" value="<?= htmlspecialchars($wilayah_asal_data['bandar_berkhidmat_pasangan']) ?>" maxlength="50">
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">Negeri</label>
-                                        <input type="text" class="form-control" name="negeri_berkhidmat_pasangan" maxlength="50">
+                                        <input type="text" class="form-control" name="negeri_berkhidmat_pasangan" value="<?= htmlspecialchars($wilayah_asal_data['negeri_berkhidmat_pasangan']) ?>" maxlength="50">
                                     </div>
                                 </div>
                             </div>
@@ -382,9 +356,12 @@ $user_phoneNo = $user_data['phone'];
                 </div>
             </div>
 
-            <div class="d-flex justify-content-end mt-4">
+            <div class="d-flex justify-content-between mt-4">
+                <a href="wilayahAsal.php" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Kembali
+                </a>
                 <button type="submit" class="btn btn-primary">
-                    Seterusnya<i class="fas fa-arrow-right ms-2"></i>
+                    Kemaskini<i class="fas fa-arrow-right ms-2"></i>
                 </button>
             </div>
         </form>

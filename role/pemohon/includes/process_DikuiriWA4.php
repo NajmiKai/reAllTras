@@ -146,12 +146,32 @@ if (isset($_FILES['dokumen_sokongan'])) {
     }
 }
 
+// Handle Dokumen Dikuiri (Multiple)
+if (isset($_FILES['dokumen_dikuiri'])) {
+    foreach ($_FILES['dokumen_dikuiri']['tmp_name'] as $key => $tmp_name) {
+        if ($_FILES['dokumen_dikuiri']['error'][$key] === UPLOAD_ERR_OK) {
+            $file = [
+                'name' => $_FILES['dokumen_dikuiri']['name'][$key],
+                'type' => $_FILES['dokumen_dikuiri']['type'][$key],
+                'tmp_name' => $tmp_name,
+                'error' => $_FILES['dokumen_dikuiri']['error'][$key],
+                'size' => $_FILES['dokumen_dikuiri']['size'][$key]
+            ];
+            
+            if (!handleFileUpload($file, $upload_dir, $wilayah_asal_id, $user_kp, 'Dokumen Dikuiri')) {
+                $success = false;
+                $error_messages[] = "Gagal memuat naik Dokumen Dikuiri #" . ($key + 1);
+            }
+        }
+    }
+}
+
 if ($success) {
     $_SESSION['success'] = "Semua dokumen berjaya dimuat naik.";
-    header("Location: ../borangWA5.php?id=" . $wilayah_asal_id);
+    header("Location: ../wilayahAsal.php?id=" . $wilayah_asal_id);
 } else {
     $_SESSION['error'] = implode("<br>", $error_messages);
-    header("Location: ../borangWA4.php");
+    header("Location: ../dikuiriWA4.php");
 }
 exit();
-?> 
+?>

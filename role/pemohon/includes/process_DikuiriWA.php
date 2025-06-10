@@ -133,4 +133,79 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     header("Location: ../borangWA.php");
     exit();
 }
-?> 
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $wilayah_asal_id = $_POST['wilayah_asal_id'] ?? null;
+    
+    if (!$wilayah_asal_id) {
+        $_SESSION['error'] = "Invalid request";
+        header("Location: ../wilayahAsal.php");
+        exit();
+    }
+
+    // Prepare update fields based on database columns
+    $updateFields = [
+        'jawatan_gred' => $_POST['jawatan_gred'],
+        'email_penyelia' => $_POST['email_penyelia'],
+        'alamat_menetap_1' => $_POST['alamat_menetap_1'],
+        'alamat_menetap_2' => $_POST['alamat_menetap_2'],
+        'poskod_menetap' => $_POST['poskod_menetap'],
+        'bandar_menetap' => $_POST['bandar_menetap'],
+        'negeri_menetap' => $_POST['negeri_menetap'],
+        'alamat_berkhidmat_1' => $_POST['alamat_berkhidmat_1'],
+        'alamat_berkhidmat_2' => $_POST['alamat_berkhidmat_2'],
+        'poskod_berkhidmat' => $_POST['poskod_berkhidmat'],
+        'bandar_berkhidmat' => $_POST['bandar_berkhidmat'],
+        'negeri_berkhidmat' => $_POST['negeri_berkhidmat'],
+        'tarikh_lapor_diri' => $_POST['tarikh_lapor_diri'],
+        'tarikh_terakhir_kemudahan' => $_POST['tarikh_terakhir_kemudahan'] ?? null,
+        'nama_first_pasangan' => $_POST['nama_first_pasangan'] ?? null,
+        'nama_last_pasangan' => $_POST['nama_last_pasangan'] ?? null,
+        'no_kp_pasangan' => $_POST['no_kp_pasangan'] ?? null,
+        'alamat_berkhidmat_1_pasangan' => $_POST['alamat_berkhidmat_1_pasangan'] ?? null,
+        'alamat_berkhidmat_2_pasangan' => $_POST['alamat_berkhidmat_2_pasangan'] ?? null,
+        'poskod_berkhidmat_pasangan' => $_POST['poskod_berkhidmat_pasangan'] ?? null,
+        'bandar_berkhidmat_pasangan' => $_POST['bandar_berkhidmat_pasangan'] ?? null,
+        'negeri_berkhidmat_pasangan' => $_POST['negeri_berkhidmat_pasangan'] ?? null,
+        'wilayah_menetap_pasangan' => $_POST['wilayah_menetap_pasangan'] ?? null,
+        // Add required status fields
+        'wilayah_asal_form_fill' => true,
+        'wilayah_asal_from_stage' => 'Hantar',
+        'status_permohonan' => 'Belum Disemak',
+        'kedudukan_permohonan' => 'Pemohon'
+    ];
+
+    // Build SQL query
+    $sql = "UPDATE wilayah_asal SET ";
+    $updates = [];
+    $types = "";
+    $values = [];
+    
+    foreach ($updateFields as $field => $value) {
+        $updates[] = "`$field` = ?";
+        $types .= "s";
+        $values[] = $value;
+    }
+    
+    $sql .= implode(', ', $updates);
+    $sql .= " WHERE id = ?";
+    $types .= "i";
+    $values[] = $wilayah_asal_id;
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param($types, ...$values);
+
+    if ($stmt->execute()) {
+        $_SESSION['success'] = "Permohonan berjaya dikemaskini";
+        header("Location: ../wilayahAsal.php");
+        exit();
+    } else {
+        $_SESSION['error'] = "Error updating application: " . $conn->error;
+        header("Location: ../dikuiriWA.php");
+        exit();
+    }
+} else {
+    header("Location: ../wilayahAsal.php");
+    exit();
+}
+?>

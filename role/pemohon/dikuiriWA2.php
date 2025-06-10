@@ -2,9 +2,19 @@
 session_start();
 include '../../connection.php';
 
-// Check if user has completed the first form
-if (!isset($_SESSION['wilayah_asal_id'])) {
-    header("Location: borangWA.php");
+$wilayah_asal_id = $_SESSION['wilayah_asal_id'] ?? null;
+
+// Check if user has wilayah_asal record
+$check_sql = "SELECT * FROM wilayah_asal WHERE id = ?";
+$check_stmt = $conn->prepare($check_sql);
+$check_stmt->bind_param("i", $wilayah_asal_id);
+$check_stmt->execute();
+$wilayah_asal_result = $check_stmt->get_result();
+$wilayah_asal_data = $wilayah_asal_result->fetch_assoc();
+
+// If no wilayah_asal record exists, redirect to borangWA
+if (!$wilayah_asal_data) {
+    header("Location: dashboard.php");
     exit();
 }
 
@@ -134,15 +144,7 @@ $user_phoneNo = $user_data['phone'];
 
 <div class="main-container">
     <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <h6><img src="../../assets/ALLTRAS.png" alt="ALLTRAS" width="140" style="margin-left: 20px;"><br>ALL REGION TRAVELLING SYSTEM</h6><br>
-        <a href="dashboard.php"><i class="fas fa-home me-2"></i>Laman Utama</a>
-        <h6 class="text mt-4"></h6>
-        <a href="wilayahAsal.php"><i class="fas fa-map-marker-alt me-2"></i>Wilayah Asal</a>
-        <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a>
-        <a href="profile.php"><i class="fas fa-user me-2"></i>Paparan Profil</a>
-        <a href="../../logoutUser.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
-    </div>
+    <?php include 'includes/sidebar.php'; ?>
 
     <!-- Main Content -->
     <div class="col p-4">
@@ -196,46 +198,45 @@ $user_phoneNo = $user_data['phone'];
             </div>
         </div>
 
-        <form action="includes/process_borangWA2.php" method="POST" class="needs-validation" novalidate>
+        <form action="includes/process_DikuiriWA2.php" method="POST" class="needs-validation" novalidate>
             <!-- Father's Information -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header" style="background-color: #d59e3e; color: white;">
                     <h5 class="mb-0"><i class="fas fa-male me-2"></i>Maklumat Bapa</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-6">
+                    <div class="row g-3">                        <div class="col-md-6">
                             <label class="form-label">Nama Bapa</label>
-                            <input type="text" class="form-control" name="nama_bapa" maxlength="50">
+                            <input type="text" class="form-control" name="nama_bapa" value="<?= htmlspecialchars($wilayah_asal_data['nama_bapa']) ?>" maxlength="50">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">No. KP Bapa</label>
-                            <input type="text" class="form-control" name="no_kp_bapa" id="no_kp_bapa" maxlength="14" oninput="formatIC(this)" title="Format: XXXXXX-XX-XXXX">
+                            <input type="text" class="form-control" name="no_kp_bapa" id="no_kp_bapa" value="<?= htmlspecialchars($wilayah_asal_data['no_kp_bapa']) ?>" maxlength="14" oninput="formatIC(this)" title="Format: XXXXXX-XX-XXXX">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Wilayah Menetap Bapa</label>
-                            <input type="text" class="form-control" name="wilayah_menetap_bapa" maxlength="50">
+                            <input type="text" class="form-control" name="wilayah_menetap_bapa" value="<?= htmlspecialchars($wilayah_asal_data['wilayah_menetap_bapa']) ?>" maxlength="50">
                         </div>
                         <div class="col-12">
                             <label class="form-label">Alamat Menetap Bapa</label>
-                            <input type="text" class="form-control mb-2" name="alamat_menetap_1_bapa" placeholder="Alamat 1" maxlength="100">
-                            <input type="text" class="form-control" name="alamat_menetap_2_bapa" placeholder="Alamat 2" maxlength="100">
+                            <input type="text" class="form-control mb-2" name="alamat_menetap_1_bapa" value="<?= htmlspecialchars($wilayah_asal_data['alamat_menetap_1_bapa']) ?>" placeholder="Alamat 1" maxlength="100">
+                            <input type="text" class="form-control" name="alamat_menetap_2_bapa" value="<?= htmlspecialchars($wilayah_asal_data['alamat_menetap_2_bapa']) ?>" placeholder="Alamat 2" maxlength="100">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Poskod</label>
-                            <input type="text" class="form-control" name="poskod_menetap_bapa" maxlength="10" pattern="[0-9]{5}" title="5 digit poskod">
+                            <input type="text" class="form-control" name="poskod_menetap_bapa" value="<?= htmlspecialchars($wilayah_asal_data['poskod_menetap_bapa']) ?>" maxlength="10" pattern="[0-9]{5}" title="5 digit poskod">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Bandar</label>
-                            <input type="text" class="form-control" name="bandar_menetap_bapa" maxlength="50">
+                            <input type="text" class="form-control" name="bandar_menetap_bapa" value="<?= htmlspecialchars($wilayah_asal_data['bandar_menetap_bapa']) ?>" maxlength="50">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Negeri</label>
-                            <input type="text" class="form-control" name="negeri_menetap_bapa" maxlength="50">
+                            <input type="text" class="form-control" name="negeri_menetap_bapa" value="<?= htmlspecialchars($wilayah_asal_data['negeri_menetap_bapa']) ?>" maxlength="50">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Ibu Negeri/Bandar Dituju</label>
-                            <input type="text" class="form-control" name="ibu_negeri_bandar_dituju_bapa" maxlength="50">
+                            <input type="text" class="form-control" name="ibu_negeri_bandar_dituju_bapa" value="<?= htmlspecialchars($wilayah_asal_data['ibu_negeri_bandar_dituju_bapa']) ?>" maxlength="50">
                         </div>
                     </div>
                 </div>
@@ -247,46 +248,45 @@ $user_phoneNo = $user_data['phone'];
                     <h5 class="mb-0"><i class="fas fa-female me-2"></i>Maklumat Ibu</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-6">
+                    <div class="row g-3">                        <div class="col-md-6">
                             <label class="form-label">Nama Ibu</label>
-                            <input type="text" class="form-control" name="nama_ibu" maxlength="50">
+                            <input type="text" class="form-control" name="nama_ibu" value="<?= htmlspecialchars($wilayah_asal_data['nama_ibu']) ?>" maxlength="50">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">No. KP Ibu</label>
-                            <input type="text" class="form-control" name="no_kp_ibu" id="no_kp_ibu" maxlength="14" oninput="formatIC(this)" title="Format: XXXXXX-XX-XXXX">
+                            <input type="text" class="form-control" name="no_kp_ibu" id="no_kp_ibu" value="<?= htmlspecialchars($wilayah_asal_data['no_kp_ibu']) ?>" maxlength="14" oninput="formatIC(this)" title="Format: XXXXXX-XX-XXXX">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Wilayah Menetap Ibu</label>
-                            <input type="text" class="form-control" name="wilayah_menetap_ibu" maxlength="50">
+                            <input type="text" class="form-control" name="wilayah_menetap_ibu" value="<?= htmlspecialchars($wilayah_asal_data['wilayah_menetap_ibu']) ?>" maxlength="50">
                         </div>
                         <div class="col-12">
                             <label class="form-label">Alamat Menetap Ibu</label>
-                            <input type="text" class="form-control mb-2" name="alamat_menetap_1_ibu" placeholder="Alamat 1" maxlength="100">
-                            <input type="text" class="form-control" name="alamat_menetap_2_ibu" placeholder="Alamat 2" maxlength="100">
+                            <input type="text" class="form-control mb-2" name="alamat_menetap_1_ibu" value="<?= htmlspecialchars($wilayah_asal_data['alamat_menetap_1_ibu']) ?>" placeholder="Alamat 1" maxlength="100">
+                            <input type="text" class="form-control" name="alamat_menetap_2_ibu" value="<?= htmlspecialchars($wilayah_asal_data['alamat_menetap_2_ibu']) ?>" placeholder="Alamat 2" maxlength="100">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Poskod</label>
-                            <input type="text" class="form-control" name="poskod_menetap_ibu" maxlength="10" pattern="[0-9]{5}" title="5 digit poskod">
+                            <input type="text" class="form-control" name="poskod_menetap_ibu" value="<?= htmlspecialchars($wilayah_asal_data['poskod_menetap_ibu']) ?>" maxlength="10" pattern="[0-9]{5}" title="5 digit poskod">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Bandar</label>
-                            <input type="text" class="form-control" name="bandar_menetap_ibu" maxlength="50">
+                            <input type="text" class="form-control" name="bandar_menetap_ibu" value="<?= htmlspecialchars($wilayah_asal_data['bandar_menetap_ibu']) ?>" maxlength="50">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Negeri</label>
-                            <input type="text" class="form-control" name="negeri_menetap_ibu" maxlength="50">
+                            <input type="text" class="form-control" name="negeri_menetap_ibu" value="<?= htmlspecialchars($wilayah_asal_data['negeri_menetap_ibu']) ?>" maxlength="50">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Ibu Negeri/Bandar Dituju</label>
-                            <input type="text" class="form-control" name="ibu_negeri_bandar_dituju_ibu" maxlength="50">
+                            <input type="text" class="form-control" name="ibu_negeri_bandar_dituju_ibu" value="<?= htmlspecialchars($wilayah_asal_data['ibu_negeri_bandar_dituju_ibu']) ?>" maxlength="50">
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="d-flex justify-content-between mt-4">
-                <a href="borangWA.php" class="btn btn-secondary">
+                <a href="wilayahAsal.php" class="btn btn-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Kembali
                 </a>
                 <button type="submit" class="btn btn-primary">

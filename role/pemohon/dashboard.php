@@ -86,6 +86,7 @@ $user_phoneNo = $user_data['phone'];
 
                     // Set wilayah_asal_id variable - set to null if wilayah_asal_matang is true
                     $wilayah_asal_id = ($application_data && !$application_data['wilayah_asal_matang']) ? $application_data['id'] : null;
+                    $_SESSION['wilayah_asal_id'] = $wilayah_asal_id; // Store wilayah_asal_id in session
 
                     // Define stages
                     $stages = [

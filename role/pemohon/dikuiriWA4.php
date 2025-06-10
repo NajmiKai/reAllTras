@@ -2,14 +2,19 @@
 session_start();
 include '../../connection.php';
 
-// Enable error reporting
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+$wilayah_asal_id = $_SESSION['wilayah_asal_id'] ?? null;
 
-// Check if wilayah_asal_id exists in session
-if (!isset($_SESSION['wilayah_asal_id'])) {
-    error_log("wilayah_asal_id not set in session");
-    header("Location: borangWA.php");
+// Check if user has wilayah_asal record
+$check_sql = "SELECT * FROM wilayah_asal WHERE id = ?";
+$check_stmt = $conn->prepare($check_sql);
+$check_stmt->bind_param("i", $wilayah_asal_id);
+$check_stmt->execute();
+$wilayah_asal_result = $check_stmt->get_result();
+$wilayah_asal_data = $wilayah_asal_result->fetch_assoc();
+
+// If no wilayah_asal record exists, redirect to borangWA
+if (!$wilayah_asal_data) {
+    header("Location: dashboard.php");
     exit();
 }
 
@@ -251,8 +256,31 @@ $user_role = $user_data['bahagian'];
                 </div>
             </div>
 
+            <!-- Dokumen Dikuiri -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header" style="background-color: #d59e3e; color: white;">
+                    <h5 class="mb-0">Dokumen Dikuiri</h5>
+                </div>
+                <div class="card-body">
+                    <div id="dikuiri-container">
+                        <div class="document-item">
+                            <div class="document-title">
+                                <h6 class="mb-0">Dokumen Dikuiri</h6>
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="d-flex">
+                                <input type="file" class="form-control" name="dokumen_dikuiri[]" accept=".pdf,.jpg,.jpeg,.png">
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-outline-primary btn-sm add-more-btn" onclick="addDikuiri()">
+                        <i class="fas fa-plus me-2"></i>Tambah Dokumen
+                    </button>
+                </div>
+            </div>
+
             <div class="d-flex justify-content-between mt-4">
-                <a href="borangWA3.php" class="btn btn-secondary">
+                <a href="wilayahAsal.php" class="btn btn-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Kembali
                 </a>
                 <button type="submit" class="btn btn-success">
@@ -331,6 +359,26 @@ $user_role = $user_data['bahagian'];
         `;
         container.appendChild(newItem);
     }
+
+    // Add more dikuiri
+    function addDikuiri() {
+        const container = document.getElementById('dikuiri-container');
+        const newItem = document.createElement('div');
+        newItem.className = 'document-item';
+        newItem.innerHTML = `
+            <div class="document-title">
+                <h6 class="mb-0">Dokumen Dikuiri</h6>
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="d-flex">
+                <input type="file" class="form-control" name="dokumen_dikuiri[]" accept=".pdf,.jpg,.jpeg,.png">
+                <button type="button" class="btn btn-danger ms-2" onclick="this.parentElement.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+        container.appendChild(newItem);
+    }
 </script>
 </body>
-</html> 
+</html>
