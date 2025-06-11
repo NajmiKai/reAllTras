@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $mail->SMTPSecure = 'tls';
                     $mail->Port = 587;
         
-                    $mail->setFrom($mail->Username);
+                    $mail->setFrom($mail->Username, 'ALLTRAS');
                     $mail->addAddress($receiver_email);
                     $mail->addCC($penyelia_email); // CC recipient
                     $mail->addCC($user_email); // CC recipient
