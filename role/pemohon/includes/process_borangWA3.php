@@ -55,6 +55,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Execute the statement
         if ($stmt->execute()) {
+            // Store the ID in a variable
+            $current_id = $wilayah_asal_id;
+            
+            // Update wilayah_asal_from_stage
+            $update_stage_sql = "UPDATE wilayah_asal SET wilayah_asal_from_stage = 'BorangWA4' WHERE id = ?";
+            $update_stage_stmt = $conn->prepare($update_stage_sql);
+            $update_stage_stmt->bind_param("i", $current_id);
+            $update_stage_stmt->execute();
+            $update_stage_stmt->close();
+
             // Store flight information in session
             $_SESSION['flight_info'] = [
                 'jenis_permohonan' => $jenis_permohonan,
@@ -75,15 +85,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $followers_stmt = $conn->prepare($followers_sql);
                 
                 foreach ($_POST['followers'] as $follower) {
-                    // Determine which flight dates to use
+                    // Determine which flight dates to use based on flight_date_type
                     $flight_date_type = $follower['flight_date_type'] ?? 'same';
                     
                     if ($flight_date_type === 'same') {
+                        // Use main applicant's flight dates
                         $follower_pergi = $tarikh_penerbangan_pergi;
                         $follower_balik = $tarikh_penerbangan_balik;
                     } else {
-                        $follower_pergi = $follower['tarikh_penerbangan_pergi_pengikut'];
-                        $follower_balik = $follower['tarikh_penerbangan_balik_pengikut'];
+                        // Use follower's specific flight dates
+                        $follower_pergi = $follower['tarikh_penerbangan_pergi_pengikut'] ?? null;
+                        $follower_balik = $follower['tarikh_penerbangan_balik_pengikut'] ?? null;
                     }
 
                     $followers_stmt->bind_param("issssss",

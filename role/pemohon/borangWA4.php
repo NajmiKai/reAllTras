@@ -87,32 +87,13 @@ $user_role = $user_data['bahagian'];
 </head>
 <body>
 
-<!-- Top Navbar -->
-<nav class="navbar navbar-expand navbar-light bg-light shadow-sm px-3 mb-4 w-100">
-    <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-            <a class="nav-link toggle-sidebar" href="#" role="button"><i class="fas fa-bars"></i></a>
-        </li>
-    </ul>
-
-    <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-            <span class="nav-link fw-semibold"><?= htmlspecialchars($user_name) ?> (<?= htmlspecialchars($user_role) ?>)</span>
-        </li>
-        <li class="nav-item d-none d-sm-inline-block">
-            <a href="../../logoutUser.php" class="nav-link text-danger">
-                <i class="fas fa-sign-out-alt me-1"></i> Log Keluar
-            </a>
-        </li>
-    </ul>
-</nav>
-
 <div class="main-container">
     <!-- Sidebar -->
     <?php include 'includes/sidebar.php'; ?>
 
     <!-- Main Content -->
     <div class="col p-4">
+        <?php include 'includes/greeting.php'; ?>
         <h3 class="mb-3">Muat Naik Dokumen</h3>
         
         <!-- Multi-step Indicator -->

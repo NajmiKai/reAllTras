@@ -154,7 +154,7 @@ $user_phoneNo = $user_data['phone'];
                         //kedudukan_permohonan ENUM('Pemohon','CSM', 'HQ', 'CSM2', 'Kewangan') DEFAULT 'Pemohon',
                         //Stage UI (CSM)
 
-                        if ($application_data['kedudukan_permohonan'] === 'Pemohon'){
+                        else if ($application_data['kedudukan_permohonan'] === 'Pemohon'){
 
                             if($application_data['status_permohonan'] === 'Belum Disemak'){
                                 $current_stage = 'CSM';
@@ -239,6 +239,29 @@ $user_phoneNo = $user_data['phone'];
                             }
                             else if ($application_data['status_permohonan'] === 'Dikuiri'){
                                 $current_stage = 'CSM2';
+                                $show_description = false;
+                            }
+                        } else if ($application_data['kedudukan_permohonan'] === 'Kewangan') {
+                            if($application_data['status_permohonan'] === 'Selesai'){
+                                $current_stage = 'Selesai';
+                                $show_description = true;
+                                $description = "Permohonan anda sudah selesai! Sila tekan butang dibawah untuk ke halaman Waran Udara";
+                                $action_button = ['text' => 'Muat Turun Waran Udara/E-Ticket', 'link' => 'wilayahAsalSelesai.php'];
+                            }
+                            else if($application_data['status_permohonan'] === 'Belum Disemak'){
+                                $current_stage = 'Kewangan';
+                                $show_description = false;
+                            }
+                            else if ($application_data['status_permohonan'] === 'Tolak'){
+                                $current_stage = 'Kewangan';
+                                $show_description = false;
+                            }
+                            else if ($application_data['status_permohonan'] === 'Lulus'){
+                                $current_stage = 'Kewangan';
+                                $show_description = false;
+                            }
+                            else if ($application_data['status_permohonan'] === 'Dikuiri'){
+                                $current_stage = 'Kewangan';
                                 $show_description = false;
                             }
                         }

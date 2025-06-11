@@ -39,6 +39,12 @@ if (!$wilayah_asal_data) {
     exit();
 }
 
+// Check if application is completed and in Kewangan
+if ($wilayah_asal_data['status_permohonan'] === 'Selesai' && $wilayah_asal_data['kedudukan_permohonan'] === 'Kewangan') {
+    header("Location: wilayahAsalSelesai.php");
+    exit();
+}
+
 // Fetch pengikut data if exists
 $pengikut_sql = "SELECT * FROM wilayah_asal_pengikut WHERE wilayah_asal_id = ?";
 $pengikut_stmt = $conn->prepare($pengikut_sql);

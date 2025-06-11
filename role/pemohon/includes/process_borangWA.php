@@ -76,6 +76,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Execute the statement
         if ($stmt->execute()) {
+            // Get the insert ID
+            $insert_id = $stmt->insert_id;
+            
+            // Update wilayah_asal_from_stage
+            $update_stage_sql = "UPDATE wilayah_asal SET wilayah_asal_from_stage = 'BorangWA2' WHERE id = ?";
+            $update_stage_stmt = $conn->prepare($update_stage_sql);
+            $update_stage_stmt->bind_param("i", $insert_id);
+            $update_stage_stmt->execute();
+            $update_stage_stmt->close();
+
             // Store form data in session for next step
             $_SESSION['borangWA_data'] = [
                 'user_kp' => $user_kp,
@@ -109,7 +119,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ];
 
             // Store the inserted ID in session
-            $_SESSION['wilayah_asal_id'] = $stmt->insert_id;
+            $_SESSION['wilayah_asal_id'] = $insert_id;
 
             // Redirect to the next form
             header("Location: ../borangWA2.php");

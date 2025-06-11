@@ -81,6 +81,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Execute the statement
         if ($stmt->execute()) {
+            // Store the ID in a variable
+            $current_id = $wilayah_asal_id;
+            
+            // Update wilayah_asal_from_stage
+            $update_stage_sql = "UPDATE wilayah_asal SET wilayah_asal_from_stage = 'BorangWA3' WHERE id = ?";
+            $update_stage_stmt = $conn->prepare($update_stage_sql);
+            $update_stage_stmt->bind_param("i", $current_id);
+            $update_stage_stmt->execute();
+            $update_stage_stmt->close();
+
             // Store parent information in session
             $_SESSION['parent_info'] = [
                 'nama_bapa' => $nama_bapa,
