@@ -1,6 +1,7 @@
 <?php
 session_start();
 include 'connection.php'; 
+include 'includes/system_logger.php';
 
 $timeoutMessage = '';
 if (isset($_GET['timeout']) && $_GET['timeout'] == 1) {
@@ -10,7 +11,6 @@ if (isset($_GET['timeout']) && $_GET['timeout'] == 1) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $password = $_POST['password'];
-
 
     $stmt = $conn->prepare("SELECT * FROM admin WHERE Email = ?");
     $stmt->bind_param("s", $email);
@@ -23,12 +23,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if (password_verify($password, $hashedPassword)) {
             // Store user info in session
-                $_SESSION['admin_id'] = $id;
-                $_SESSION['admin_name'] = $name;
-                $_SESSION['admin_role'] = $role;
-                $_SESSION['admin_icNo'] = $icNo;
-                $_SESSION['admin_email'] = $email;
-                $_SESSION['admin_phoneNo'] = $phoneNo;           
+            $_SESSION['admin_id'] = $id;
+            $_SESSION['admin_name'] = $name;
+            $_SESSION['admin_role'] = $role;
+            $_SESSION['admin_icNo'] = $icNo;
+            $_SESSION['admin_email'] = $email;
+            $_SESSION['admin_phoneNo'] = $phoneNo;           
+
+            // Log successful login
+            logAuthEvent($conn, 'login', 'admin', $icNo, true);
+            
             // Redirect based on role
             if ($role === 'PBR CSM') {
                 header("Location: role/CSM/PBR/dashboard.php");
@@ -62,14 +66,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 exit();
             }
         } else {
+            // Log failed login attempt
+            logAuthEvent($conn, 'login', 'admin', $email, false);
             echo "<script>alert('Kata laluan salah'); window.location.href='login.php';</script>";
             exit();
         }
     } else {
+        // Log failed login attempt
+        logAuthEvent($conn, 'login', 'admin', $email, false);
         echo "<script>alert('Emel tidak ditemui'); window.location.href='login.php';</script>";
         exit();
     }
-
 }
 ?>
 

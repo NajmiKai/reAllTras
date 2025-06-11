@@ -1,6 +1,7 @@
 <?php
 session_start();
 include 'connection.php'; 
+include 'includes/system_logger.php';
 
 $timeoutMessage = '';
 if (isset($_GET['timeout']) && $_GET['timeout'] == 1) {
@@ -28,14 +29,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['super_admin_email'] = $email;
             $_SESSION['super_admin_phoneNo'] = $phoneNo;
             
+            // Log successful login
+            logAuthEvent($conn, 'login', 'superAdmin', $icNo, true);
+            
             // Redirect to super admin dashboard
             header("Location: role/superAdmin/dashboard.php");
             exit();
         } else {
+            // Log failed login attempt
+            logAuthEvent($conn, 'login', 'superAdmin', $email, false);
             echo "<script>alert('Kata laluan salah'); window.location.href='loginSuperAdmin.php';</script>";
             exit();
         }
     } else {
+        // Log failed login attempt
+        logAuthEvent($conn, 'login', 'superAdmin', $email, false);
         echo "<script>alert('Emel tidak ditemui'); window.location.href='loginSuperAdmin.php';</script>";
         exit();
     }

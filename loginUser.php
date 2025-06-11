@@ -1,6 +1,7 @@
 <?php
 session_start();
 include 'connection.php'; 
+include 'includes/system_logger.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $identifier = $_POST['identifier']; // This will be either KP or email
@@ -32,15 +33,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['user_phone'] = $phone;
             $_SESSION['user_bahagian'] = $bahagian;
             
+            // Log successful login
+            logAuthEvent($conn, 'login', 'user', $kp, true);
+            
             // Redirect to dashboard or home page
             header("Location: role/pemohon/dashboard.php");
             exit();
         } else {
+            // Log failed login attempt
+            logAuthEvent($conn, 'login', 'user', $identifier, false);
             $_SESSION['error'] = "Invalid password";
             header("Location: loginUser.php");
             exit();
         }
     } else {
+        // Log failed login attempt
+        logAuthEvent($conn, 'login', 'user', $identifier, false);
         $_SESSION['error'] = "User not found";
         header("Location: loginUser.php");
         exit();

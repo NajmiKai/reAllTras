@@ -11,6 +11,7 @@ require '../../../PHPMailer/src/SMTP.php';
 
 session_start();
 include '../../../connection.php';
+include '../../../includes/system_logger.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -18,8 +19,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $status_permohonan = $_POST['status_permohonan'];
         $admin_id = $_SESSION['admin_id'];
 
+        // Get current status before update
+        $stmt_current = $conn->prepare("SELECT status FROM wilayah_asal WHERE id = ?");
+        $stmt_current->bind_param("i", $wilayah_asal_id);
+        $stmt_current->execute();
+        $result_current = $stmt_current->get_result();
+        $current_data = $result_current->fetch_assoc();
+        $old_status = $current_data['status'];
+
         if ($status_permohonan === 'disokong') {
-        $status = 'Menunggu pengesahan penyemak1 HQ';
+            $status = 'Menunggu pengesahan penyemak1 HQ';
         } else {
             $status = 'Kembali ke PBR CSM';
         }
@@ -36,8 +45,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, status_permohonan = ?, kedudukan_permohonan = ?, ulasan_pengesah_csm1 = ?, pengesah_csm1_id = ?, tarikh_keputusan_pengesah_csm1 = ? WHERE id = ?");
         $stmt_wilayah->bind_param("ssssssi", $status, $status_permohonan, $kedudukan_permohonan, $ulasan, $admin_id, $tarikh_keputusan, $wilayah_asal_id);
         $stmt_wilayah->execute();
+        
+        // Log the status change
+        logApplicationStatusChange($conn, 'admin', $admin_id, $wilayah_asal_id, $old_status, $status, "CSM Pengesah updated application status");
+        
         $stmt_wilayah->close();
-
 
         $sql = "SELECT * FROM admin WHERE role = 'Penyemak HQ'";
         $result = $conn->query($sql);

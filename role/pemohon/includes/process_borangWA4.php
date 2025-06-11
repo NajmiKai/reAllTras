@@ -1,6 +1,7 @@
 <?php
 session_start();
 include '../../../connection.php';
+include '../../../includes/system_logger.php';
 
 // Enable error reporting
 error_reporting(E_ALL);
@@ -54,6 +55,8 @@ function handleFileUpload($file, $upload_dir, $wilayah_asal_id, $user_kp, $descr
             $stmt->bind_param("isssiss", $wilayah_asal_id, $file_name, $web_path, $file_type, $file_size, $description, $user_kp);
             
             if ($stmt->execute()) {
+                // Log document upload
+                logDocumentEvent($conn, 'document_upload', 'user', $user_kp, $file_name, $stmt->insert_id);
                 return true;
             }
         }

@@ -1,5 +1,12 @@
 <?php
 session_start();
+include 'connection.php';
+include 'includes/system_logger.php';
+
+// Log the logout event if admin was logged in
+if (isset($_SESSION['admin_icNo'])) {
+    logAuthEvent($conn, 'logout', 'admin', $_SESSION['admin_icNo'], true);
+}
 
 // Clear all session variables
 $_SESSION = [];
