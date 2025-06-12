@@ -67,7 +67,7 @@ include '../../../connection.php';
         $stmt->bind_result($pbr_csm1_id);
         if ($stmt->fetch()) {
             if ($pbr_csm1_id === $admin_id || $pbr_csm1_id !== null) { 
-                $isApproved = false;
+                $isApproved = true;
             }
         }
         $stmt->close();
@@ -421,7 +421,7 @@ include '../../../connection.php';
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="status_select" class="form-label">Status Permohonan</label>
-                    <select class="form-select" name="keputusan" id="keputusan" required onchange="toggleUlasan()" <?php if ($isApproved) echo 'disabled'; ?>>
+                    <select class="form-select" name="status_permohonan" id="status_select" required onchange="toggleUlasan(); updateFormAction();" <?php if ($isApproved) echo 'disabled'; ?>>
                         <option value="">-- Sila Pilih --</option>
                         <option value="Diluluskan">Diluluskan</option>
                         <option value="Tidak diluluskan">Tidak diluluskan</option>
@@ -466,6 +466,11 @@ include '../../../connection.php';
 document.querySelector('.toggle-sidebar').addEventListener('click', function (e) {
         e.preventDefault();
         document.getElementById('sidebar').classList.toggle('hidden');
+    });
+
+    // Call updateFormAction on page load to set initial form action
+    document.addEventListener('DOMContentLoaded', function() {
+        updateFormAction();
     });
 
     function toggleSubMenu() {
