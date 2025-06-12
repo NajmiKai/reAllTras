@@ -188,7 +188,7 @@ $user_phoneNo = $user_data['phone'];
                                 $show_description = false;
                             }
                             else if ($application_data['status_permohonan'] === 'Lulus'){
-                                $current_stage = 'CSM2';
+                                $current_stage = 'HQ';
                                 $show_description = false;
                             }
                             else if ($application_data['status_permohonan'] === 'Dikuiri'){
@@ -212,7 +212,7 @@ $user_phoneNo = $user_data['phone'];
                                 $description = "Harap Maaf, Permohonan anda ditolak.";
                             }
                             else if ($application_data['status_permohonan'] === 'Lulus'){
-                                $current_stage = 'Kewangan';
+                                $current_stage = 'CSM2';
                                 $show_description = false;
                             }
                             else if ($application_data['status_permohonan'] === 'Dikuiri'){

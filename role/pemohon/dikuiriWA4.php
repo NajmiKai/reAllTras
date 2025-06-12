@@ -124,8 +124,8 @@ $user_role = $user_data['bahagian'];
                                         <?php echo htmlspecialchars($doc['file_name']); ?>
                                         <small class="text-muted ms-2">(<?php echo date('d/m/Y H:i', strtotime($doc['upload_date'])); ?>)</small>
                                     </div>
-                                    <a href="../../<?php echo htmlspecialchars($doc['file_path']); ?>" target="_blank" class="btn btn-sm btn-primary">
-                                        <i class="fas fa-eye"></i> Lihat
+                                    <a href="/reAllTras/<?= str_replace('../../../', '', htmlspecialchars($doc['file_path'])) ?>" target="_blank" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-eye"></i>
                                     </a>
                                 </div>
                             </div>
