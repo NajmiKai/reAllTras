@@ -38,7 +38,8 @@ try {
             wilayah_asal_form_fill = true,
             wilayah_asal_from_stage = 'Hantar',
             status_permohonan = 'Belum Disemak',
-            kedudukan_permohonan = 'Pemohon'
+            kedudukan_permohonan = 'Pemohon',
+            status = 'Menunggu pengesahan PBR CSM'
             WHERE id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $wilayah_asal_id);
