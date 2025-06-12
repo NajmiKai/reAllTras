@@ -119,7 +119,7 @@ try {
             <p>Mohon pihak tuan/puan untuk menyemak maklumat pemohon dan mengambil tindakan sewajarnya.</p>
             <p>Sila klik pautan/butang di bawah untuk tindakan lanjut dan maklumat permohonan.</p>
 
-            <p><a href='http://localhost/reAllTras/role/csm/pegawaiSulit/viewdetails.php?kp={$user_data['kp']}'><b><u>PAPAR MAKLUMAT PERMOHONAN</u></b></a></p><br>
+            <p><a href='http://localhost/reAllTras/role/csm/pbr/viewdetails.php?kp={$user_data['kp']}'><b><u>PAPAR MAKLUMAT PERMOHONAN</u></b></a></p><br>
 
             <p>Sekian, terima kasih.</p>
             <p>Emel ini dijana secara automatik oleh <i>All Region Travelling System (ALLTRAS)</i></p>
