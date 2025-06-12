@@ -67,7 +67,7 @@ include '../../../connection.php';
         $stmt->bind_result($pbr_csm1_id);
         if ($stmt->fetch()) {
             if ($pbr_csm1_id === $admin_id || $pbr_csm1_id !== null) { 
-                $isApproved = false;
+                $isApproved = true;
             }
         }
         $stmt->close();
