@@ -487,6 +487,20 @@ document.querySelector('.toggle-sidebar').addEventListener('click', function (e)
         }
     }
 
+    function updateFormAction() {
+    const form = document.getElementById('permohonanForm');
+    const status = document.getElementById('status_select').value;
+    const ulasanDiv = document.getElementById('ulasanDiv');
+
+    if (status === 'Tidak diluluskan') {
+        form.action = 'send_mail3.php';
+        ulasanDiv.style.display = 'block';
+    } else {
+        form.action = 'send_mail.php';
+        ulasanDiv.style.display = 'none';
+    }
+}
+
 </script>
 </body>
 </html>
