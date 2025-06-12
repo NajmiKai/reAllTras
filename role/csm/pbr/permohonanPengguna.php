@@ -45,7 +45,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 $submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'permohonanIbuPejabat.php', 'permohonanDikuiri.php']);
 
 // Query user table
-$sql = "SELECT * FROM user JOIN wilayah_asal ON user.kp = wilayah_asal.user_kp WHERE wilayah_asal_form_fill = 1'";
+$sql = "SELECT * FROM user JOIN wilayah_asal ON user.kp = wilayah_asal.user_kp WHERE status = 'Menunggu pengesahan PBR CSM' ";
 $result = $conn->query($sql);
 
 $users = [];
@@ -55,7 +55,9 @@ if ($result->num_rows > 0) {
         $row['status'] = 'Sedang diproses'; 
         $users[] = $row;
     }
-} 
+} else {
+    echo "No users found.";
+}
 
 ?>
 <!DOCTYPE html>
