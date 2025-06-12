@@ -260,13 +260,13 @@ $filename = "Kelulusan Kemudahan Tambang Ziarah Wilayah_" . $fullNameCleaned . "
   </colgroup>
   <tr>
     <td><strong>Ruj.Tuan &nbsp;</strong></td>
-    <td>:<span style="display:inline-block; width:150px;"></span>(<strong><span style="display:inline-block; width:40px;"></span></strong>)</td>
+    <td>:<span style="display:inline-block; width:150px;"></span></td>
 
     
   </tr>
   <tr>
     <td><strong>Ruj. Kami &nbsp;</strong></td>
-    <td>:<span style="display:inline-block; width:150px;"></span>(<strong><span style="display:inline-block; width:40px;"></span></strong>)</td>
+    <td>:<span style="display:inline-block; width:150px;"></span></td>
 
     
   </tr>
@@ -280,7 +280,7 @@ $filename = "Kelulusan Kemudahan Tambang Ziarah Wilayah_" . $fullNameCleaned . "
 Ketua Bahagian<br>
 Khidmat Pengurusan dan Sumber Manusia<br>
 WP Kuala Lumpur<br>
-<strong>(u.p: <span style="display:inline-block; width:200px;"></span>)</strong>
+<strong>(u.p: <span style="display:inline-block; width:200px;"></span></strong>
 </p>
 
 <div class="section">
@@ -432,7 +432,7 @@ WP Kuala Lumpur<br>
   </colgroup>
   <tr>
     <td>Ruj.Kami</td>
-    <td>:<span style="display:inline-block; width:150px;"></span>(<strong> <span style="display:inline-block; width:40px;"></span>  </strong>)</td>
+    <td>:<span style="display:inline-block; width:150px;"></span></td>
   </tr>
 </table>
 </p>
@@ -447,7 +447,7 @@ WP Kuala Lumpur<br>
 
 
 <br>
-(<span style="display:inline-block; width:200px;"></span>)<br>
+<br><br>
 Bahagian Khidmat Pengurusan dan Sumber Manusia,<br>
 Cawangan Khidmat Pengurusan,<br>
 b.p Ketua Pengarah Kastam, <br>

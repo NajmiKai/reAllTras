@@ -52,8 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             file_type,             -- VARCHAR
                             file_size,             -- INT
                             description,           -- TEXT
-                            file_uploader_origin,  -- VARCHAR
-                            file_class_origin      -- ENUM
+                            file_origin_id,       -- VARCHAR
+                            file_origin              -- ENUM
                         ) VALUES (?, ?, ?, ?, ?, ?, ?, 'kewangan')";
         
                 $stmt = $conn->prepare($sql);
