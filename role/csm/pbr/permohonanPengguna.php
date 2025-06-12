@@ -55,9 +55,7 @@ if ($result->num_rows > 0) {
         $row['status'] = 'Sedang diproses'; 
         $users[] = $row;
     }
-} else {
-    echo "No users found.";
-}
+} 
 
 ?>
 <!DOCTYPE html>
