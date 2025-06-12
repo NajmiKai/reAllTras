@@ -91,7 +91,7 @@ try {
         $mail->SMTPSecure = 'tls';
         $mail->Port = 587;
 
-        $mail->setFrom($mail->Username);
+        $mail->setFrom($mail->Username, 'ALLTRAS');
         $mail->addAddress($user_data['email']);
         
         // Add all PBR CSM admins as CC recipients
