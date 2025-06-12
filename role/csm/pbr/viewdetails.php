@@ -176,7 +176,7 @@ include '../../../connection.php';
             </div>
         </div>
 
-        <form action="send_mail.php" method="POST" enctype="multipart/form-data" id="permohonanForm">            
+        <form action="send_mail.php" method="POST" enctype="multipart/form-data" id="permohonanForm" onsubmit="return handleFormSubmit()">            
             <!-- Maklumat Pegawai -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #d59e3e; color: white;">
@@ -471,10 +471,8 @@ document.querySelector('.toggle-sidebar').addEventListener('click', function (e)
     function toggleSubMenu() {
         const submenu = document.getElementById("wilayahSubmenu");
         submenu.style.display = submenu.style.display === "block" ? "none" : "block";
-    }
-
-    function toggleUlasan() {
-        const select = document.getElementById('keputusan');
+    }    function toggleUlasan() {
+        const select = document.getElementById('status_select');
         const ulasanDiv = document.getElementById('ulasanDiv');
         const ulasanText = document.getElementById('ulasanText');
         
@@ -485,6 +483,19 @@ document.querySelector('.toggle-sidebar').addEventListener('click', function (e)
             ulasanDiv.style.display = 'none';
             ulasanText.removeAttribute('required');
         }
+    }
+
+    function handleFormSubmit() {
+        const form = document.getElementById('permohonanForm');
+        const status = document.getElementById('status_select').value;
+        
+        if (status === 'Tidak diluluskan') {
+            form.action = 'send_mail3.php';
+        } else if (status === 'Diluluskan') {
+            form.action = 'send_mail.php';
+        }
+        
+        return true;
     }
 
 

@@ -18,13 +18,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // $keputusan = $_POST['keputusan'];
         $admin_id = $_SESSION['admin_id'];
         $status = 'Permohonan dikuiri';
+        $ulasan = $_POST['ulasan'] ?? null; // Get ulasan if provided, else set to null
 
         $tarikh_keputusan = date('Y-m-d H:i:s');
         $status_permohonan = "Dikuiri";
         $kedudukan_permohonan = "Pemohon";
 
-        $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?,  status_permohonan= ?, kedudukan_permohonan= ? WHERE id = ?");
-        $stmt_wilayah->bind_param("sssi", $status, $status_permohonan, $kedudukan_permohonan, $wilayah_asal_id);
+        $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, ulasan_pbr_csm1 = ?, pbr_csm1_id = ?,  status_permohonan= ?, kedudukan_permohonan= ?, tarikh_keputusan_csm1 = ? WHERE id = ?");
+        $stmt_wilayah->bind_param("ssssssi", $status, $ulasan, $admin_id, $status_permohonan, $kedudukan_permohonan, $tarikh_keputusan, $wilayah_asal_id);
         $stmt_wilayah->execute();
         $stmt_wilayah->close();
 
