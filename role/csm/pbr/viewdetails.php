@@ -67,7 +67,7 @@ include '../../../connection.php';
         $stmt->bind_result($pbr_csm1_id);
         if ($stmt->fetch()) {
             if ($pbr_csm1_id === $admin_id || $pbr_csm1_id !== null) { 
-                $isApproved = true;
+                $isApproved = false;
             }
         }
         $stmt->close();
@@ -176,7 +176,7 @@ include '../../../connection.php';
             </div>
         </div>
 
-        <form action="send_mail.php" method="POST" enctype="multipart/form-data">            
+        <form action="send_mail.php" method="POST" enctype="multipart/form-data" id="permohonanForm">            
             <!-- Maklumat Pegawai -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #d59e3e; color: white;">
