@@ -39,7 +39,7 @@ function getStatusFilter($status, $admin_id) {
             return "status = 'Kembali ke PBR CSM'";
         case 'total':
         default:
-            return "(pbr_csm1_id = $admin_id OR pbr_csm2_id = $admin_id OR status IN ('Menunggu pengesahan PBR CSM', 'Menunggu pengesahan PBR2 CSM', 'Kembali ke PBR CSM') OR status IS NULL)";
+            return "(pbr_csm1_id = $admin_id OR pbr_csm2_id = $admin_id OR status IN ('Menunggu pengesahan PBR CSM', 'Menunggu pengesahan PBR2 CSM', 'Kembali ke PBR CSM'))";
     }
 }
 

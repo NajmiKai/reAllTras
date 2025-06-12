@@ -36,7 +36,7 @@ $admin_phoneNo = $_SESSION['admin_phoneNo'];
 function countByStatus($conn, $table, $admin_id, $status = 'total') {
     if ($status === 'total') {
         // Count all rows for this admin_id without status filter
-        $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE pbr_csm1_id = ? OR pbr_csm2_id = ? OR status = 'Menunggu pengesahan PBR CSM' OR status = 'Menunggu pengesahan PBR2 CSM' OR status IS NULL OR status = 'Kembali ke PBR CSM'";
+        $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE pbr_csm1_id = ? OR pbr_csm2_id = ? OR status = 'Menunggu pengesahan PBR CSM' OR status = 'Menunggu pengesahan PBR2 CSM' OR status = 'Kembali ke PBR CSM'";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("ii", $admin_id, $admin_id);
     } elseif ($status === 'Sedang diproses') {
