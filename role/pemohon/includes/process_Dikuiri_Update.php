@@ -40,7 +40,10 @@ try {
             status_permohonan = 'Belum Disemak',
             kedudukan_permohonan = 'Pemohon',
             status = 'Menunggu pengesahan PBR CSM',
+            ulasan_pbr_csm1 = NULL,
             pbr_csm1_id = NULL,
+            ulasan_pengesah_csm1 = NULL,
+            pengesah_csm1_id = NULL,
             tarikh_keputusan_csm1 = NULL
             WHERE id = ?";
     $stmt = $conn->prepare($sql);
