@@ -40,7 +40,7 @@ function countByStatus($conn, $table, $admin_id, $status = 'total') {
         $stmt = $conn->prepare($query);
         $stmt->bind_param("ii", $admin_id, $admin_id);
     } elseif ($status === 'Sedang diproses') {
-        $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE status = 'Menunggu pengesahan PBR CSM' OR status IS NULL OR status = 'Menunggu pengesahan PBR2 CSM'";
+        $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE status = 'Menunggu pengesahan PBR CSM' OR status = 'Menunggu pengesahan PBR2 CSM'";
         $stmt = $conn->prepare($query);
     } elseif ($status === 'Berjaya diproses') {
         $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE pbr_csm1_id = ? OR pbr_csm2_id = ? ";
