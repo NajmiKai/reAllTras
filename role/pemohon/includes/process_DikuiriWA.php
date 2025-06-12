@@ -112,7 +112,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($stmt->execute()) {
             $_SESSION['success'] = "Maklumat berjaya dikemaskini.";
-            header("Location: wilayahAsal.php");
+            include 'process_Dikuiri_Update.php';
+            header("Location: dashboard.php");
             exit();
         } else {
             throw new Exception("Error executing statement: " . $stmt->error);

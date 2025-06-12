@@ -11,6 +11,7 @@ require '../../../PHPMailer/src/SMTP.php';
 
 session_start();
 include '../../../connection.php';
+include '../../../includes/system_logger.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -18,27 +19,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $status_permohonan = $_POST['status_permohonan'];
         $admin_id = $_SESSION['admin_id'];
 
+        // Get current status before update
+        $stmt_current = $conn->prepare("SELECT status FROM wilayah_asal WHERE id = ?");
+        $stmt_current->bind_param("i", $wilayah_asal_id);
+        $stmt_current->execute();
+        $result_current = $stmt_current->get_result();
+        $current_data = $result_current->fetch_assoc();
+        $old_status = $current_data['status'];
+
         if ($status_permohonan === 'diterima') {
             $status = 'Menunggu Pengesahan Pelulus HQ';
-            } else {
-                $status = 'Kembali ke penyemak HQ';
-            }
-
+        } else {
+            $status = 'Kembali ke penyemak HQ';
+        }
 
         $ulasan = null;
         if ($status_permohonan === 'tidak diterima') {
             $ulasan = $_POST['ulasan'] ?? null;
         }
         
-
-
         $tarikh_keputusan = date('Y-m-d H:i:s');
         // 2. Update wilayah_asal
         $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, ulasan_pengesah_HQ = ?, pengesah_HQ_id = ?, tarikh_keputusan_pengesah_HQ = ? WHERE id = ?");
         $stmt_wilayah->bind_param("ssssi", $status, $ulasan, $admin_id, $tarikh_keputusan, $wilayah_asal_id);
         $stmt_wilayah->execute();
+        
+        // Log the status change
+        logApplicationStatusChange($conn, 'admin', $admin_id, $wilayah_asal_id, $old_status, $status, "HQ Pengesah updated application status");
+        
         $stmt_wilayah->close();
-
 
         $sql = "SELECT * FROM admin WHERE role = 'Pelulus HQ'";
         $result = $conn->query($sql);

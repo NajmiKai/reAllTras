@@ -78,6 +78,15 @@ if (isset($data['kp'])) {
 }
 
 if (isset($data['bahagian'])) {
+    // Validate bahagian exists in organisasi table
+    $check_bahagian = $conn->prepare("SELECT id FROM organisasi WHERE nama_cawangan = ?");
+    $check_bahagian->bind_param("s", $data['bahagian']);
+    $check_bahagian->execute();
+    if ($check_bahagian->get_result()->num_rows === 0) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Bahagian tidak sah']);
+        exit();
+    }
     $sql .= "bahagian = ?, ";
     $params[] = $data['bahagian'];
     $types .= "s";

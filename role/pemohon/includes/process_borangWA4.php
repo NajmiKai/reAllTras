@@ -1,6 +1,7 @@
 <?php
 session_start();
 include '../../../connection.php';
+include '../../../includes/system_logger.php';
 
 // Enable error reporting
 error_reporting(E_ALL);
@@ -54,6 +55,8 @@ function handleFileUpload($file, $upload_dir, $wilayah_asal_id, $user_kp, $descr
             $stmt->bind_param("isssiss", $wilayah_asal_id, $file_name, $web_path, $file_type, $file_size, $description, $user_kp);
             
             if ($stmt->execute()) {
+                // Log document upload
+                logDocumentEvent($conn, 'document_upload', 'user', $user_kp, $file_name, $stmt->insert_id);
                 return true;
             }
         }
@@ -147,6 +150,16 @@ if (isset($_FILES['dokumen_sokongan'])) {
 }
 
 if ($success) {
+    // Store the ID in a variable
+    $current_id = $wilayah_asal_id;
+    
+    // Update wilayah_asal_from_stage
+    $update_stage_sql = "UPDATE wilayah_asal SET wilayah_asal_from_stage = 'BorangWA5' WHERE id = ?";
+    $update_stage_stmt = $conn->prepare($update_stage_sql);
+    $update_stage_stmt->bind_param("i", $current_id);
+    $update_stage_stmt->execute();
+    $update_stage_stmt->close();
+
     $_SESSION['success'] = "Semua dokumen berjaya dimuat naik.";
     header("Location: ../borangWA5.php?id=" . $wilayah_asal_id);
 } else {

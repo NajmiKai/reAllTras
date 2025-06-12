@@ -53,9 +53,17 @@ while($role = $roles_result->fetch_assoc()) {
     <div class="col p-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3 class="mb-0">Senarai Admin</h3>
-            <?php include 'includes/greeting.php'; ?>
+            <div>
+                <?php include 'includes/greeting.php'; ?>
+            </div>
         </div>
 
+        <div class="mb-4">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAdminModal">
+                <i class="fas fa-plus"></i> Tambah Admin
+            </button>
+        </div>
+        
         <!-- Admins Table -->
         <div class="card shadow-sm">
             <div class="card-body">
@@ -148,6 +156,54 @@ while($role = $roles_result->fetch_assoc()) {
     </div>
 </div>
 
+<!-- Add Admin Modal -->
+<div class="modal fade" id="addAdminModal" tabindex="-1" aria-labelledby="addAdminModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addAdminModalLabel">Tambah Admin Baru</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addAdminForm">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nama</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phoneNo" class="form-label">No. Telefon</label>
+                        <input type="text" class="form-control" id="phoneNo" name="phoneNo" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="icNo" class="form-label">No. KP</label>
+                        <input type="text" class="form-control" id="icNo" name="icNo" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="role" class="form-label">Peranan</label>
+                        <select class="form-select" id="role" name="role" required>
+                            <?php foreach($roles as $role): ?>
+                            <option value="<?php echo htmlspecialchars($role); ?>"><?php echo htmlspecialchars($role); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Kata Laluan</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-primary" onclick="addNewAdmin()">Tambah Admin</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -217,6 +273,35 @@ function deleteAdmin(adminId) {
         })
         .catch(error => console.error('Error:', error));
     }
+}
+
+function addNewAdmin() {
+    const form = document.getElementById('addAdminForm');
+    const formData = new FormData(form);
+    
+    // Convert FormData to JSON
+    const jsonData = {};
+    formData.forEach((value, key) => {
+        jsonData[key] = value;
+    });
+
+    fetch('includes/addAdmin.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(jsonData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Admin berjaya ditambah');
+            location.reload();
+        } else {
+            alert('Ralat: ' + data.message);
+        }
+    })
+    .catch(error => console.error('Error:', error));
 }
 </script>
 </body>

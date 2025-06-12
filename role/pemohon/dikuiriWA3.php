@@ -11,10 +11,21 @@ $check_stmt->execute();
 $wilayah_asal_result = $check_stmt->get_result();
 $wilayah_asal_data = $wilayah_asal_result->fetch_assoc();
 
-// If no wilayah_asal record exists, redirect to borangWA
+// If no wilayah_asal record exists, redirect to dashboard
 if (!$wilayah_asal_data) {
     header("Location: dashboard.php");
     exit();
+}
+
+// Fetch followers data
+$followers_sql = "SELECT * FROM wilayah_asal_pengikut WHERE wilayah_asal_id = ?";
+$followers_stmt = $conn->prepare($followers_sql);
+$followers_stmt->bind_param("i", $wilayah_asal_id);
+$followers_stmt->execute();
+$followers_result = $followers_stmt->get_result();
+$followers_data = [];
+while ($row = $followers_result->fetch_assoc()) {
+    $followers_data[] = $row;
 }
 
 // Fetch user data from database
@@ -149,12 +160,12 @@ $user_phoneNo = $user_data['phone'];
                         <div class="col-md-12">
                             <label class="form-label">Jenis Permohonan</label>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="jenis_permohonan" id="permohonan_asal" value="Asal" <?= $wilayah_asal_data['jenis_permohonan'] === 'Asal' ? 'checked' : '' ?> required>
-                                <label class="form-check-label" for="permohonan_asal">Asal</label>
+                                <input class="form-check-input" type="radio" name="jenis_permohonan" id="diri_sendiri" value="diri_sendiri" <?= $wilayah_asal_data['jenis_permohonan'] === 'diri_sendiri' ? 'checked' : '' ?> required>
+                                <label class="form-check-label" for="diri_sendiri">Diri Sendiri/ Pasangan/ Anak Ke Wilayah Ditetapkan</label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="jenis_permohonan" id="permohonan_balik" value="Balik" <?= $wilayah_asal_data['jenis_permohonan'] === 'Balik' ? 'checked' : '' ?> required>
-                                <label class="form-check-label" for="permohonan_balik">Balik</label>
+                                <input class="form-check-input" type="radio" name="jenis_permohonan" id="keluarga" value="keluarga" <?= $wilayah_asal_data['jenis_permohonan'] === 'keluarga' ? 'checked' : '' ?> required>
+                                <label class="form-check-label" for="keluarga">Keluarga Pegawai ke Wilayah Berkhidmat</label>
                             </div>
                         </div>
                         
@@ -168,18 +179,18 @@ $user_phoneNo = $user_data['phone'];
                         </div>
                         
                         <div class="col-md-6">
-                            <label class="form-label">Titik Permulaan</label>
+                            <label class="form-label">Lapangan Terbang Berlepas</label>
                             <input type="text" class="form-control" name="start_point" value="<?= htmlspecialchars($wilayah_asal_data['start_point']) ?>" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Destinasi</label>
+                            <label class="form-label">Lapangan Terbang Tiba</label>
                             <input type="text" class="form-control" name="end_point" value="<?= htmlspecialchars($wilayah_asal_data['end_point']) ?>" required>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Partner Flight Information (if applicable) -->
+            <!-- Partner Flight Information -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header" style="background-color: #d59e3e; color: white;">
                     <h5 class="mb-0"><i class="fas fa-user-friends me-2"></i>Maklumat Penerbangan Pasangan</h5>
@@ -214,12 +225,84 @@ $user_phoneNo = $user_data['phone'];
                 </div>
             </div>
 
+            <!-- Followers Section -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header" style="background-color: #d59e3e; color: white;">
+                    <h5 class="mb-0"><i class="fas fa-users me-2"></i>Maklumat Pengikut</h5>
+                </div>
+                <div class="card-body">
+                    <div id="followers-container">
+                        <?php foreach ($followers_data as $index => $follower): ?>
+                        <div class="follower-entry mb-3 p-3 border rounded" id="follower-<?= $index ?>">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="mb-0">Pengikut <?= $index + 1 ?></h6>
+                                <button type="button" class="btn btn-sm btn-danger" onclick="removeFollower(<?= $index ?>, <?= $follower['id'] ?>)">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <input type="hidden" name="followers[<?= $index ?>][id]" value="<?= $follower['id'] ?>">
+                            <div class="row">
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label">Nama Depan</label>
+                                    <input type="text" class="form-control" name="followers[<?= $index ?>][nama_first]" value="<?= htmlspecialchars($follower['nama_first_pengikut']) ?>" required>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label">Nama Belakang</label>
+                                    <input type="text" class="form-control" name="followers[<?= $index ?>][nama_last]" value="<?= htmlspecialchars($follower['nama_last_pengikut']) ?>" required>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label">Tarikh Lahir</label>
+                                    <input type="date" class="form-control" name="followers[<?= $index ?>][tarikh_lahir]" value="<?= htmlspecialchars($follower['tarikh_lahir_pengikut']) ?>" required>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label">No. KP</label>
+                                    <input type="text" class="form-control" name="followers[<?= $index ?>][kp]" value="<?= htmlspecialchars($follower['kp_pengikut']) ?>" required>
+                                </div>
+                                <div class="col-12 mb-2">
+                                    <label class="form-label">Tarikh Penerbangan</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="followers[<?= $index ?>][flight_date_type]" 
+                                            id="same_flight_<?= $index ?>" value="same" 
+                                            <?= ($follower['tarikh_penerbangan_pergi_pengikut'] == $wilayah_asal_data['tarikh_penerbangan_pergi']) ? 'checked' : '' ?>
+                                            onchange="toggleFlightDates(<?= $index ?>, 'same')">
+                                        <label class="form-check-label" for="same_flight_<?= $index ?>">
+                                            Tarikh Penerbangan Sama
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="followers[<?= $index ?>][flight_date_type]" 
+                                            id="different_flight_<?= $index ?>" value="different" 
+                                            <?= ($follower['tarikh_penerbangan_pergi_pengikut'] != $wilayah_asal_data['tarikh_penerbangan_pergi']) ? 'checked' : '' ?>
+                                            onchange="toggleFlightDates(<?= $index ?>, 'different')">
+                                        <label class="form-check-label" for="different_flight_<?= $index ?>">
+                                            Tarikh Penerbangan Lain
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-2 custom-flight-dates-<?= $index ?>" style="display: <?= ($follower['tarikh_penerbangan_pergi_pengikut'] != $wilayah_asal_data['tarikh_penerbangan_pergi']) ? 'block' : 'none' ?>;">
+                                    <label class="form-label">Tarikh Penerbangan Pergi</label>
+                                    <input type="date" class="form-control" name="followers[<?= $index ?>][tarikh_penerbangan_pergi_pengikut]" value="<?= htmlspecialchars($follower['tarikh_penerbangan_pergi_pengikut']) ?>">
+                                </div>
+                                <div class="col-md-6 mb-2 custom-flight-dates-<?= $index ?>" style="display: <?= ($follower['tarikh_penerbangan_pergi_pengikut'] != $wilayah_asal_data['tarikh_penerbangan_pergi']) ? 'block' : 'none' ?>;">
+                                    <label class="form-label">Tarikh Penerbangan Balik</label>
+                                    <input type="date" class="form-control" name="followers[<?= $index ?>][tarikh_penerbangan_balik_pengikut]" value="<?= htmlspecialchars($follower['tarikh_penerbangan_balik_pengikut']) ?>">
+                                </div>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <button type="button" class="btn btn-outline-primary mt-3" onclick="addFollower()">
+                        <i class="fas fa-plus me-2"></i>Tambah Pengikut
+                    </button>
+                </div>
+            </div>
+
             <div class="d-flex justify-content-between mt-4">
                 <a href="wilayahAsal.php" class="btn btn-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Kembali
                 </a>
                 <button type="submit" class="btn btn-primary">
-                    Seterusnya<i class="fas fa-arrow-right ms-2"></i>
+                    Simpan<i class="fas fa-save ms-2"></i>
                 </button>
             </div>
         </form>
@@ -244,7 +327,7 @@ $user_phoneNo = $user_data['phone'];
     })()
 
     // Follower management
-    let followerCount = 0;
+    let followerCount = <?= count($followers_data) ?>;
 
     function addFollower() {
         const container = document.getElementById('followers-container');
@@ -310,6 +393,24 @@ $user_phoneNo = $user_data['phone'];
         followerCount++;
     }
 
+    function removeFollower(index, id = null) {
+        const followerDiv = document.getElementById(`follower-${index}`);
+        if (followerDiv) {
+            if (id) {
+                // If this is an existing follower, add a hidden input to mark it for deletion
+                const deleteInput = document.createElement('input');
+                deleteInput.type = 'hidden';
+                deleteInput.name = `deleted_followers[]`;
+                deleteInput.value = id;
+                followerDiv.appendChild(deleteInput);
+                followerDiv.style.display = 'none';
+            } else {
+                // If this is a new follower, just remove the div
+                followerDiv.remove();
+            }
+        }
+    }
+
     function toggleFlightDates(followerIndex, type) {
         const customDatesDiv = document.querySelectorAll(`.custom-flight-dates-${followerIndex}`);
         const mainFlightDates = {
@@ -364,58 +465,16 @@ $user_phoneNo = $user_data['phone'];
         }
     }
 
-    // Update form submission handler
-    document.querySelector('form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Validate followers data
-        const followers = [];
-        const followerInputs = document.querySelectorAll('.follower-entry');
-        
-        followerInputs.forEach((follower, index) => {
-            const nama_first = follower.querySelector(`input[name="followers[${index}][nama_first]"]`).value;
-            const nama_last = follower.querySelector(`input[name="followers[${index}][nama_last]"]`).value;
-            const tarikh_lahir = follower.querySelector(`input[name="followers[${index}][tarikh_lahir]"]`).value;
-            const kp = follower.querySelector(`input[name="followers[${index}][kp]"]`).value;
-            const flight_date_type = follower.querySelector(`input[name="followers[${index}][flight_date_type]"]:checked`).value;
+    // Show success/error messages if they exist
+    <?php if (isset($_SESSION['success'])): ?>
+        alert('<?= $_SESSION['success'] ?>');
+        <?php unset($_SESSION['success']); ?>
+    <?php endif; ?>
 
-            let tarikh_penerbangan_pergi_pengikut, tarikh_penerbangan_balik_pengikut;
-
-            if (flight_date_type === 'same') {
-                tarikh_penerbangan_pergi_pengikut = document.querySelector('input[name="tarikh_penerbangan_pergi"]').value;
-                tarikh_penerbangan_balik_pengikut = document.querySelector('input[name="tarikh_penerbangan_balik"]').value;
-            } else {
-                tarikh_penerbangan_pergi_pengikut = follower.querySelector(`input[name="followers[${index}][tarikh_penerbangan_pergi_pengikut]"]`).value;
-                tarikh_penerbangan_balik_pengikut = follower.querySelector(`input[name="followers[${index}][tarikh_penerbangan_balik_pengikut]"]`).value;
-            }
-
-            if (nama_first && nama_last && tarikh_lahir && kp) {
-                followers.push({
-                    nama_first,
-                    nama_last,
-                    tarikh_lahir,
-                    kp,
-                    tarikh_penerbangan_pergi_pengikut,
-                    tarikh_penerbangan_balik_pengikut
-                });
-            }
-        });
-
-        // Add followers data to form
-        const followersInput = document.createElement('input');
-        followersInput.type = 'hidden';
-        followersInput.name = 'followers_data';
-        followersInput.value = JSON.stringify(followers);
-        this.appendChild(followersInput);
-
-        // Submit the form
-        this.submit();
-    });
-
-    document.querySelector('.toggle-sidebar').addEventListener('click', function (e) {
-        e.preventDefault();
-        document.getElementById('sidebar').classList.toggle('hidden');
-    });
+    <?php if (isset($_SESSION['error'])): ?>
+        alert('<?= $_SESSION['error'] ?>');
+        <?php unset($_SESSION['error']); ?>
+    <?php endif; ?>
 </script>
 </body>
 </html>

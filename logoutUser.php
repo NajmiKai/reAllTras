@@ -1,5 +1,12 @@
 <?php
 session_start();
+include 'connection.php';
+include 'includes/system_logger.php';
+
+// Log the logout event if user was logged in
+if (isset($_SESSION['user_kp'])) {
+    logAuthEvent($conn, 'logout', 'user', $_SESSION['user_kp'], true);
+}
 
 // Clear all session variables
 $_SESSION = [];

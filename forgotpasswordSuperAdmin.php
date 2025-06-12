@@ -89,12 +89,12 @@ $showSuccess = isset($_GET['status']) && $_GET['status'] === 'sent';
             </div>
         <?php endif; ?>
         
-        <p class="text-center">Masukkan emel atau nombor KP anda dan kami akan hantarkan pautan untuk menetapkan semula kata laluan anda.</p>
+        <p class="text-center">Masukkan emel anda dan kami akan hantarkan pautan untuk menetapkan semula kata laluan anda.</p>
 
         <form method="POST" action="send-reset-super-admin.php">
             <div class="mb-3">
-                <label for="identifier" class="form-label">Emel atau Kad Pengenalan</label>
-                <input type="text" class="form-control" name="identifier" id="identifier" placeholder="Masukkan emel atau KP" required>
+                <label for="identifier" class="form-label">Emel</label>
+                <input type="email" class="form-control" name="identifier" id="identifier" placeholder="Masukkan emel" required>
             </div>
 
             <button type="submit" class="btn btn-primary btn-login">Hantar Pautan Reset</button>
