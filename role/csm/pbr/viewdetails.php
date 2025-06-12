@@ -421,7 +421,7 @@ include '../../../connection.php';
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="status_select" class="form-label">Status Permohonan</label>
-                    <select class="form-select" name="status_permohonan" id="status_select" required onchange="toggleUlasan(); updateFormAction();" <?php if ($isApproved) echo 'disabled'; ?>>
+                    <select class="form-select" name="status_permohonan" id="status_select" required onchange="toggleUlasan()" <?php if ($isApproved) echo 'disabled'; ?>>
                         <option value="">-- Sila Pilih --</option>
                         <option value="Diluluskan">Diluluskan</option>
                         <option value="Tidak diluluskan">Tidak diluluskan</option>
@@ -468,11 +468,6 @@ document.querySelector('.toggle-sidebar').addEventListener('click', function (e)
         document.getElementById('sidebar').classList.toggle('hidden');
     });
 
-    // Call updateFormAction on page load to set initial form action
-    document.addEventListener('DOMContentLoaded', function() {
-        updateFormAction();
-    });
-
     function toggleSubMenu() {
         const submenu = document.getElementById("wilayahSubmenu");
         submenu.style.display = submenu.style.display === "block" ? "none" : "block";
@@ -492,19 +487,6 @@ document.querySelector('.toggle-sidebar').addEventListener('click', function (e)
         }
     }
 
-    function updateFormAction() {
-    const form = document.getElementById('permohonanForm');
-    const status = document.getElementById('status_select').value;
-    const ulasanDiv = document.getElementById('ulasanDiv');
-
-    if (status === 'Tidak diluluskan') {
-        form.action = 'send_mail3.php';
-        ulasanDiv.style.display = 'block';
-    } else {
-        form.action = 'send_mail.php';
-        ulasanDiv.style.display = 'none';
-    }
-}
 
 </script>
 </body>
