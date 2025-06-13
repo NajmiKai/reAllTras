@@ -84,16 +84,29 @@ $display_result = $conn->query($sql);
                                 <td><?php echo htmlspecialchars($row['bahagian']); ?></td>
                                 <td><?php echo htmlspecialchars($row['jenis_permohonan']); ?></td>
                                 <td>
-                                    <span class="badge <?php 
-                                        echo match($row['status_permohonan']) {
-                                            'Belum Disemak' => 'bg-secondary',
-                                            'Selesai' => 'bg-success',
-                                            'Dikuiri' => 'bg-warning',
-                                            'Tolak' => 'bg-danger',
-                                            'Lulus' => 'bg-primary',
-                                            default => 'bg-secondary'
-                                        };
-                                    ?>">
+                                    <?php
+                                        $status_class = 'bg-secondary';
+                                        switch ($row['status_permohonan']) {
+                                            case 'Belum Disemak':
+                                                $status_class = 'bg-secondary';
+                                                break;
+                                            case 'Selesai':
+                                                $status_class = 'bg-success';
+                                                break;
+                                            case 'Dikuiri':
+                                                $status_class = 'bg-warning';
+                                                break;
+                                            case 'Tolak':
+                                                $status_class = 'bg-danger';
+                                                break;
+                                            case 'Lulus':
+                                                $status_class = 'bg-primary';
+                                                break;
+                                            default:
+                                                $status_class = 'bg-secondary';
+                                        }
+                                    ?>
+                                    <span class="badge <?php echo $status_class; ?>">
                                         <?php echo htmlspecialchars($row['status_permohonan']); ?>
                                     </span>
                                 </td>

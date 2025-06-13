@@ -1,11 +1,5 @@
 <?php
-session_start();
 include '../../connection.php';
-
-// Set user ID in session if not set
-if (!isset($_SESSION['user_id'])) {
-    $_SESSION['user_id'] = 1; // Set default user ID to 1
-}
 
 // Fetch user data from database
 $user_id = $_SESSION['user_id'];
@@ -27,6 +21,13 @@ $user_icNo = $user_data['kp'];
 $user_email = $user_data['email'];
 $user_phoneNo = $user_data['phone'];
 
+// Handle POST data from back button
+$formData = [];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    foreach ($_POST as $key => $value) {
+        $formData[$key] = htmlspecialchars($value);
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="ms">
@@ -182,11 +183,11 @@ $user_phoneNo = $user_data['phone'];
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Jawatan & Gred</label>
-                            <input type="text" class="form-control" name="jawatan_gred" required>
+                            <input type="text" class="form-control" name="jawatan_gred" value="<?= isset($formData['jawatan_gred']) ? $formData['jawatan_gred'] : '' ?>" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Email Ketua Cawangan <span style="font-size: 0.9em; font-style: italic; color: #666;">(Email Ketua Bahagian untuk KC dan Setaraf)</span></label>
-                            <input type="email" class="form-control" name="email_penyelia" required>
+                            <input type="email" class="form-control" name="email_penyelia" value="<?= isset($formData['email_penyelia']) ? $formData['email_penyelia'] : '' ?>" required>
                         </div>
                     </div>
                 </div>
@@ -201,23 +202,23 @@ $user_phoneNo = $user_data['phone'];
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Alamat 1</label>
-                            <input type="text" class="form-control" name="alamat_menetap_1" required>
+                            <input type="text" class="form-control" name="alamat_menetap_1" value="<?= isset($formData['alamat_menetap_1']) ? $formData['alamat_menetap_1'] : '' ?>" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Alamat 2</label>
-                            <input type="text" class="form-control" name="alamat_menetap_2" required>
+                            <input type="text" class="form-control" name="alamat_menetap_2" value="<?= isset($formData['alamat_menetap_2']) ? $formData['alamat_menetap_2'] : '' ?>" required>
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Poskod</label>
-                            <input type="text" class="form-control" name="poskod_menetap" required>
+                            <input type="text" class="form-control" name="poskod_menetap" value="<?= isset($formData['poskod_menetap']) ? $formData['poskod_menetap'] : '' ?>" required>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Bandar</label>
-                            <input type="text" class="form-control" name="bandar_menetap" required>
+                            <input type="text" class="form-control" name="bandar_menetap" value="<?= isset($formData['bandar_menetap']) ? $formData['bandar_menetap'] : '' ?>" required>
                         </div>
                         <div class="col-md-5">
                             <label class="form-label">Negeri</label>
-                            <input type="text" class="form-control" name="negeri_menetap" required>
+                            <input type="text" class="form-control" name="negeri_menetap" value="<?= isset($formData['negeri_menetap']) ? $formData['negeri_menetap'] : '' ?>" required>
                         </div>
                     </div>
                 </div>
@@ -232,23 +233,23 @@ $user_phoneNo = $user_data['phone'];
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Alamat 1</label>
-                            <input type="text" class="form-control" name="alamat_berkhidmat_1" required>
+                            <input type="text" class="form-control" name="alamat_berkhidmat_1" value="<?= isset($formData['alamat_berkhidmat_1']) ? $formData['alamat_berkhidmat_1'] : '' ?>" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Alamat 2</label>
-                            <input type="text" class="form-control" name="alamat_berkhidmat_2" required>
+                            <input type="text" class="form-control" name="alamat_berkhidmat_2" value="<?= isset($formData['alamat_berkhidmat_2']) ? $formData['alamat_berkhidmat_2'] : '' ?>" required>
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Poskod</label>
-                            <input type="text" class="form-control" name="poskod_berkhidmat" required>
+                            <input type="text" class="form-control" name="poskod_berkhidmat" value="<?= isset($formData['poskod_berkhidmat']) ? $formData['poskod_berkhidmat'] : '' ?>" required>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Bandar</label>
-                            <input type="text" class="form-control" name="bandar_berkhidmat" required>
+                            <input type="text" class="form-control" name="bandar_berkhidmat" value="<?= isset($formData['bandar_berkhidmat']) ? $formData['bandar_berkhidmat'] : '' ?>" required>
                         </div>
                         <div class="col-md-5">
                             <label class="form-label">Negeri</label>
-                            <input type="text" class="form-control" name="negeri_berkhidmat" required>
+                            <input type="text" class="form-control" name="negeri_berkhidmat" value="<?= isset($formData['negeri_berkhidmat']) ? $formData['negeri_berkhidmat'] : '' ?>" required>
                         </div>
                     </div>
                 </div>
@@ -263,7 +264,10 @@ $user_phoneNo = $user_data['phone'];
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Tarikh Lapor Diri</label>
-                            <input type="date" class="form-control" name="tarikh_lapor_diri" required>
+                            <input type="date" class="form-control" name="tarikh_lapor_diri" value="<?= isset($formData['tarikh_lapor_diri']) ? $formData['tarikh_lapor_diri'] : '' ?>" required>
+                            <div class="invalid-feedback" id="dateError">
+                                Tarikh lapor diri mestilah sekurang-kurangnya 6 bulan dari tarikh permohonan.
+                            </div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Pernah Menggunakan Kemudahan Ini?</label>
@@ -278,7 +282,7 @@ $user_phoneNo = $user_data['phone'];
                         </div>
                         <div class="col-md-6" id="tarikh_terakhir_container" style="display: none;">
                             <label class="form-label">Tarikh Terakhir Menggunakan Kemudahan</label>
-                            <input type="date" class="form-control" name="tarikh_terakhir_kemudahan">
+                            <input type="date" class="form-control" name="tarikh_terakhir_kemudahan" value="<?= isset($formData['tarikh_terakhir_kemudahan']) ? $formData['tarikh_terakhir_kemudahan'] : '' ?>">
                         </div>
                     </div>
                 </div>
@@ -311,19 +315,19 @@ $user_phoneNo = $user_data['phone'];
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label class="form-label">Nama Depan Pasangan</label>
-                                        <input type="text" class="form-control" name="nama_first_pasangan" maxlength="50">
+                                        <input type="text" class="form-control" name="nama_first_pasangan" value="<?= isset($formData['nama_first_pasangan']) ? $formData['nama_first_pasangan'] : '' ?>" maxlength="50">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Nama Belakang Pasangan</label>
-                                        <input type="text" class="form-control" name="nama_last_pasangan" maxlength="50">
+                                        <input type="text" class="form-control" name="nama_last_pasangan" value="<?= isset($formData['nama_last_pasangan']) ? $formData['nama_last_pasangan'] : '' ?>" maxlength="50">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">No. KP Pasangan</label>
-                                        <input type="text" class="form-control" name="no_kp_pasangan" maxlength="14" id="no_kp_pasangan" oninput="formatIC(this)" title="Format: XXXXXX-XX-XXXX">
+                                        <input type="text" class="form-control" name="no_kp_pasangan" value="<?= isset($formData['no_kp_pasangan']) ? $formData['no_kp_pasangan'] : '' ?>" maxlength="14" id="no_kp_pasangan" oninput="formatIC(this)" title="Format: XXXXXX-XX-XXXX">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Wilayah Menetap Pasangan</label>
-                                        <input type="text" class="form-control" name="wilayah_menetap_pasangan" maxlength="50">
+                                        <input type="text" class="form-control" name="wilayah_menetap_pasangan" value="<?= isset($formData['wilayah_menetap_pasangan']) ? $formData['wilayah_menetap_pasangan'] : '' ?>" maxlength="50">
                                     </div>
                                 </div>
                             </div>
@@ -333,20 +337,20 @@ $user_phoneNo = $user_data['phone'];
                                 <div class="row g-3">
                                     <div class="col-12">
                                         <label class="form-label">Alamat</label>
-                                        <input type="text" class="form-control mb-2" name="alamat_berkhidmat_1_pasangan" placeholder="Alamat 1" maxlength="100">
-                                        <input type="text" class="form-control" name="alamat_berkhidmat_2_pasangan" placeholder="Alamat 2" maxlength="100">
+                                        <input type="text" class="form-control mb-2" name="alamat_berkhidmat_1_pasangan" value="<?= isset($formData['alamat_berkhidmat_1_pasangan']) ? $formData['alamat_berkhidmat_1_pasangan'] : '' ?>" placeholder="Alamat 1" maxlength="100">
+                                        <input type="text" class="form-control" name="alamat_berkhidmat_2_pasangan" value="<?= isset($formData['alamat_berkhidmat_2_pasangan']) ? $formData['alamat_berkhidmat_2_pasangan'] : '' ?>" placeholder="Alamat 2" maxlength="100">
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">Poskod</label>
-                                        <input type="text" class="form-control" name="poskod_berkhidmat_pasangan" maxlength="10" pattern="[0-9]{5}" title="5 digit poskod">
+                                        <input type="text" class="form-control" name="poskod_berkhidmat_pasangan" value="<?= isset($formData['poskod_berkhidmat_pasangan']) ? $formData['poskod_berkhidmat_pasangan'] : '' ?>" maxlength="10" pattern="[0-9]{5}" title="5 digit poskod">
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">Bandar</label>
-                                        <input type="text" class="form-control" name="bandar_berkhidmat_pasangan" maxlength="50">
+                                        <input type="text" class="form-control" name="bandar_berkhidmat_pasangan" value="<?= isset($formData['bandar_berkhidmat_pasangan']) ? $formData['bandar_berkhidmat_pasangan'] : '' ?>" maxlength="50">
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">Negeri</label>
-                                        <input type="text" class="form-control" name="negeri_berkhidmat_pasangan" maxlength="50">
+                                        <input type="text" class="form-control" name="negeri_berkhidmat_pasangan" value="<?= isset($formData['negeri_berkhidmat_pasangan']) ? $formData['negeri_berkhidmat_pasangan'] : '' ?>" maxlength="50">
                                     </div>
                                 </div>
                             </div>
@@ -443,6 +447,36 @@ $user_phoneNo = $user_data['phone'];
         }
         hiddenInput.value = input.value.replace(/\D/g, '');
     }
+
+    function validateReportDate() {
+        const reportDate = new Date(document.getElementById('tarikh_lapor_diri').value);
+        const today = new Date();
+        
+        // Calculate 6 months ago from today
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(today.getMonth() - 6);
+        
+        const dateInput = document.getElementById('tarikh_lapor_diri');
+        const dateError = document.getElementById('dateError');
+        
+        if (reportDate > sixMonthsAgo) {
+            dateInput.setCustomValidity('Tarikh lapor diri mestilah sekurang-kurangnya 6 bulan dari tarikh hari ini.');
+            dateError.style.display = 'block';
+            return false;
+        } else {
+            dateInput.setCustomValidity('');
+            dateError.style.display = 'none';
+            return true;
+        }
+    }
+
+    // Add validation to form submission
+    document.querySelector('form').addEventListener('submit', function(event) {
+        if (!validateReportDate()) {
+            event.preventDefault();
+            alert('Tarikh lapor diri mestilah sekurang-kurangnya 6 bulan dari tarikh hari ini.');
+        }
+    });
 </script>
 </body>
 </html>

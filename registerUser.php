@@ -134,9 +134,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="text" class="form-control" name="kp" placeholder="Nombor KP" maxlength="14" required>
             </div>
             <div class="col-md-6">
-                <label class="form-label">Bahagian</label>
+                <label class="form-label">Cawangan / Unit</label>
                 <select class="form-select select2" name="bahagian" required>
-                    <option selected disabled>Pilih Bahagian</option>
+                    <option selected disabled>Pilih Cawangan / Unit</option>
                     <?php
                     $query = "SELECT id, nama_cawangan FROM organisasi ORDER BY nama_cawangan";
                     $result = $conn->query($query);
