@@ -420,7 +420,7 @@ $documents = $result->fetch_all(MYSQLI_ASSOC);
             </div>
 
             <div class="d-flex justify-content-between mt-4">
-                <a href="borangWA4.php" class="btn btn-secondary">
+                <a href="javascript:void(0)" onclick="goBack()" class="btn btn-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Kembali
                 </a>
                     <button type="submit" class="btn btn-success">
@@ -453,6 +453,38 @@ $documents = $result->fetch_all(MYSQLI_ASSOC);
         e.preventDefault();
         document.getElementById('sidebar').classList.toggle('hidden');
     });
+
+    function goBack() {
+        // Get the wilayah_asal_id from the form
+        const wilayahAsalId = document.querySelector('input[name="wilayah_asal_id"]').value;
+        
+        // Create a form to submit the data
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'borangWA4.php';
+        
+        // Add wilayah_asal_id
+        const idInput = document.createElement('input');
+        idInput.type = 'hidden';
+        idInput.name = 'wilayah_asal_id';
+        idInput.value = wilayahAsalId;
+        form.appendChild(idInput);
+        
+        // Add all form data
+        const formData = new FormData(document.querySelector('form'));
+        for (let [key, value] of formData.entries()) {
+            if (key !== 'wilayah_asal_id') {  // Skip wilayah_asal_id as we already added it
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = value;
+                form.appendChild(input);
+            }
+        }
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
 </script>
 </body>
 </html> 
