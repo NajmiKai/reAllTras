@@ -470,9 +470,8 @@ $user_phoneNo = $user_data['phone'];
             form.appendChild(input);
         }
         
-        // Add wilayah_asal_id if it exists in the URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const wilayahAsalId = urlParams.get('wilayah_asal_id');
+        // Add wilayah_asal_id from session
+        const wilayahAsalId = '<?php echo $_SESSION['wilayah_asal_id']; ?>';
         if (wilayahAsalId) {
             const idInput = document.createElement('input');
             idInput.type = 'hidden';
