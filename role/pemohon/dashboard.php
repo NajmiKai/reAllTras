@@ -143,9 +143,9 @@ $user_phoneNo = $user_data['phone'];
                             $csm_stmt->execute();
                             $csm_result = $csm_stmt->get_result();
                             $csm_data = $csm_result->fetch_assoc();
-                            $csm_name = $csm_data['Name'] ?? 'Unknown';
-
-                            $description = "Ulasan daripada " . $csm_name . " (Cawangan Sumber Manusia): " . $application_data['ulasan_pbr_csm1'];
+                            $csm_name = $csm_data['Name'] ?? 'Unknown';                            // Check which ulasan to display
+                            $ulasan = !empty($application_data['ulasan_pengesah_csm1']) ? $application_data['ulasan_pengesah_csm1'] : $application_data['ulasan_pbr_csm1'];
+                            $description = "Ulasan daripada " . $csm_name . " (Cawangan Sumber Manusia): " . $ulasan;
                             $action_button = ['text' => 'Lihat Permohonan', 'link' => 'wilayahAsal.php'];
 
                         }
@@ -188,7 +188,7 @@ $user_phoneNo = $user_data['phone'];
                                 $show_description = false;
                             }
                             else if ($application_data['status_permohonan'] === 'Lulus'){
-                                $current_stage = 'CSM2';
+                                $current_stage = 'HQ';
                                 $show_description = false;
                             }
                             else if ($application_data['status_permohonan'] === 'Dikuiri'){
@@ -212,7 +212,7 @@ $user_phoneNo = $user_data['phone'];
                                 $description = "Harap Maaf, Permohonan anda ditolak.";
                             }
                             else if ($application_data['status_permohonan'] === 'Lulus'){
-                                $current_stage = 'Kewangan';
+                                $current_stage = 'CSM2';
                                 $show_description = false;
                             }
                             else if ($application_data['status_permohonan'] === 'Dikuiri'){

@@ -26,21 +26,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $result_current = $stmt_current->get_result();
         $current_data = $result_current->fetch_assoc();
         $old_status = $current_data['status'];
+        $ulasan = null;
 
         if ($status_permohonan === 'disokong') {
             $status = 'Menunggu pengesahan penyemak1 HQ';
+            $status_permohonan = "Lulus";
+            $kedudukan_permohonan = "CSM";
+
         } else {
             $status = 'Kembali ke PBR CSM';
+            $status_permohonan = "Dikuiri";
+            $kedudukan_permohonan = "CSM";
+            $ulasan = $_POST['ulasan'] ?? null;
+
         }
 
-        $ulasan = null;
-        if ($status_permohonan === 'tidak disokong') {
-            $ulasan = $_POST['ulasan'] ?? null;
-        }
         
         $tarikh_keputusan = date('Y-m-d H:i:s');
-        $status_permohonan = "Lulus";
-        $kedudukan_permohonan = "CSM";
+    
 
         $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, status_permohonan = ?, kedudukan_permohonan = ?, ulasan_pengesah_csm1 = ?, pengesah_csm1_id = ?, tarikh_keputusan_pengesah_csm1 = ? WHERE id = ?");
         $stmt_wilayah->bind_param("ssssssi", $status, $status_permohonan, $kedudukan_permohonan, $ulasan, $admin_id, $tarikh_keputusan, $wilayah_asal_id);

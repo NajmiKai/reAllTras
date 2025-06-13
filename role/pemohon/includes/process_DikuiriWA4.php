@@ -44,7 +44,7 @@ function handleFileUpload($file, $upload_dir, $wilayah_asal_id, $user_kp) {
         
         if (move_uploaded_file($file['tmp_name'], $target_path)) {
             // Create the web-accessible path for database storage
-            $web_path = 'uploads/permohonan/' . $wilayah_asal_id . '/' . $unique_filename;
+            $web_path = '../../../uploads/permohonan/' . $wilayah_asal_id . '/' . $unique_filename;
             
             // Insert into database
             $sql = "INSERT INTO documents (wilayah_asal_id, file_name, file_path, file_type, file_size, description, file_origin_id, file_origin) 
