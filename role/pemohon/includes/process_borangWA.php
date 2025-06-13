@@ -29,7 +29,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($wilayah_asal_id) {
             // Update existing record
             $sql = "UPDATE wilayah_asal SET 
-                user_kp = ?,
                 jawatan_gred = ?,
                 email_penyelia = ?,
                 alamat_menetap_1 = ?,
@@ -43,9 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 bandar_berkhidmat = ?,
                 negeri_berkhidmat = ?,
                 tarikh_lapor_diri = ?,
-                pernah_guna = ?,
                 tarikh_terakhir_kemudahan = ?,
-                ada_pasangan = ?,
                 wilayah_asal_from_stage = 'BorangWA2'
                 WHERE id = ?";
         } else {
@@ -55,9 +52,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 alamat_menetap_1, alamat_menetap_2, poskod_menetap,
                 bandar_menetap, negeri_menetap, alamat_berkhidmat_1,
                 alamat_berkhidmat_2, poskod_berkhidmat, bandar_berkhidmat,
-                negeri_berkhidmat, tarikh_lapor_diri, pernah_guna,
-                tarikh_terakhir_kemudahan, ada_pasangan, wilayah_asal_from_stage
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'BorangWA2')";
+                negeri_berkhidmat, tarikh_lapor_diri,
+                tarikh_terakhir_kemudahan, wilayah_asal_from_stage
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'BorangWA2')";
         }
 
         $stmt = $conn->prepare($sql);
@@ -66,22 +63,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         if ($wilayah_asal_id) {
-            $stmt->bind_param("sssssssssssssssssi",
-                $user_kp, $jawatan_gred, $email_penyelia,
+            $stmt->bind_param("ssssssssssssssi",
+                $jawatan_gred, $email_penyelia,
                 $alamat_menetap_1, $alamat_menetap_2, $poskod_menetap,
                 $bandar_menetap, $negeri_menetap, $alamat_berkhidmat_1,
                 $alamat_berkhidmat_2, $poskod_berkhidmat, $bandar_berkhidmat,
-                $negeri_berkhidmat, $tarikh_lapor_diri, $pernah_guna,
-                $tarikh_terakhir_kemudahan, $ada_pasangan, $wilayah_asal_id
+                $negeri_berkhidmat, $tarikh_lapor_diri,
+                $tarikh_terakhir_kemudahan, $wilayah_asal_id
             );
         } else {
-            $stmt->bind_param("sssssssssssssssss",
-                $user_kp, $jawatan_gred, $email_penyelia,
+            $stmt->bind_param("ssssssssssssss",
+                $jawatan_gred, $email_penyelia,
                 $alamat_menetap_1, $alamat_menetap_2, $poskod_menetap,
                 $bandar_menetap, $negeri_menetap, $alamat_berkhidmat_1,
                 $alamat_berkhidmat_2, $poskod_berkhidmat, $bandar_berkhidmat,
-                $negeri_berkhidmat, $tarikh_lapor_diri, $pernah_guna,
-                $tarikh_terakhir_kemudahan, $ada_pasangan
+                $negeri_berkhidmat, $tarikh_lapor_diri,
+                $tarikh_terakhir_kemudahan
             );
         }
 
