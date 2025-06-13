@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $status = 'Menunggu pengesahan pegawai sulit CSM';
 
         $ulasan = null;
-        if ($keputusan === 'Tidak diluluskan') {
+        if ($keputusan === 'Tidak diterima') {
             $ulasan = $_POST['ulasan'] ?? null;
         }
 

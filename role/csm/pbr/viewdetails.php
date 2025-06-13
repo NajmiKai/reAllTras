@@ -423,8 +423,8 @@ include '../../../connection.php';
                     <label for="status_select" class="form-label">Status Permohonan</label>
                     <select class="form-select" name="status_permohonan" id="status_select" required onchange="toggleUlasan()" <?php if ($isApproved) echo 'disabled'; ?>>
                         <option value="">-- Sila Pilih --</option>
-                        <option value="Diluluskan">Diluluskan</option>
-                        <option value="Tidak diluluskan">Tidak diluluskan</option>
+                        <option value="Diluluskan">Diterima</option>
+                        <option value="Tidak diluluskan">Tidak diterima</option>
                     </select>
                 </div>
                 <div class="col-md-12 mb-3" id="ulasanDiv" style="display: none;">
@@ -476,7 +476,7 @@ document.querySelector('.toggle-sidebar').addEventListener('click', function (e)
         const ulasanDiv = document.getElementById('ulasanDiv');
         const ulasanText = document.getElementById('ulasanText');
         
-        if (select.value === 'Tidak diluluskan') {
+        if (select.value === 'Tidak diterima') {
             ulasanDiv.style.display = 'block';
             ulasanText.setAttribute('required', 'required');
         } else {
@@ -489,9 +489,9 @@ document.querySelector('.toggle-sidebar').addEventListener('click', function (e)
         const form = document.getElementById('permohonanForm');
         const status = document.getElementById('status_select').value;
         
-        if (status === 'Tidak diluluskan') {
+        if (status === 'Tidak diterima') {
             form.action = 'send_mail3.php';
-        } else if (status === 'Diluluskan') {
+        } else if (status === 'Diterima') {
             form.action = 'send_mail.php';
         }
         

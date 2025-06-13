@@ -243,7 +243,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <button type="submit" class="btn btn-primary btn-login">Log Masuk</button>
 
             <div class="login-options">
-                <a href="registerAdmin.php">Daftar Akaun Baru</a> | 
+                <!-- <a href="registerAdmin.php">Daftar Akaun Baru</a> |  -->
                 <a href="forgotpassword.php">Lupa Kata Laluan?</a>
             </div>
         </form>
