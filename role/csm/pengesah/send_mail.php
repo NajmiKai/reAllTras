@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $old_status = $current_data['status'];
         $ulasan = null;
 
-        if ($status_permohonan === 'disokong') {
+        if ($status_permohonan === 'disahkan') {
             $status = 'Menunggu pengesahan penyemak1 HQ';
             $status_permohonan = "Lulus";
             $kedudukan_permohonan = "CSM";

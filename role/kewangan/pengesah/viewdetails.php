@@ -64,8 +64,7 @@ include '../../../connection.php';
         $stmt->execute();
         $stmt->bind_result($pengesah_kewangan_id);
         if ($stmt->fetch()) {
-                // if ($pengesah_kewangan_id === $admin_id || $pengesah_kewangan_id !== null) { 
-                    if ($pengesah_kewangan_id === $admin_id ) { 
+                if ($pengesah_kewangan_id === $admin_id || $pengesah_kewangan_id !== null) { 
                 $isApproved = true;
             }
         }

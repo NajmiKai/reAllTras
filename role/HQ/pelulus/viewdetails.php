@@ -444,8 +444,8 @@ include '../../../connection.php';
                     <label for="status_select" class="form-label">Status Permohonan</label>
                     <select class="form-select" name="status_permohonan" id="status_select" required onchange="toggleUlasan()" <?php if ($isApproved) echo 'disabled'; ?>>
                         <option value="">-- Sila Pilih --</option>
-                        <option value="diterima">Permohonan Diterima</option>
-                        <option value="tidak diterima">Permohonan Tidak Diterima</option>
+                        <option value="diluluskan">Diluluskan</option>
+                        <option value="tidak diluluskan">Tidak Diluluskan</option>
                     </select>
                 </div>
                 <div class="col-md-8 mb-3" id="ulasanDiv" style="display: none;">
@@ -493,7 +493,7 @@ document.querySelector('.toggle-sidebar').addEventListener('click', function (e)
     const ulasanDiv = document.getElementById('ulasanDiv');
     const ulasanText = document.getElementById('ulasanText');
     
-    if (select.value === 'tidak diterima') {
+    if (select.value === 'tidak diluluskan') {
         ulasanDiv.style.display = 'block';
         ulasanText.setAttribute('required', 'required');
     } else {

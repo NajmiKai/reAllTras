@@ -26,23 +26,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $result_current = $stmt_current->get_result();
         $current_data = $result_current->fetch_assoc();
         $old_status = $current_data['status'];
+        $ulasan = null;
+        $tarikh_keputusan = date('Y-m-d H:i:s');
 
         if ($status_permohonan === 'mencukupi') {
             $status = 'Menunggu pengesahan penyedia kemudahan kewangan';
+            $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, ulasan_pengesah_kewangan = ?, pengesah_kewangan_id = ?, tarikh_keputusan_pengesah_kewangan = ? WHERE id = ?");
+            $stmt_wilayah->bind_param("ssssi", $status, $ulasan, $admin_id, $tarikh_keputusan, $wilayah_asal_id);
+            $stmt_wilayah->execute();
         } else {
             $status = 'Kembali ke PBR CSM';
+            $status_permohonan = "Dikuiri";
+            $kedudukan_permohonan = "CSM";
+            $ulasan = $_POST['ulasan'] ?? null;
+
+            $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, ulasan_pengesah_kewangan = ?, pengesah_kewangan_id = ?, status_permohonan= ?, kedudukan_permohonan= ?, tarikh_keputusan_pengesah_kewangan = ? WHERE id = ?");
+            $stmt_wilayah->bind_param("ssssi", $status, $ulasan, $admin_id, $status_permohonan, $kedudukan_permohonan, $tarikh_keputusan, $wilayah_asal_id);
+            $stmt_wilayah->execute();
         }
 
-        $ulasan = null;
-        if ($status_permohonan === 'tidak mencukupi') {
-            $ulasan = $_POST['ulasan'] ?? null;
-        }
-        
-        $tarikh_keputusan = date('Y-m-d H:i:s');
-        // 2. Update wilayah_asal
-        $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, ulasan_pengesah_kewangan = ?, pengesah_kewangan_id = ?, tarikh_keputusan_pengesah_kewangan = ? WHERE id = ?");
-        $stmt_wilayah->bind_param("ssssi", $status, $ulasan, $admin_id, $tarikh_keputusan, $wilayah_asal_id);
-        $stmt_wilayah->execute();
+  
+       
         
         // Log the status change
         logApplicationStatusChange($conn, 'admin', $admin_id, $wilayah_asal_id, $old_status, $status, "Kewangan Pengesah updated application status");

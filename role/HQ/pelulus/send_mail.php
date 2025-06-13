@@ -27,14 +27,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $current_data = $result_current->fetch_assoc();
         $old_status = $current_data['status'];
 
-        if ($status_permohonan === 'diterima') {
+        if ($status_permohonan === 'diluluskan') {
             $status = 'Menunggu pengesahan penyemak2 HQ';
         } else {
             $status = 'Kembali ke penyemak HQ';
         }
 
         $ulasan = null;
-        if ($status_permohonan === 'tidak diterima') {
+        if ($status_permohonan === 'tidak diluluskan') {
             $ulasan = $_POST['ulasan'] ?? null;
         }
         

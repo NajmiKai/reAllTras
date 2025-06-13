@@ -19,8 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $admin_id = $_SESSION['admin_id'];
         $status = 'Kembali ke PBR CSM';
 
-
-
         $tarikh_keputusan = date('Y-m-d H:i:s');
         $status_permohonan = "Dikuiri";
         $kedudukan_permohonan = "CSM";

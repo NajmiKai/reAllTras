@@ -68,22 +68,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background: url('background.png') repeat;
-            background-size: 180px;
+            background-image: url('assets/backgroundUser.png');
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
 
         .login-wrapper {
             background-color: rgba(255, 255, 255, 0.96);
             border-radius: 16px;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            padding: 40px;
+            padding: 30px;
             width: 100%;
             max-width: 450px;
-            margin: 20px;
+            position: center;
         }
 
         .login-title {
@@ -165,7 +167,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </a>
     <div class="login-wrapper">
         <div class="login-title">
-            <img src="assets/ALLTRAS_logo.jpg" alt="ALLTRAS" height="120"><br>
+            <img src="assets/ALLTRAS.png" alt="ALLTRAS" height="130"><br>
             ALL REGION TRAVELLING SYSTEM
         </div>
 
