@@ -452,31 +452,33 @@ $user_phoneNo = $user_data['phone'];
     });
 
     function goBack() {
-        // Get the wilayah_asal_id from the form
-        const wilayahAsalId = document.querySelector('input[name="wilayah_asal_id"]').value;
-        
         // Create a form to submit the data
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = 'borangWA2.php';
         
-        // Add wilayah_asal_id
-        const idInput = document.createElement('input');
-        idInput.type = 'hidden';
-        idInput.name = 'wilayah_asal_id';
-        idInput.value = wilayahAsalId;
-        form.appendChild(idInput);
+        // Get all form data
+        const currentForm = document.querySelector('form');
+        const formData = new FormData(currentForm);
         
-        // Add all form data
-        const formData = new FormData(document.querySelector('form'));
+        // Add all form data as hidden inputs
         for (let [key, value] of formData.entries()) {
-            if (key !== 'wilayah_asal_id') {  // Skip wilayah_asal_id as we already added it
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = key;
-                input.value = value;
-                form.appendChild(input);
-            }
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = value;
+            form.appendChild(input);
+        }
+        
+        // Add wilayah_asal_id if it exists in the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const wilayahAsalId = urlParams.get('wilayah_asal_id');
+        if (wilayahAsalId) {
+            const idInput = document.createElement('input');
+            idInput.type = 'hidden';
+            idInput.name = 'wilayah_asal_id';
+            idInput.value = wilayahAsalId;
+            form.appendChild(idInput);
         }
         
         document.body.appendChild(form);
