@@ -67,8 +67,9 @@ $user_phoneNo = $user_data['PhoneNo'];
 
             <!-- Admin Card -->
             <div class="col-md-4 mb-4">
+            <a href="adjustAdmin.php" class="text-decoration-none">
                 <div class="card shadow-sm h-100">
-                    <div class="card-body">
+                    <div class="card-body"> 
                         <div class="d-flex align-items-center">
                             <div class="flex-shrink-0">
                                 <i class="fas fa-users-cog fa-3x text-primary"></i>
@@ -79,11 +80,14 @@ $user_phoneNo = $user_data['PhoneNo'];
                             </div>
                         </div>
                     </div>
-                </div>
+                </div></a>
             </div>
+
+            
 
             <!-- User Card -->
             <div class="col-md-4 mb-4">
+            <a href="adjustUsers.php" class="text-decoration-none">
                 <div class="card shadow-sm h-100">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
@@ -96,11 +100,13 @@ $user_phoneNo = $user_data['PhoneNo'];
                             </div>
                         </div>
                     </div>
-                </div>
+                </div></a>
             </div>
 
             <!-- Wilayah Asal Card -->
             <div class="col-md-4 mb-4">
+            <a href="adjustSuperAdmin.php" class="text-decoration-none">
+
                 <div class="card shadow-sm h-100">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
@@ -113,7 +119,7 @@ $user_phoneNo = $user_data['PhoneNo'];
                             </div>
                         </div>
                     </div>
-                </div>
+                </div></a>
             </div>
         </div>
 
