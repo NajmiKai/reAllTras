@@ -39,7 +39,7 @@ function countByStatus($conn, $table, $admin_id, $status = 'total') {
         $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE status = 'Menunggu pengesahan penyemak1 HQ' OR status = 'Menunggu pengesahan penyemak2 HQ'";
         $stmt = $conn->prepare($query);
     } elseif ($status === 'Berjaya diproses') {
-        $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE penyemak_HQ1_id = ? OR penyemak_HQ2_id = ?  ";
+        $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE (penyemak_HQ1_id = ? OR penyemak_HQ2_id = ?) AND status != 'Kembali ke penyemak HQ' ";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("ii", $admin_id, $admin_id);
     } elseif ($status === 'Dikuiri') {
