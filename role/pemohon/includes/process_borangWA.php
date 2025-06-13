@@ -8,7 +8,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $wilayah_asal_id = $_POST['wilayah_asal_id'] ?? $_SESSION['wilayah_asal_id'] ?? null;
 
         // Get form data
-        $nama_pegawai = $_POST['nama_pegawai'];
         $user_kp = $_POST['user_kp'];
         $jawatan_gred = $_POST['jawatan_gred'];
         $email_penyelia = $_POST['email_penyelia'];
@@ -30,7 +29,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($wilayah_asal_id) {
             // Update existing record
             $sql = "UPDATE wilayah_asal SET 
-                nama_pegawai = ?,
                 user_kp = ?,
                 jawatan_gred = ?,
                 email_penyelia = ?,
@@ -53,13 +51,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             // Insert new record
             $sql = "INSERT INTO wilayah_asal (
-                nama_pegawai, user_kp, jawatan_gred, email_penyelia,
+                user_kp, jawatan_gred, email_penyelia,
                 alamat_menetap_1, alamat_menetap_2, poskod_menetap,
                 bandar_menetap, negeri_menetap, alamat_berkhidmat_1,
                 alamat_berkhidmat_2, poskod_berkhidmat, bandar_berkhidmat,
                 negeri_berkhidmat, tarikh_lapor_diri, pernah_guna,
                 tarikh_terakhir_kemudahan, ada_pasangan, wilayah_asal_from_stage
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'BorangWA2')";
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'BorangWA2')";
         }
 
         $stmt = $conn->prepare($sql);
@@ -68,8 +66,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         if ($wilayah_asal_id) {
-            $stmt->bind_param("ssssssssssssssssssi",
-                $nama_pegawai, $user_kp, $jawatan_gred, $email_penyelia,
+            $stmt->bind_param("sssssssssssssssssi",
+                $user_kp, $jawatan_gred, $email_penyelia,
                 $alamat_menetap_1, $alamat_menetap_2, $poskod_menetap,
                 $bandar_menetap, $negeri_menetap, $alamat_berkhidmat_1,
                 $alamat_berkhidmat_2, $poskod_berkhidmat, $bandar_berkhidmat,
@@ -77,8 +75,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $tarikh_terakhir_kemudahan, $ada_pasangan, $wilayah_asal_id
             );
         } else {
-            $stmt->bind_param("ssssssssssssssssss",
-                $nama_pegawai, $user_kp, $jawatan_gred, $email_penyelia,
+            $stmt->bind_param("sssssssssssssssss",
+                $user_kp, $jawatan_gred, $email_penyelia,
                 $alamat_menetap_1, $alamat_menetap_2, $poskod_menetap,
                 $bandar_menetap, $negeri_menetap, $alamat_berkhidmat_1,
                 $alamat_berkhidmat_2, $poskod_berkhidmat, $bandar_berkhidmat,
@@ -97,7 +95,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             
             // Store form data in session
             $_SESSION['borangWA_data'] = [
-                'nama_pegawai' => $nama_pegawai,
                 'user_kp' => $user_kp,
                 'jawatan_gred' => $jawatan_gred,
                 'email_penyelia' => $email_penyelia,
