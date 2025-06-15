@@ -34,7 +34,7 @@ function getStatusFilter($status, $admin_id) {
         case 'processing':
             return "status IN ('Menunggu pengesahan penyemak1 HQ', 'Menunggu pengesahan penyemak2 HQ')";
         case 'approved':
-            return "(penyemak_HQ1_id = $admin_id OR penyemak_HQ2_id = $admin_id)";
+            return "(penyemak_HQ1_id = $admin_id OR penyemak_HQ2_id = $admin_id) AND status != 'Kembali ke penyemak HQ'";
         case 'rejected':
             return "status = 'Kembali ke penyemak HQ'";
         case 'total':
