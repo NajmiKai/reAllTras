@@ -206,6 +206,10 @@ while($bahagian = $bahagian_result->fetch_assoc()) {
                         <label for="password" class="form-label">Kata Laluan</label>
                         <input type="password" class="form-control" id="password" name="password" required>
                     </div>
+                    <div class="mb-3">
+                        <label for="confirm_password" class="form-label">Sahkan Kata Laluan</label>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -312,10 +316,21 @@ function addNewUser() {
     const form = document.getElementById('addUserForm');
     const formData = new FormData(form);
     
+    // Check if passwords match
+    const password = formData.get('password');
+    const confirmPassword = formData.get('confirm_password');
+    
+    if (password !== confirmPassword) {
+        alert('Kata laluan tidak sepadan. Sila cuba lagi.');
+        return;
+    }
+    
     // Convert FormData to JSON
     const jsonData = {};
     formData.forEach((value, key) => {
-        jsonData[key] = value;
+        if (key !== 'confirm_password') { // Don't send confirm_password to server
+            jsonData[key] = value;
+        }
     });
 
     fetch('includes/addUser.php', {
@@ -334,7 +349,10 @@ function addNewUser() {
             alert('Ralat: ' + data.message);
         }
     })
-    .catch(error => console.error('Error:', error));
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Ralat sistem. Sila cuba lagi.');
+    });
 }
 </script>
 </body>

@@ -2,37 +2,16 @@
 session_start();
 include '../../../connection.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
-        // Get wilayah_asal_id from POST or session
-        $wilayah_asal_id = $_POST['wilayah_asal_id'] ?? $_SESSION['wilayah_asal_id'] ?? null;
-
-        if (!$wilayah_asal_id) {
-            throw new Exception("No wilayah_asal_id found");
+        // Check if wilayah_asal_id exists in session
+        if (!isset($_SESSION['wilayah_asal_id'])) {
+            throw new Exception("Session data not found. Please start from the beginning.");
         }
 
-        // Get form data
-        $nama_bapa = $_POST['nama_bapa'];
-        $no_kp_bapa = $_POST['no_kp_bapa'];
-        $wilayah_menetap_bapa = $_POST['wilayah_menetap_bapa'];
-        $alamat_menetap_1_bapa = $_POST['alamat_menetap_1_bapa'];
-        $alamat_menetap_2_bapa = $_POST['alamat_menetap_2_bapa'];
-        $poskod_menetap_bapa = $_POST['poskod_menetap_bapa'];
-        $bandar_menetap_bapa = $_POST['bandar_menetap_bapa'];
-        $negeri_menetap_bapa = $_POST['negeri_menetap_bapa'];
-        $ibu_negeri_bandar_dituju_bapa = $_POST['ibu_negeri_bandar_dituju_bapa'];
+        $wilayah_asal_id = $_SESSION['wilayah_asal_id'];
 
-        $nama_ibu = $_POST['nama_ibu'];
-        $no_kp_ibu = $_POST['no_kp_ibu'];
-        $wilayah_menetap_ibu = $_POST['wilayah_menetap_ibu'];
-        $alamat_menetap_1_ibu = $_POST['alamat_menetap_1_ibu'];
-        $alamat_menetap_2_ibu = $_POST['alamat_menetap_2_ibu'];
-        $poskod_menetap_ibu = $_POST['poskod_menetap_ibu'];
-        $bandar_menetap_ibu = $_POST['bandar_menetap_ibu'];
-        $negeri_menetap_ibu = $_POST['negeri_menetap_ibu'];
-        $ibu_negeri_bandar_dituju_ibu = $_POST['ibu_negeri_bandar_dituju_ibu'];
-
-        // Update parent information in database
+        // Prepare the SQL statement
         $sql = "UPDATE wilayah_asal SET 
             nama_bapa = ?,
             no_kp_bapa = ?,
@@ -51,24 +30,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             poskod_menetap_ibu = ?,
             bandar_menetap_ibu = ?,
             negeri_menetap_ibu = ?,
-            ibu_negeri_bandar_dituju_ibu = ?,
-            wilayah_asal_from_stage = 'BorangWA3'
+            ibu_negeri_bandar_dituju_ibu = ?
             WHERE id = ?";
 
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssssssssssssssssssssi",
-            $nama_bapa, $no_kp_bapa, $wilayah_menetap_bapa,
-            $alamat_menetap_1_bapa, $alamat_menetap_2_bapa,
-            $poskod_menetap_bapa, $bandar_menetap_bapa,
-            $negeri_menetap_bapa, $ibu_negeri_bandar_dituju_bapa,
-            $nama_ibu, $no_kp_ibu, $wilayah_menetap_ibu,
-            $alamat_menetap_1_ibu, $alamat_menetap_2_ibu,
-            $poskod_menetap_ibu, $bandar_menetap_ibu,
-            $negeri_menetap_ibu, $ibu_negeri_bandar_dituju_ibu,
+        
+        // Prepare values for binding
+        $nama_bapa = $_POST['nama_bapa'];
+        $no_kp_bapa = $_POST['no_kp_bapa_raw'] ?? $_POST['no_kp_bapa'];
+        $wilayah_menetap_bapa = $_POST['wilayah_menetap_bapa'];
+        $alamat_menetap_1_bapa = $_POST['alamat_menetap_1_bapa'];
+        $alamat_menetap_2_bapa = $_POST['alamat_menetap_2_bapa'];
+        $poskod_menetap_bapa = $_POST['poskod_menetap_bapa'];
+        $bandar_menetap_bapa = $_POST['bandar_menetap_bapa'];
+        $negeri_menetap_bapa = $_POST['negeri_menetap_bapa'];
+        $ibu_negeri_bandar_dituju_bapa = $_POST['ibu_negeri_bandar_dituju_bapa'];
+        
+        $nama_ibu = $_POST['nama_ibu'];
+        $no_kp_ibu = $_POST['no_kp_ibu_raw'] ?? $_POST['no_kp_ibu'];
+        $wilayah_menetap_ibu = $_POST['wilayah_menetap_ibu'];
+        $alamat_menetap_1_ibu = $_POST['alamat_menetap_1_ibu'];
+        $alamat_menetap_2_ibu = $_POST['alamat_menetap_2_ibu'];
+        $poskod_menetap_ibu = $_POST['poskod_menetap_ibu'];
+        $bandar_menetap_ibu = $_POST['bandar_menetap_ibu'];
+        $negeri_menetap_ibu = $_POST['negeri_menetap_ibu'];
+        $ibu_negeri_bandar_dituju_ibu = $_POST['ibu_negeri_bandar_dituju_ibu'];
+
+        // Bind parameters - 19 parameters total (18 strings + 1 integer)
+        $stmt->bind_param("ssssssssssssssssssi",
+            $nama_bapa,
+            $no_kp_bapa,
+            $wilayah_menetap_bapa,
+            $alamat_menetap_1_bapa,
+            $alamat_menetap_2_bapa,
+            $poskod_menetap_bapa,
+            $bandar_menetap_bapa,
+            $negeri_menetap_bapa,
+            $ibu_negeri_bandar_dituju_bapa,
+            $nama_ibu,
+            $no_kp_ibu,
+            $wilayah_menetap_ibu,
+            $alamat_menetap_1_ibu,
+            $alamat_menetap_2_ibu,
+            $poskod_menetap_ibu,
+            $bandar_menetap_ibu,
+            $negeri_menetap_ibu,
+            $ibu_negeri_bandar_dituju_ibu,
             $wilayah_asal_id
         );
 
+        // Execute the statement
         if ($stmt->execute()) {
+            // Store the ID in a variable
+            $current_id = $wilayah_asal_id;
+            
+            // Update wilayah_asal_from_stage
+            $update_stage_sql = "UPDATE wilayah_asal SET wilayah_asal_from_stage = 'BorangWA3' WHERE id = ?";
+            $update_stage_stmt = $conn->prepare($update_stage_sql);
+            $update_stage_stmt->bind_param("i", $current_id);
+            $update_stage_stmt->execute();
+            $update_stage_stmt->close();
+
             // Store parent information in session
             $_SESSION['parent_info'] = [
                 'nama_bapa' => $nama_bapa,
