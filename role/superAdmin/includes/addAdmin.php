@@ -25,7 +25,13 @@ $valid_roles = ['PBR CSM', 'Pegawai Sulit CSM', 'Pengesah CSM', 'Penyemak HQ', '
                 'Pelulus HQ', 'Penyemak Baki Kewangan', 'Pengesah Kewangan', 'Penyedia Kemudahan Kewangan'];
 
 if (!in_array($data['role'], $valid_roles)) {
-    echo json_encode(['success' => false, 'message' => 'Invalid role selected']);
+    echo json_encode(['success' => false, 'message' => 'Peranan tidak sah']);
+    exit();
+}
+
+// Validate email format
+if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+    echo json_encode(['success' => false, 'message' => 'Format email tidak sah']);
     exit();
 }
 
@@ -34,7 +40,7 @@ $check_email = $conn->prepare("SELECT ID FROM admin WHERE Email = ?");
 $check_email->bind_param("s", $data['email']);
 $check_email->execute();
 if ($check_email->get_result()->num_rows > 0) {
-    echo json_encode(['success' => false, 'message' => 'Email already exists']);
+    echo json_encode(['success' => false, 'message' => 'Emel sudah wujud']);
     exit();
 }
 
@@ -43,7 +49,7 @@ $check_ic = $conn->prepare("SELECT ID FROM admin WHERE ICNo = ?");
 $check_ic->bind_param("s", $data['icNo']);
 $check_ic->execute();
 if ($check_ic->get_result()->num_rows > 0) {
-    echo json_encode(['success' => false, 'message' => 'IC number already exists']);
+    echo json_encode(['success' => false, 'message' => 'No. KP sudah wujud']);
     exit();
 }
 
@@ -62,9 +68,9 @@ $stmt->bind_param("ssssss",
 );
 
 if ($stmt->execute()) {
-    echo json_encode(['success' => true, 'message' => 'Admin added successfully']);
+    echo json_encode(['success' => true, 'message' => 'Admin berjaya ditambah']);
 } else {
-    echo json_encode(['success' => false, 'message' => 'Failed to add admin']);
+    echo json_encode(['success' => false, 'message' => 'Gagal menambah admin']);
 }
 
 $stmt->close();

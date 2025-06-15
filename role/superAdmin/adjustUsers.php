@@ -67,7 +67,7 @@ while($bahagian = $bahagian_result->fetch_assoc()) {
         <!-- Users Table -->
         <div class="card shadow-sm">
             <div class="card-body">
-                <div class="table-responsive">
+                <div class="table">
                     <table class="table table-hover">
                         <thead>
                             <tr>
@@ -75,7 +75,7 @@ while($bahagian = $bahagian_result->fetch_assoc()) {
                                 <th>Email</th>
                                 <th>No. Telefon</th>
                                 <th>No. KP</th>
-                                <th>Bahagian</th>
+                                <th>Cawangan</th>
                                 <th>Tarikh Daftar</th>
                                 <th>Tindakan</th>
                             </tr>
@@ -134,16 +134,16 @@ while($bahagian = $bahagian_result->fetch_assoc()) {
                     </div>
                     <div class="mb-3">
                         <label for="editPhone" class="form-label">No. Telefon</label>
-                        <input type="text" class="form-control" id="editPhone" name="phone">
+                        <input type="text" class="form-control" id="editPhone" name="phone" maxlength="11">
                     </div>
                     <div class="mb-3">
                         <label for="editKp" class="form-label">No. KP</label>
-                        <input type="text" class="form-control" id="editKp" name="kp" required>
+                        <input type="text" class="form-control" id="editKp" name="kp" maxlength="12" required>
                     </div>
                     <div class="mb-3">
-                        <label for="editBahagian" class="form-label">Bahagian</label>
+                        <label for="editBahagian" class="form-label">Cawangan</label>
                         <select class="form-select" id="editBahagian" name="bahagian" required>
-                            <option value="">Pilih Bahagian</option>
+                            <option value="">Pilih Cawangan</option>
                             <?php foreach($bahagian_list as $bahagian): ?>
                             <option value="<?php echo htmlspecialchars($bahagian); ?>"><?php echo htmlspecialchars($bahagian); ?></option>
                             <?php endforeach; ?>
@@ -187,16 +187,16 @@ while($bahagian = $bahagian_result->fetch_assoc()) {
                     </div>
                     <div class="mb-3">
                         <label for="phone" class="form-label">No. Telefon</label>
-                        <input type="text" class="form-control" id="phone" name="phone">
+                        <input type="text" class="form-control" id="phone" name="phone" maxlength="11" >
                     </div>
                     <div class="mb-3">
                         <label for="kp" class="form-label">No. KP</label>
-                        <input type="text" class="form-control" id="kp" name="kp" required>
+                        <input type="text" class="form-control" id="kp" name="kp" maxlength="12" required>
                     </div>
                     <div class="mb-3">
-                        <label for="bahagian" class="form-label">Bahagian</label>
+                        <label for="bahagian" class="form-label">Cawangan</label>
                         <select class="form-select" id="bahagian" name="bahagian" required>
-                            <option value="">Pilih Bahagian</option>
+                            <option value="">Pilih Cawangan</option>
                             <?php foreach($bahagian_list as $bahagian): ?>
                             <option value="<?php echo htmlspecialchars($bahagian); ?>"><?php echo htmlspecialchars($bahagian); ?></option>
                             <?php endforeach; ?>
@@ -204,12 +204,27 @@ while($bahagian = $bahagian_result->fetch_assoc()) {
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">Kata Laluan</label>
+                    <div class="input-group">
                         <input type="password" class="form-control" id="password" name="password" required>
+                        <span class="input-group-text p-0" style="height: 50px;">
+                    <span class="d-flex align-items-center justify-content-center px-3" style="height: 100%; width: 100%; cursor: pointer;" onclick="togglePassword()">
+                        <i class="fa-solid fa-eye" id="toggleIcon"></i>
+                    </span>
+                </span>
                     </div>
+                    </div>
+
                     <div class="mb-3">
                         <label for="confirm_password" class="form-label">Sahkan Kata Laluan</label>
+                    <div class="input-group">
                         <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                        <span class="input-group-text p-0" style="height: 50px;">
+                    <span class="d-flex align-items-center justify-content-center px-3" style="height: 100%; width: 100%; cursor: pointer;" onclick="togglePassword2()">
+                        <i class="fa-solid fa-eye" id="toggleIcon"></i>
+                    </span>
+                </span>
                     </div>
+                     </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -224,24 +239,145 @@ while($bahagian = $bahagian_result->fetch_assoc()) {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <script>
+// Define deleteUser function first
+function deleteUser(userId) {
+    if (confirm('Adakah anda pasti mahu memadamkan pengguna ini?')) {
+        fetch(`includes/deleteUser.php?id=${userId}`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                alert('Pengguna berjaya dipadamkan');
+                location.reload();
+            } else {
+                alert('Ralat: ' + (data.message || 'Tidak dapat memadamkan pengguna'));
+            }
+        })
+        .catch(error => {
+            console.error('Delete error:', error);
+            alert('Ralat sistem: ' + error.message);
+        });
+    }
+}
+
 // Initialize Select2 for bahagian dropdowns
 $(document).ready(function() {
-    $('#bahagian, #editBahagian').select2({
+    console.log('Document ready, initializing Select2...');
+    
+    // Initialize Select2 for Add User Modal
+    $('#bahagian').select2({
         theme: 'bootstrap-5',
         width: '100%',
-        placeholder: 'Cari bahagian...',
+        placeholder: 'Cari cawangan...',
         allowClear: true,
+        dropdownParent: $('#addUserModal'),
         language: {
             noResults: function() {
-                return "Tiada bahagian dijumpai";
+                return "Tiada cawangan dijumpai";
             },
             searching: function() {
                 return "Mencari...";
             }
         }
     });
+
+    // Initialize Select2 for Edit User Modal
+    $('#editBahagian').select2({
+        theme: 'bootstrap-5',
+        width: '100%',
+        placeholder: 'Cari cawangan...',
+        allowClear: true,
+        dropdownParent: $('#viewUserModal'),
+        language: {
+            noResults: function() {
+                return "Tiada cawangan dijumpai";
+            },
+            searching: function() {
+                return "Mencari...";
+            }
+        }
+    });
+
+    // Re-initialize Select2 when modals are shown
+    $('#addUserModal').on('shown.bs.modal', function () {
+        $('#bahagian').select2('destroy').select2({
+            theme: 'bootstrap-5',
+            width: '100%',
+            placeholder: 'Cari cawangan...',
+            allowClear: true,
+            dropdownParent: $('#addUserModal'),
+            language: {
+                noResults: function() {
+                    return "Tiada cawangan dijumpai";
+                },
+                searching: function() {
+                    return "Mencari...";
+                }
+            }
+        });
+    });
+
+    $('#viewUserModal').on('shown.bs.modal', function () {
+        $('#editBahagian').select2('destroy').select2({
+            theme: 'bootstrap-5',
+            width: '100%',
+            placeholder: 'Cari cawangan...',
+            allowClear: true,
+            dropdownParent: $('#viewUserModal'),
+            language: {
+                noResults: function() {
+                    return "Tiada cawangan dijumpai";
+                },
+                searching: function() {
+                    return "Mencari...";
+                }
+            }
+        });
+    });
 });
+
+
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        function togglePassword2() {
+            const passwordInput = document.getElementById('confirm_password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
 
 function viewUser(userId) {
     // Fetch user details via AJAX
@@ -280,8 +416,10 @@ function saveUserChanges() {
         headers: {
             'Content-Type': 'application/json',
         },
+        credentials: 'include', // 🔥 important to send PHP session cookies
         body: JSON.stringify(jsonData)
     })
+
     .then(response => response.json())
     .then(data => {
         if (data.success) {
@@ -292,24 +430,6 @@ function saveUserChanges() {
         }
     })
     .catch(error => console.error('Error:', error));
-}
-
-function deleteUser(userId) {
-    if (confirm('Adakah anda pasti mahu memadamkan pengguna ini?')) {
-        fetch(`includes/deleteUser.php?id=${userId}`, {
-            method: 'POST'
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Pengguna berjaya dipadamkan');
-                location.reload();
-            } else {
-                alert('Ralat: ' + data.message);
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    }
 }
 
 function addNewUser() {
@@ -338,6 +458,7 @@ function addNewUser() {
         headers: {
             'Content-Type': 'application/json',
         },
+        credentials: 'include', // 🔥 important to send PHP session cookies
         body: JSON.stringify(jsonData)
     })
     .then(response => response.json())

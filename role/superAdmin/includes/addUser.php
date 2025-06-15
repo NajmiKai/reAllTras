@@ -31,7 +31,7 @@ $check_email = $conn->prepare("SELECT id FROM user WHERE email = ?");
 $check_email->bind_param("s", $data['email']);
 $check_email->execute();
 if ($check_email->get_result()->num_rows > 0) {
-    echo json_encode(['success' => false, 'message' => 'Email sudah wujud']);
+    echo json_encode(['success' => false, 'message' => 'Emel sudah wujud']);
     exit();
 }
 
@@ -49,12 +49,14 @@ $check_bahagian = $conn->prepare("SELECT id FROM organisasi WHERE nama_cawangan 
 $check_bahagian->bind_param("s", $data['bahagian']);
 $check_bahagian->execute();
 if ($check_bahagian->get_result()->num_rows === 0) {
-    echo json_encode(['success' => false, 'message' => 'Bahagian tidak sah']);
+    echo json_encode(['success' => false, 'message' => 'Cawangan tidak sah']);
     exit();
 }
 
 // Hash password
 $hashed_password = password_hash($data['password'], PASSWORD_DEFAULT);
+
+$phone = $data['phone'] ?? null; //phone is optional
 
 // Insert new user
 $stmt = $conn->prepare("INSERT INTO user (nama_first, nama_last, email, phone, kp, bahagian, password) VALUES (?, ?, ?, ?, ?, ?, ?)");
@@ -62,7 +64,7 @@ $stmt->bind_param("sssssss",
     $data['nama_first'],
     $data['nama_last'],
     $data['email'],
-    $data['phone'] ?? null, // Phone is optional
+    $phone,
     $data['kp'],
     $data['bahagian'],
     $hashed_password

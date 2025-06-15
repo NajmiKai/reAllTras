@@ -44,16 +44,16 @@ $super_admins_result = $conn->query($super_admins_sql);
     <!-- Main Content -->
     <div class="col p-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3 class="mb-0">Senarai Super Admin</h3>
+            <h3 class="mb-0">Profil Super Admin</h3>
             <?php include 'includes/greeting.php'; ?>
         </div>
 
         <!-- Add Super Admin Button -->
-        <div class="mb-4">
+        <!-- <div class="mb-4">
             <button type="button" class="btn btn-primary" onclick="showAddSuperAdminModal()">
                 <i class="fas fa-plus"></i> Tambah Super Admin
             </button>
-        </div>
+        </div> -->
 
         <!-- Super Admins Table -->
         <div class="card shadow-sm">

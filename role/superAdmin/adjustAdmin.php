@@ -128,11 +128,11 @@ while($role = $roles_result->fetch_assoc()) {
                     </div>
                     <div class="mb-3">
                         <label for="editPhone" class="form-label">No. Telefon</label>
-                        <input type="text" class="form-control" id="editPhone" name="phoneNo" required>
+                        <input type="text" class="form-control" id="editPhone" name="phoneNo" maxlength="11" required>
                     </div>
                     <div class="mb-3">
                         <label for="editIcNo" class="form-label">No. KP</label>
-                        <input type="text" class="form-control" id="editIcNo" name="icNo" required>
+                        <input type="text" class="form-control" id="editIcNo" name="icNo" maxlength="12" required>
                     </div>
                     <div class="mb-3">
                         <label for="editRole" class="form-label">Peranan</label>
@@ -176,11 +176,11 @@ while($role = $roles_result->fetch_assoc()) {
                     </div>
                     <div class="mb-3">
                         <label for="phoneNo" class="form-label">No. Telefon</label>
-                        <input type="text" class="form-control" id="phoneNo" name="phoneNo" required>
+                        <input type="text" class="form-control" id="phoneNo" name="phoneNo" maxlength="11" required>
                     </div>
                     <div class="mb-3">
                         <label for="icNo" class="form-label">No. KP</label>
-                        <input type="text" class="form-control" id="icNo" name="icNo" required>
+                        <input type="text" class="form-control" id="icNo" name="icNo"  maxlength="12" required>
                     </div>
                     <div class="mb-3">
                         <label for="role" class="form-label">Peranan</label>
@@ -192,8 +192,26 @@ while($role = $roles_result->fetch_assoc()) {
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">Kata Laluan</label>
+                    <div class="input-group">
                         <input type="password" class="form-control" id="password" name="password" required>
+                        <span class="input-group-text p-0" style="height: 50px;">
+                    <span class="d-flex align-items-center justify-content-center px-3" style="height: 100%; width: 100%; cursor: pointer;" onclick="togglePassword()">
+                        <i class="fa-solid fa-eye" id="toggleIcon"></i>
+                    </span>
+                </span>
                     </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirm_password" class="form-label">Sahkan Kata Laluan</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                        <span class="input-group-text p-0" style="height: 50px;">
+                    <span class="d-flex align-items-center justify-content-center px-3" style="height: 100%; width: 100%; cursor: pointer;" onclick="togglePassword2()">
+                        <i class="fa-solid fa-eye" id="toggleIcon"></i>
+                    </span>
+                </span>
+                    </div>
+                     </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -225,6 +243,36 @@ function viewAdmin(adminId) {
         })
         .catch(error => console.error('Error:', error));
 }
+
+function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        function togglePassword2() {
+            const passwordInput = document.getElementById('confirm_password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
 
 function saveAdminChanges() {
     const form = document.getElementById('editAdminForm');

@@ -76,10 +76,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             background-color: rgba(255, 255, 255, 0.96);
             border-radius: 16px;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            padding: 40px;
+            padding: 30px;
             width: 100%;
             max-width: 450px;
-            margin: 20px;
+            margin: 10px;
         }
 
         .login-title {

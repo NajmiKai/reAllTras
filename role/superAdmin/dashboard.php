@@ -68,7 +68,7 @@ $user_phoneNo = $user_data['PhoneNo'];
             <!-- Admin Card -->
             <div class="col-md-4 mb-4">
             <a href="adjustAdmin.php" class="text-decoration-none">
-                <div class="card shadow-sm h-100">
+                <div class="card shadow-sm h-90">
                     <div class="card-body"> 
                         <div class="d-flex align-items-center">
                             <div class="flex-shrink-0">
@@ -88,7 +88,7 @@ $user_phoneNo = $user_data['PhoneNo'];
             <!-- User Card -->
             <div class="col-md-4 mb-4">
             <a href="adjustUsers.php" class="text-decoration-none">
-                <div class="card shadow-sm h-100">
+                <div class="card shadow-sm h-90">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div class="flex-shrink-0">
@@ -105,16 +105,16 @@ $user_phoneNo = $user_data['PhoneNo'];
 
             <!-- Wilayah Asal Card -->
             <div class="col-md-4 mb-4">
-            <a href="adjustSuperAdmin.php" class="text-decoration-none">
+            <a href="listWilayahAsal.php" class="text-decoration-none">
 
-                <div class="card shadow-sm h-100">
+                <div class="card shadow-sm h-90">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div class="flex-shrink-0">
                                 <i class="fas fa-map-marker-alt fa-3x text-info"></i>
                             </div>
                             <div class="flex-grow-1 ms-3">
-                                <h6 class="card-title mb-1">Jumlah Permohonan Wilayah Asal</h6>
+                                <h6 class="card-title mb-1">Jumlah Wilayah Asal</h6>
                                 <h2 class="mb-0"><?php echo $wilayah_count; ?></h2>
                             </div>
                         </div>
@@ -123,7 +123,7 @@ $user_phoneNo = $user_data['PhoneNo'];
             </div>
         </div>
 
-        <div class="container my-4">
+           <div class="container my-4">
             <div class="row g-4">
                 <div class="col-md-6">
                     <div class="card shadow-sm h-100">
@@ -134,12 +134,13 @@ $user_phoneNo = $user_data['PhoneNo'];
                         </div>
                     </div>
                 </div>
+
                 <div class="col-md-6">
                     <div class="card shadow-sm h-100">
                         <div class="card-body">
                             <h5 class="card-title">Carta Aliran Permohonan</h5>
                             <h6 class="text-danger mb-3">Tugas Rasmi / Kursus</h6>
-                            <img src="../../assets/flowchart-tugasrasmi.jpg" alt="Carta Aliran Tugas Rasmi" class="img-fluid rounded clickable-image" style="cursor:pointer;">
+                            <img src="../../assets/flowchart-tugasrasmi.jpg" alt="Carta Aliran Wilayah Asal" class="img-fluid rounded clickable-image" style="cursor:pointer;">
                         </div>
                     </div>
                 </div>
@@ -167,9 +168,8 @@ $user_phoneNo = $user_data['PhoneNo'];
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-
-    // Image Modal
-    const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+  // Image Modal
+  const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
     const modalImage = document.getElementById('modalImage');
 
     document.querySelectorAll('.clickable-image').forEach(img => {
@@ -178,9 +178,6 @@ $user_phoneNo = $user_data['PhoneNo'];
         imageModal.show();
         });
     });
-
-    console.log('Wilayah Asal ID:', <?= json_encode($wilayah_asal_id) ?>);
-    console.log('PBR CSM1 ID:', <?= json_encode($application_data['pbr_csm1_id'] ?? null) ?>);
 </script>
 </body>
 </html>
