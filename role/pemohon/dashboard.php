@@ -23,6 +23,34 @@ $user_icNo = $user_data['kp'];
 $user_email = $user_data['email'];
 $user_phoneNo = $user_data['phone'];
 
+function getUlasan($application_data) {
+    if (!empty($application_data['ulasan_pengesah_kewangan'])) {
+        return $application_data['ulasan_pengesah_kewangan'];
+    }
+    if (!empty($application_data['ulasan_penyemakBaki_kewangan'])) {
+        return $application_data['ulasan_penyemakBaki_kewangan'];
+    }
+    if (!empty($application_data['ulasan_pelulus_HQ'])) {
+        return $application_data['ulasan_pelulus_HQ'];
+    }
+    if (!empty($application_data['ulasan_pengesah_HQ'])) {
+        return $application_data['ulasan_pengesah_HQ'];
+    }
+    if (!empty($application_data['ulasan_penyemak_HQ'])) {
+        return $application_data['ulasan_penyemak_HQ'];
+    }
+    if (!empty($application_data['ulasan_pengesah_csm2'])) {
+        return $application_data['ulasan_pengesah_csm2'];
+    }
+    if (!empty($application_data['ulasan_pengesah_csm1'])) {
+        return $application_data['ulasan_pengesah_csm1'];
+    }
+    if (!empty($application_data['ulasan_pbr_csm1'])) {
+        return $application_data['ulasan_pbr_csm1'];
+    }
+    return "Tiada Kuiri yang dapat dikesan";
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="ms">
@@ -140,7 +168,7 @@ $user_phoneNo = $user_data['phone'];
                             $csm_result = $csm_stmt->get_result();
                             $csm_data = $csm_result->fetch_assoc();
                             $csm_name = $csm_data['Name'] ?? 'Unknown';                            // Check which ulasan to display
-                            $ulasan = !empty($application_data['ulasan_pengesah_csm1']) ? $application_data['ulasan_pengesah_csm1'] : $application_data['ulasan_pbr_csm1'];
+                            $ulasan = getUlasan($application_data);
                             $description = "Ulasan daripada " . $csm_name . " (Cawangan Sumber Manusia): " . $ulasan;
                             $action_button = ['text' => 'Lihat Permohonan', 'link' => 'wilayahAsal.php'];
 

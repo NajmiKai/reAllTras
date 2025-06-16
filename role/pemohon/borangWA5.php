@@ -123,7 +123,6 @@ $documents = $result->fetch_all(MYSQLI_ASSOC);
 
     <!-- Main Content -->
     <div class="col p-4">
-        <?php include 'includes/greeting.php'; ?>
         <h3 class="mb-3">Pengesahan Maklumat</h3>
         
         <!-- Multi-step Indicator -->

@@ -27,6 +27,49 @@ $user_role = $user_data['bahagian'];
 $user_icNo = $user_data['kp'];
 $user_email = $user_data['email'];
 $user_phoneNo = $user_data['phone'];
+
+// Fetch existing wilayah_asal data if stage is BorangWA4
+$wilayah_asal_id = $_SESSION['wilayah_asal_id'] ?? null;
+$existing_data = null;
+$followers_data = [];
+
+if ($wilayah_asal_id) {
+    // Get main data
+    $check_sql = "SELECT * FROM wilayah_asal WHERE id = ? AND wilayah_asal_from_stage NOT IN ('BorangWA3', 'Hantar') AND wilayah_asal_matang = false";
+    $check_stmt = $conn->prepare($check_sql);
+    $check_stmt->bind_param("i", $wilayah_asal_id);
+    $check_stmt->execute();
+    $result = $check_stmt->get_result();
+    $existing_data = $result->fetch_assoc();
+
+    if ($existing_data) {
+        // Check if partner has different dates
+        $partner_has_different_dates = $existing_data['tarikh_penerbangan_pergi_pasangan'] && 
+            ($existing_data['tarikh_penerbangan_pergi_pasangan'] !== $existing_data['tarikh_penerbangan_pergi'] ||
+             $existing_data['tarikh_penerbangan_balik_pasangan'] !== $existing_data['tarikh_penerbangan_balik']);
+
+        // Get followers data
+        $followers_sql = "SELECT * FROM wilayah_asal_pengikut WHERE wilayah_asal_id = ?";
+        $followers_stmt = $conn->prepare($followers_sql);
+        $followers_stmt->bind_param("i", $wilayah_asal_id);
+        $followers_stmt->execute();
+        $followers_result = $followers_stmt->get_result();
+        
+        while ($row = $followers_result->fetch_assoc()) {
+            // Check if follower has different dates
+            $row['has_different_dates'] = $row['tarikh_penerbangan_pergi_pengikut'] && 
+                ($row['tarikh_penerbangan_pergi_pengikut'] !== $existing_data['tarikh_penerbangan_pergi'] ||
+                 $row['tarikh_penerbangan_balik_pengikut'] !== $existing_data['tarikh_penerbangan_balik']);
+            $followers_data[] = $row;
+        }
+    }
+}
+
+// Debug output
+error_log("Number of followers found: " . count($followers_data));
+foreach ($followers_data as $follower) {
+    error_log("Follower data: " . print_r($follower, true));
+}
 ?>
 <!DOCTYPE html>
 <html lang="ms">
@@ -183,13 +226,13 @@ $user_phoneNo = $user_data['phone'];
                         <div class="col-12 mb-3">
                             <label class="form-label fw-bold">Jenis Permohonan</label>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="jenis_permohonan" id="diri_sendiri" value="diri_sendiri" required>
+                                <input class="form-check-input" type="radio" name="jenis_permohonan" id="diri_sendiri" value="diri_sendiri" required <?= ($existing_data && $existing_data['jenis_permohonan'] === 'diri_sendiri') ? 'checked' : '' ?>>
                                 <label class="form-check-label" for="diri_sendiri">
                                     Diri Sendiri/ Pasangan/ Anak Ke Wilayah Ditetapkan
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="jenis_permohonan" id="keluarga" value="keluarga" required>
+                                <input class="form-check-input" type="radio" name="jenis_permohonan" id="keluarga" value="keluarga" required <?= ($existing_data && $existing_data['jenis_permohonan'] === 'keluarga') ? 'checked' : '' ?>>
                                 <label class="form-check-label" for="keluarga">
                                     Keluarga Pegawai ke Wilayah Berkhidmat
                                 </label>
@@ -197,42 +240,42 @@ $user_phoneNo = $user_data['phone'];
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Tarikh Penerbangan Pergi</label>
-                            <input type="date" class="form-control" name="tarikh_penerbangan_pergi" required>
+                            <input type="date" class="form-control" name="tarikh_penerbangan_pergi" required value="<?= $existing_data ? $existing_data['tarikh_penerbangan_pergi'] : '' ?>">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Tarikh Penerbangan Balik</label>
-                            <input type="date" class="form-control" name="tarikh_penerbangan_balik" required>
+                            <input type="date" class="form-control" name="tarikh_penerbangan_balik" required value="<?= $existing_data ? $existing_data['tarikh_penerbangan_balik'] : '' ?>">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Lapangan Terbang Berlepas</label>
-                            <input type="text" class="form-control" name="start_point" required>
+                            <input type="text" class="form-control" name="start_point" required value="<?= $existing_data ? $existing_data['start_point'] : '' ?>">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Lapangan Terbang Tiba</label>
-                            <input type="text" class="form-control" name="end_point" required>
+                            <input type="text" class="form-control" name="end_point" required value="<?= $existing_data ? $existing_data['end_point'] : '' ?>">
                         </div>
                         <div class="col-12 mb-3">
                             <label class="form-label fw-bold">Tarikh Penerbangan Pasangan Lain? <span style="font-size: 0.9em; font-style: italic; color: #666;">(Untuk pegawai yang tidak berkenaan, Tanda Tidak)</span></label>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="partner_flight_type" id="partner_same" value="same" checked onchange="togglePartnerDates('same')">
+                                <input class="form-check-input" type="radio" name="partner_flight_type" id="partner_same" value="same" <?= !$partner_has_different_dates ? 'checked' : '' ?> onchange="togglePartnerDates('same')">
                                 <label class="form-check-label" for="partner_same">
-                                    Tidak
+                                    Tarikh Penerbangan Sama
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="partner_flight_type" id="partner_different" value="different" onchange="togglePartnerDates('different')">
+                                <input class="form-check-input" type="radio" name="partner_flight_type" id="partner_different" value="different" <?= $partner_has_different_dates ? 'checked' : '' ?> onchange="togglePartnerDates('different')">
                                 <label class="form-check-label" for="partner_different">
-                                    Ya
+                                    Tarikh Penerbangan Lain
                                 </label>
                             </div>
                         </div>
-                        <div class="col-md-6 partner-dates" style="display: none;">
+                        <div class="col-md-6 partner-dates" style="display: <?= $partner_has_different_dates ? 'block' : 'none' ?>;">
                             <label class="form-label">Tarikh Penerbangan Pergi Pasangan</label>
-                            <input type="date" class="form-control" name="tarikh_penerbangan_pergi_pasangan">
+                            <input type="date" class="form-control" name="tarikh_penerbangan_pergi_pasangan" value="<?= $existing_data ? $existing_data['tarikh_penerbangan_pergi_pasangan'] : '' ?>">
                         </div>
-                        <div class="col-md-6 partner-dates" style="display: none;">
+                        <div class="col-md-6 partner-dates" style="display: <?= $partner_has_different_dates ? 'block' : 'none' ?>;">
                             <label class="form-label">Tarikh Penerbangan Balik Pasangan</label>
-                            <input type="date" class="form-control" name="tarikh_penerbangan_balik_pasangan">
+                            <input type="date" class="form-control" name="tarikh_penerbangan_balik_pasangan" value="<?= $existing_data ? $existing_data['tarikh_penerbangan_balik_pasangan'] : '' ?>">
                         </div>
                     </div>
                 </div>
@@ -283,13 +326,68 @@ $user_phoneNo = $user_data['phone'];
     })()
 
     // Follower management
-    let followerCount = 0;
+    let followerCount = 0; // Start from 0 and let the initialization set the correct count
+    
+    // Function to sync dates
+    function syncDates() {
+        const mainPergi = document.querySelector('input[name="tarikh_penerbangan_pergi"]').value;
+        const mainBalik = document.querySelector('input[name="tarikh_penerbangan_balik"]').value;
+        
+        // Sync partner dates if same is selected
+        if (document.querySelector('input[name="partner_flight_type"]:checked').value === 'same') {
+            document.querySelector('input[name="tarikh_penerbangan_pergi_pasangan"]').value = mainPergi;
+            document.querySelector('input[name="tarikh_penerbangan_balik_pasangan"]').value = mainBalik;
+        }
 
-    function addFollower() {
+        // Sync follower dates for all followers with same flight dates
+        const followers = document.querySelectorAll('.follower-entry');
+        followers.forEach((follower, index) => {
+            if (follower.querySelector(`input[name="followers[${index}][flight_date_type]"]:checked`).value === 'same') {
+                follower.querySelector(`input[name="followers[${index}][tarikh_penerbangan_pergi_pengikut]"]`).value = mainPergi;
+                follower.querySelector(`input[name="followers[${index}][tarikh_penerbangan_balik_pengikut]"]`).value = mainBalik;
+            }
+        });
+    }
+
+    // Add event listeners to main flight dates
+    document.querySelector('input[name="tarikh_penerbangan_pergi"]').addEventListener('change', syncDates);
+    document.querySelector('input[name="tarikh_penerbangan_balik"]').addEventListener('change', syncDates);
+    
+    // Initialize followers if they exist
+    <?php if (!empty($followers_data)): ?>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("Initializing followers: <?= count($followers_data) ?> followers found");
+        <?php foreach ($followers_data as $index => $follower): ?>
+        console.log("Adding follower <?= $index + 1 ?>");
+        addFollower({
+            nama_first_pengikut: '<?= addslashes($follower['nama_first_pengikut']) ?>',
+            nama_last_pengikut: '<?= addslashes($follower['nama_last_pengikut']) ?>',
+            tarikh_lahir_pengikut: '<?= $follower['tarikh_lahir_pengikut'] ?>',
+            kp_pengikut: '<?= addslashes($follower['kp_pengikut']) ?>',
+            has_different_dates: <?= $follower['has_different_dates'] ? 'true' : 'false' ?>,
+            tarikh_penerbangan_pergi_pengikut: '<?= $follower['tarikh_penerbangan_pergi_pengikut'] ?>',
+            tarikh_penerbangan_balik_pengikut: '<?= $follower['tarikh_penerbangan_balik_pengikut'] ?>'
+        });
+        <?php endforeach; ?>
+        console.log("Finished initializing followers. Current count: " + followerCount);
+    });
+    <?php endif; ?>
+
+    function addFollower(existingData = null) {
         const container = document.getElementById('followers-container');
         const followerDiv = document.createElement('div');
         followerDiv.className = 'follower-entry mb-3 p-3 border rounded';
         followerDiv.id = `follower-${followerCount}`;
+
+        console.log("Adding follower " + (followerCount + 1) + " with data:", existingData);
+
+        // Use the has_different_dates flag from PHP
+        const hasDifferentDates = existingData && existingData.has_different_dates;
+
+        console.log("Follower dates check:", {
+            existingData,
+            hasDifferentDates
+        });
 
         followerDiv.innerHTML = `
             <div class="d-flex justify-content-between align-items-center mb-2">
@@ -301,25 +399,25 @@ $user_phoneNo = $user_data['phone'];
             <div class="row">
                 <div class="col-md-6 mb-2">
                     <label class="form-label">Nama Depan</label>
-                    <input type="text" class="form-control" name="followers[${followerCount}][nama_first]" required>
+                    <input type="text" class="form-control" name="followers[${followerCount}][nama_first]" required value="${existingData ? existingData.nama_first_pengikut : ''}">
                 </div>
                 <div class="col-md-6 mb-2">
                     <label class="form-label">Nama Belakang</label>
-                    <input type="text" class="form-control" name="followers[${followerCount}][nama_last]" required>
+                    <input type="text" class="form-control" name="followers[${followerCount}][nama_last]" required value="${existingData ? existingData.nama_last_pengikut : ''}">
                 </div>
                 <div class="col-md-6 mb-2">
                     <label class="form-label">Tarikh Lahir</label>
-                    <input type="date" class="form-control" name="followers[${followerCount}][tarikh_lahir]" required>
+                    <input type="date" class="form-control" name="followers[${followerCount}][tarikh_lahir]" required value="${existingData ? existingData.tarikh_lahir_pengikut : ''}">
                 </div>
                 <div class="col-md-6 mb-2">
                     <label class="form-label">No. KP</label>
-                    <input type="text" class="form-control" name="followers[${followerCount}][kp]" required>
+                    <input type="text" class="form-control" name="followers[${followerCount}][kp]" required value="${existingData ? existingData.kp_pengikut : ''}">
                 </div>
                 <div class="col-12 mb-2">
                     <label class="form-label">Tarikh Penerbangan</label>
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="followers[${followerCount}][flight_date_type]" 
-                            id="same_flight_${followerCount}" value="same" checked 
+                            id="same_flight_${followerCount}" value="same" ${!hasDifferentDates ? 'checked' : ''} 
                             onchange="toggleFlightDates(${followerCount}, 'same')">
                         <label class="form-check-label" for="same_flight_${followerCount}">
                             Tarikh Penerbangan Sama
@@ -327,26 +425,28 @@ $user_phoneNo = $user_data['phone'];
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="followers[${followerCount}][flight_date_type]" 
-                            id="different_flight_${followerCount}" value="different" 
+                            id="different_flight_${followerCount}" value="different" ${hasDifferentDates ? 'checked' : ''} 
                             onchange="toggleFlightDates(${followerCount}, 'different')">
                         <label class="form-check-label" for="different_flight_${followerCount}">
                             Tarikh Penerbangan Lain
                         </label>
                     </div>
                 </div>
-                <div class="col-md-6 mb-2 custom-flight-dates-${followerCount}" style="display: none;">
+                <div class="col-md-6 mb-2 custom-flight-dates-${followerCount}" style="display: ${hasDifferentDates ? 'block' : 'none'};">
                     <label class="form-label">Tarikh Penerbangan Pergi</label>
-                    <input type="date" class="form-control" name="followers[${followerCount}][tarikh_penerbangan_pergi_pengikut]">
+                    <input type="date" class="form-control" name="followers[${followerCount}][tarikh_penerbangan_pergi_pengikut]" value="${existingData ? existingData.tarikh_penerbangan_pergi_pengikut : ''}">
                 </div>
-                <div class="col-md-6 mb-2 custom-flight-dates-${followerCount}" style="display: none;">
+                <div class="col-md-6 mb-2 custom-flight-dates-${followerCount}" style="display: ${hasDifferentDates ? 'block' : 'none'};">
                     <label class="form-label">Tarikh Penerbangan Balik</label>
-                    <input type="date" class="form-control" name="followers[${followerCount}][tarikh_penerbangan_balik_pengikut]">
+                    <input type="date" class="form-control" name="followers[${followerCount}][tarikh_penerbangan_balik_pengikut]" value="${existingData ? existingData.tarikh_penerbangan_balik_pengikut : ''}">
                 </div>
             </div>
         `;
 
         container.appendChild(followerDiv);
         followerCount++;
+        console.log("Added follower. New count: " + followerCount);
+        syncDates(); // Sync dates after adding new follower
     }
 
     function toggleFlightDates(followerIndex, type) {
@@ -358,27 +458,16 @@ $user_phoneNo = $user_data['phone'];
 
         if (type === 'same') {
             customDatesDiv.forEach(div => div.style.display = 'none');
-            // Set hidden inputs for same flight dates
-            const hiddenPergi = document.createElement('input');
-            hiddenPergi.type = 'hidden';
-            hiddenPergi.name = `followers[${followerIndex}][tarikh_penerbangan_pergi_pengikut]`;
-            hiddenPergi.value = mainFlightDates.pergi;
-            
-            const hiddenBalik = document.createElement('input');
-            hiddenBalik.type = 'hidden';
-            hiddenBalik.name = `followers[${followerIndex}][tarikh_penerbangan_balik_pengikut]`;
-            hiddenBalik.value = mainFlightDates.balik;
-
+            // Set the follower's flight dates to match main dates
             const followerDiv = document.getElementById(`follower-${followerIndex}`);
-            followerDiv.appendChild(hiddenPergi);
-            followerDiv.appendChild(hiddenBalik);
+            const pergiInput = followerDiv.querySelector(`input[name="followers[${followerIndex}][tarikh_penerbangan_pergi_pengikut]"]`);
+            const balikInput = followerDiv.querySelector(`input[name="followers[${followerIndex}][tarikh_penerbangan_balik_pengikut]"]`);
+            if (pergiInput) pergiInput.value = mainFlightDates.pergi;
+            if (balikInput) balikInput.value = mainFlightDates.balik;
         } else {
             customDatesDiv.forEach(div => div.style.display = 'block');
-            // Remove hidden inputs if they exist
-            const followerDiv = document.getElementById(`follower-${followerIndex}`);
-            const hiddenInputs = followerDiv.querySelectorAll('input[type="hidden"]');
-            hiddenInputs.forEach(input => input.remove());
         }
+        syncDates(); // Sync dates after toggling
     }
 
     function togglePartnerDates(type) {
@@ -400,6 +489,15 @@ $user_phoneNo = $user_data['phone'];
                 input.required = false;
                 input.value = '';
             });
+        }
+        syncDates(); // Sync dates after toggling
+    }
+
+    function removeFollower(index) {
+        const followerDiv = document.getElementById(`follower-${index}`);
+        if (followerDiv) {
+            followerDiv.remove();
+            syncDates(); // Sync dates after removing follower
         }
     }
 

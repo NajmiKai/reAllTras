@@ -11,30 +11,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $wilayah_asal_id = $_SESSION['wilayah_asal_id'];
 
-        // Prepare the SQL statement
-        $sql = "UPDATE wilayah_asal SET 
-            nama_bapa = ?,
-            no_kp_bapa = ?,
-            wilayah_menetap_bapa = ?,
-            alamat_menetap_1_bapa = ?,
-            alamat_menetap_2_bapa = ?,
-            poskod_menetap_bapa = ?,
-            bandar_menetap_bapa = ?,
-            negeri_menetap_bapa = ?,
-            ibu_negeri_bandar_dituju_bapa = ?,
-            nama_ibu = ?,
-            no_kp_ibu = ?,
-            wilayah_menetap_ibu = ?,
-            alamat_menetap_1_ibu = ?,
-            alamat_menetap_2_ibu = ?,
-            poskod_menetap_ibu = ?,
-            bandar_menetap_ibu = ?,
-            negeri_menetap_ibu = ?,
-            ibu_negeri_bandar_dituju_ibu = ?
-            WHERE id = ?";
+        // Check if record exists and its stage
+        $check_sql = "SELECT id, wilayah_asal_from_stage FROM wilayah_asal WHERE id = ?";
+        $check_stmt = $conn->prepare($check_sql);
+        $check_stmt->bind_param("i", $wilayah_asal_id);
+        $check_stmt->execute();
+        $result = $check_stmt->get_result();
+        $existing_record = $result->fetch_assoc();
 
-        $stmt = $conn->prepare($sql);
-        
         // Prepare values for binding
         $nama_bapa = $_POST['nama_bapa'];
         $no_kp_bapa = $_POST['no_kp_bapa_raw'] ?? $_POST['no_kp_bapa'];
@@ -56,74 +40,143 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $negeri_menetap_ibu = $_POST['negeri_menetap_ibu'];
         $ibu_negeri_bandar_dituju_ibu = $_POST['ibu_negeri_bandar_dituju_ibu'];
 
-        // Bind parameters - 19 parameters total (18 strings + 1 integer)
-        $stmt->bind_param("ssssssssssssssssssi",
-            $nama_bapa,
-            $no_kp_bapa,
-            $wilayah_menetap_bapa,
-            $alamat_menetap_1_bapa,
-            $alamat_menetap_2_bapa,
-            $poskod_menetap_bapa,
-            $bandar_menetap_bapa,
-            $negeri_menetap_bapa,
-            $ibu_negeri_bandar_dituju_bapa,
-            $nama_ibu,
-            $no_kp_ibu,
-            $wilayah_menetap_ibu,
-            $alamat_menetap_1_ibu,
-            $alamat_menetap_2_ibu,
-            $poskod_menetap_ibu,
-            $bandar_menetap_ibu,
-            $negeri_menetap_ibu,
-            $ibu_negeri_bandar_dituju_ibu,
-            $wilayah_asal_id
-        );
+        if ($existing_record && $existing_record['wilayah_asal_from_stage'] === 'BorangWA3') {
+            // Update existing record
+            $update_sql = "UPDATE wilayah_asal SET 
+                nama_bapa = ?,
+                no_kp_bapa = ?,
+                wilayah_menetap_bapa = ?,
+                alamat_menetap_1_bapa = ?,
+                alamat_menetap_2_bapa = ?,
+                poskod_menetap_bapa = ?,
+                bandar_menetap_bapa = ?,
+                negeri_menetap_bapa = ?,
+                ibu_negeri_bandar_dituju_bapa = ?,
+                nama_ibu = ?,
+                no_kp_ibu = ?,
+                wilayah_menetap_ibu = ?,
+                alamat_menetap_1_ibu = ?,
+                alamat_menetap_2_ibu = ?,
+                poskod_menetap_ibu = ?,
+                bandar_menetap_ibu = ?,
+                negeri_menetap_ibu = ?,
+                ibu_negeri_bandar_dituju_ibu = ?
+                WHERE id = ?";
 
-        // Execute the statement
-        if ($stmt->execute()) {
-            // Store the ID in a variable
-            $current_id = $wilayah_asal_id;
-            
-            // Update wilayah_asal_from_stage
-            $update_stage_sql = "UPDATE wilayah_asal SET wilayah_asal_from_stage = 'BorangWA3' WHERE id = ?";
-            $update_stage_stmt = $conn->prepare($update_stage_sql);
-            $update_stage_stmt->bind_param("i", $current_id);
-            $update_stage_stmt->execute();
-            $update_stage_stmt->close();
+            $update_stmt = $conn->prepare($update_sql);
+            $update_stmt->bind_param("ssssssssssssssssssi",
+                $nama_bapa,
+                $no_kp_bapa,
+                $wilayah_menetap_bapa,
+                $alamat_menetap_1_bapa,
+                $alamat_menetap_2_bapa,
+                $poskod_menetap_bapa,
+                $bandar_menetap_bapa,
+                $negeri_menetap_bapa,
+                $ibu_negeri_bandar_dituju_bapa,
+                $nama_ibu,
+                $no_kp_ibu,
+                $wilayah_menetap_ibu,
+                $alamat_menetap_1_ibu,
+                $alamat_menetap_2_ibu,
+                $poskod_menetap_ibu,
+                $bandar_menetap_ibu,
+                $negeri_menetap_ibu,
+                $ibu_negeri_bandar_dituju_ibu,
+                $wilayah_asal_id
+            );
 
-            // Store parent information in session
-            $_SESSION['parent_info'] = [
-                'nama_bapa' => $nama_bapa,
-                'no_kp_bapa' => $no_kp_bapa,
-                'wilayah_menetap_bapa' => $wilayah_menetap_bapa,
-                'alamat_menetap_1_bapa' => $alamat_menetap_1_bapa,
-                'alamat_menetap_2_bapa' => $alamat_menetap_2_bapa,
-                'poskod_menetap_bapa' => $poskod_menetap_bapa,
-                'bandar_menetap_bapa' => $bandar_menetap_bapa,
-                'negeri_menetap_bapa' => $negeri_menetap_bapa,
-                'ibu_negeri_bandar_dituju_bapa' => $ibu_negeri_bandar_dituju_bapa,
-                'nama_ibu' => $nama_ibu,
-                'no_kp_ibu' => $no_kp_ibu,
-                'wilayah_menetap_ibu' => $wilayah_menetap_ibu,
-                'alamat_menetap_1_ibu' => $alamat_menetap_1_ibu,
-                'alamat_menetap_2_ibu' => $alamat_menetap_2_ibu,
-                'poskod_menetap_ibu' => $poskod_menetap_ibu,
-                'bandar_menetap_ibu' => $bandar_menetap_ibu,
-                'negeri_menetap_ibu' => $negeri_menetap_ibu,
-                'ibu_negeri_bandar_dituju_ibu' => $ibu_negeri_bandar_dituju_ibu
-            ];
-
-            // Keep existing borangWA_data if it exists
-            if (!isset($_SESSION['borangWA_data'])) {
-                $_SESSION['borangWA_data'] = [];
+            if (!$update_stmt->execute()) {
+                throw new Exception("Error updating record: " . $update_stmt->error);
             }
-
-            // Redirect to the next form
-            header("Location: ../borangWA3.php");
-            exit();
         } else {
-            throw new Exception("Error executing statement: " . $stmt->error);
+            // Insert new record
+            $insert_sql = "UPDATE wilayah_asal SET 
+                nama_bapa = ?,
+                no_kp_bapa = ?,
+                wilayah_menetap_bapa = ?,
+                alamat_menetap_1_bapa = ?,
+                alamat_menetap_2_bapa = ?,
+                poskod_menetap_bapa = ?,
+                bandar_menetap_bapa = ?,
+                negeri_menetap_bapa = ?,
+                ibu_negeri_bandar_dituju_bapa = ?,
+                nama_ibu = ?,
+                no_kp_ibu = ?,
+                wilayah_menetap_ibu = ?,
+                alamat_menetap_1_ibu = ?,
+                alamat_menetap_2_ibu = ?,
+                poskod_menetap_ibu = ?,
+                bandar_menetap_ibu = ?,
+                negeri_menetap_ibu = ?,
+                ibu_negeri_bandar_dituju_ibu = ?
+                WHERE id = ?";
+
+            $insert_stmt = $conn->prepare($insert_sql);
+            $insert_stmt->bind_param("ssssssssssssssssssi",
+                $nama_bapa,
+                $no_kp_bapa,
+                $wilayah_menetap_bapa,
+                $alamat_menetap_1_bapa,
+                $alamat_menetap_2_bapa,
+                $poskod_menetap_bapa,
+                $bandar_menetap_bapa,
+                $negeri_menetap_bapa,
+                $ibu_negeri_bandar_dituju_bapa,
+                $nama_ibu,
+                $no_kp_ibu,
+                $wilayah_menetap_ibu,
+                $alamat_menetap_1_ibu,
+                $alamat_menetap_2_ibu,
+                $poskod_menetap_ibu,
+                $bandar_menetap_ibu,
+                $negeri_menetap_ibu,
+                $ibu_negeri_bandar_dituju_ibu,
+                $wilayah_asal_id
+            );
+
+            if (!$insert_stmt->execute()) {
+                throw new Exception("Error inserting record: " . $insert_stmt->error);
+            }
         }
+
+        // Update wilayah_asal_from_stage
+        $update_stage_sql = "UPDATE wilayah_asal SET wilayah_asal_from_stage = 'BorangWA3' WHERE id = ?";
+        $update_stage_stmt = $conn->prepare($update_stage_sql);
+        $update_stage_stmt->bind_param("i", $wilayah_asal_id);
+        $update_stage_stmt->execute();
+        $update_stage_stmt->close();
+
+        // Store parent information in session
+        $_SESSION['parent_info'] = [
+            'nama_bapa' => $nama_bapa,
+            'no_kp_bapa' => $no_kp_bapa,
+            'wilayah_menetap_bapa' => $wilayah_menetap_bapa,
+            'alamat_menetap_1_bapa' => $alamat_menetap_1_bapa,
+            'alamat_menetap_2_bapa' => $alamat_menetap_2_bapa,
+            'poskod_menetap_bapa' => $poskod_menetap_bapa,
+            'bandar_menetap_bapa' => $bandar_menetap_bapa,
+            'negeri_menetap_bapa' => $negeri_menetap_bapa,
+            'ibu_negeri_bandar_dituju_bapa' => $ibu_negeri_bandar_dituju_bapa,
+            'nama_ibu' => $nama_ibu,
+            'no_kp_ibu' => $no_kp_ibu,
+            'wilayah_menetap_ibu' => $wilayah_menetap_ibu,
+            'alamat_menetap_1_ibu' => $alamat_menetap_1_ibu,
+            'alamat_menetap_2_ibu' => $alamat_menetap_2_ibu,
+            'poskod_menetap_ibu' => $poskod_menetap_ibu,
+            'bandar_menetap_ibu' => $bandar_menetap_ibu,
+            'negeri_menetap_ibu' => $negeri_menetap_ibu,
+            'ibu_negeri_bandar_dituju_ibu' => $ibu_negeri_bandar_dituju_ibu
+        ];
+
+        // Keep existing borangWA_data if it exists
+        if (!isset($_SESSION['borangWA_data'])) {
+            $_SESSION['borangWA_data'] = [];
+        }
+
+        // Redirect to the next form
+        header("Location: ../borangWA3.php");
+        exit();
     } catch (Exception $e) {
         // Log the error
         error_log("Error in process_borangWA2.php: " . $e->getMessage());

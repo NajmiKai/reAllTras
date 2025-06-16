@@ -30,6 +30,35 @@ if (!$user_data) {
 
 $user_name = $user_data['nama_first'] . ' ' . $user_data['nama_last'];
 $user_role = $user_data['bahagian'];
+
+// Fetch existing documents if wilayah_asal_from_stage is BorangWA5
+$existing_documents = [];
+if (isset($_SESSION['wilayah_asal_id'])) {
+    $sql = "SELECT d.*, w.wilayah_asal_from_stage 
+            FROM documents d 
+            JOIN wilayah_asal w ON d.wilayah_asal_id = w.id 
+            WHERE d.wilayah_asal_id = ? AND d.file_origin = 'pemohon'";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $_SESSION['wilayah_asal_id']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    while ($row = $result->fetch_assoc()) {
+        $existing_documents[$row['description']] = $row;
+    }
+}
+
+// Check if we're in edit mode
+$is_edit_mode = false;
+if (isset($_SESSION['wilayah_asal_id'])) {
+    $sql = "SELECT wilayah_asal_from_stage FROM wilayah_asal WHERE id = ? AND wilayah_asal_from_stage NOT IN ('BorangWA4', 'Hantar') AND wilayah_asal_matang = false";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $_SESSION['wilayah_asal_id']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($row = $result->fetch_assoc()) {
+        $is_edit_mode = ($row['wilayah_asal_from_stage'] === 'BorangWA5');
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="ms">
@@ -83,6 +112,25 @@ $user_role = $user_data['bahagian'];
         .add-more-btn {
             margin-top: 0.5rem;
         }
+        .file-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .view-file-btn {
+            color: #0d6efd;
+            text-decoration: none;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        .view-file-btn:hover {
+            text-decoration: underline;
+        }
+        .view-file-btn i {
+            font-size: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -93,7 +141,6 @@ $user_role = $user_data['bahagian'];
 
     <!-- Main Content -->
     <div class="col p-4">
-        <?php include 'includes/greeting.php'; ?>
         <h3 class="mb-3">Muat Naik Dokumen</h3>
         
         <!-- Multi-step Indicator -->
@@ -146,16 +193,36 @@ $user_role = $user_data['bahagian'];
                     <div class="document-item">
                         <div class="document-title">
                             <h6 class="mb-0">Salinan IC Pegawai / Sijil Kelahiran Pegawai</h6>
-                            <i class="fas fa-check-circle uploaded"></i>
+                            <?php if (isset($existing_documents['Dokumen Pegawai'])): ?>
+                                <i class="fas fa-check-circle uploaded"></i>
+                                <div class="mt-2">
+                                    <small class="text-muted">Current file: <?php echo htmlspecialchars($existing_documents['Dokumen Pegawai']['file_name']); ?></small>
+                                    <div class="file-actions">
+                                        <a href="/reAllTras/<?php echo str_replace('../../../', '', htmlspecialchars($existing_documents['Dokumen Pegawai']['file_path'])); ?>" target="_blank" class="view-file-btn">
+                                            <i class="fa-solid fa-eye"></i>View File
+                                        </a>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
                         </div>
-                        <input type="file" class="form-control" name="dokumen_pegawai" accept=".pdf,.jpg,.jpeg,.png" required>
+                        <input type="file" class="form-control" name="dokumen_pegawai" accept=".pdf,.jpg,.jpeg,.png" <?php echo (!$is_edit_mode) ? 'required' : ''; ?>>
                     </div>
                     <div class="document-item mt-3">
                         <div class="document-title">
                             <h6 class="mb-0">Lampiran II</h6>
-                            <i class="fas fa-check-circle uploaded"></i>
+                            <?php if (isset($existing_documents['Lampiran II'])): ?>
+                                <i class="fas fa-check-circle uploaded"></i>
+                                <div class="mt-2">
+                                    <small class="text-muted">Current file: <?php echo htmlspecialchars($existing_documents['Lampiran II']['file_name']); ?></small>
+                                    <div class="file-actions">
+                                        <a href="/reAllTras/<?php echo str_replace('../../../', '', htmlspecialchars($existing_documents['Lampiran II']['file_path'])); ?>" target="_blank" class="view-file-btn">
+                                            <i class="fa-solid fa-eye"></i>View File
+                                        </a>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
                         </div>
-                        <input type="file" class="form-control" name="lampiran_ii" accept=".pdf,.jpg,.jpeg,.png" required>
+                        <input type="file" class="form-control" name="lampiran_ii" accept=".pdf,.jpg,.jpeg,.png" <?php echo (!$is_edit_mode) ? 'required' : ''; ?>>
                     </div>
                 </div>
             </div>
@@ -169,14 +236,34 @@ $user_role = $user_data['bahagian'];
                     <div class="document-item">
                         <div class="document-title">
                             <h6 class="mb-0">Salinan IC Pasangan / Sijil Kelahiran Pasangan</h6>
-                            <i class="fas fa-check-circle"></i>
+                            <?php if (isset($existing_documents['Dokumen Pasangan'])): ?>
+                                <i class="fas fa-check-circle uploaded"></i>
+                                <div class="mt-2">
+                                    <small class="text-muted">Current file: <?php echo htmlspecialchars($existing_documents['Dokumen Pasangan']['file_name']); ?></small>
+                                    <div class="file-actions">
+                                        <a href="/reAllTras/<?php echo str_replace('../../../', '', htmlspecialchars($existing_documents['Dokumen Pasangan']['file_path'])); ?>" target="_blank" class="view-file-btn">
+                                            <i class="fa-solid fa-eye"></i>View File
+                                        </a>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
                         </div>
                         <input type="file" class="form-control" name="dokumen_pasangan" accept=".pdf,.jpg,.jpeg,.png">
                     </div>
                     <div class="document-item mt-3">
                         <div class="document-title">
                             <h6 class="mb-0">Sijil Perkahwinan / Kad Kahwin</h6>
-                            <i class="fas fa-check-circle"></i>
+                            <?php if (isset($existing_documents['Sijil Perkahwinan'])): ?>
+                                <i class="fas fa-check-circle uploaded"></i>
+                                <div class="mt-2">
+                                    <small class="text-muted">Current file: <?php echo htmlspecialchars($existing_documents['Sijil Perkahwinan']['file_name']); ?></small>
+                                    <div class="file-actions">
+                                        <a href="/reAllTras/<?php echo str_replace('../../../', '', htmlspecialchars($existing_documents['Sijil Perkahwinan']['file_path'])); ?>" target="_blank" class="view-file-btn">
+                                            <i class="fa-solid fa-eye"></i>View File
+                                        </a>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
                         </div>
                         <input type="file" class="form-control" name="sijil_perkahwinan" accept=".pdf,.jpg,.jpeg,.png">
                     </div>
@@ -190,13 +277,48 @@ $user_role = $user_data['bahagian'];
                 </div>
                 <div class="card-body">
                     <div id="pengikut-container">
-                        <div class="document-item">
-                            <div class="document-title">
-                                <h6 class="mb-0">Salinan IC Pengikut / Sijil Kelahiran Pengikut</h6>
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                            <input type="file" class="form-control" name="dokumen_pengikut[]" accept=".pdf,.jpg,.jpeg,.png">
-                        </div>
+                        <?php
+                        // Display existing pengikut documents
+                        $pengikut_count = 1;
+                        $pengikut_docs = array_filter($existing_documents, function($doc) {
+                            return strpos($doc['description'], 'Dokumen Pengikut') !== false;
+                        });
+                        
+                        if (!empty($pengikut_docs)) {
+                            foreach ($pengikut_docs as $doc) {
+                                $doc_number = preg_replace('/[^0-9]/', '', $doc['description']);
+                                echo '<div class="document-item">
+                                    <div class="document-title">
+                                        <h6 class="mb-0">Salinan IC Pengikut / Sijil Kelahiran Pengikut #' . $doc_number . '</h6>
+                                        <i class="fas fa-check-circle uploaded"></i>
+                                        <div class="mt-2">
+                                            <small class="text-muted">Current file: ' . htmlspecialchars($doc['file_name']) . '</small>
+                                            <div class="file-actions">
+                                                <a href="/reAllTras/' . str_replace('../../../', '', htmlspecialchars($doc['file_path'])) . '" target="_blank" class="view-file-btn">
+                                                    <i class="fa-solid fa-eye"></i>View File
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex">
+                                        <input type="file" class="form-control" name="dokumen_pengikut[]" accept=".pdf,.jpg,.jpeg,.png">
+                                        <button type="button" class="btn btn-danger ms-2" onclick="this.parentElement.parentElement.remove()">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>';
+                            }
+                        } else {
+                            // If no existing documents, show default input
+                            echo '<div class="document-item">
+                                <div class="document-title">
+                                    <h6 class="mb-0">Salinan IC Pengikut / Sijil Kelahiran Pengikut</h6>
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <input type="file" class="form-control" name="dokumen_pengikut[]" accept=".pdf,.jpg,.jpeg,.png">
+                            </div>';
+                        }
+                        ?>
                     </div>
                     <button type="button" class="btn btn-outline-primary btn-sm add-more-btn" onclick="addPengikut()">
                         <i class="fas fa-plus me-2"></i>Tambah Pengikut
@@ -211,20 +333,52 @@ $user_role = $user_data['bahagian'];
                 </div>
                 <div class="card-body">
                     <div id="sokongan-container">
-                        <div class="document-item">
-                            <div class="document-title">
-                                <h6 class="mb-0">Dokumen Pengesahan Ayah</h6>
-                                <i class="fas fa-check-circle"></i>
+                        <?php
+                        // Display existing sokongan documents
+                        $sokongan_count = 1;
+                        foreach ($existing_documents as $doc) {
+                            if (strpos($doc['description'], 'Dokumen Sokongan') !== false) {
+                                echo '<div class="document-item">
+                                    <div class="document-title">
+                                        <h6 class="mb-0">' . htmlspecialchars($doc['description']) . '</h6>
+                                        <i class="fas fa-check-circle uploaded"></i>
+                                        <div class="mt-2">
+                                            <small class="text-muted">Current file: ' . htmlspecialchars($doc['file_name']) . '</small>
+                                            <div class="file-actions">
+                                                <a href="/reAllTras/' . str_replace('../../../', '', htmlspecialchars($doc['file_path'])) . '" target="_blank" class="view-file-btn">
+                                                    <i class="fa-solid fa-eye"></i>View File
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex">
+                                        <input type="file" class="form-control" name="dokumen_sokongan[]" accept=".pdf,.jpg,.jpeg,.png">
+                                        <button type="button" class="btn btn-danger ms-2" onclick="this.parentElement.parentElement.remove()">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>';
+                                $sokongan_count++;
+                            }
+                        }
+                        // If no existing documents, show default inputs
+                        if ($sokongan_count === 1) {
+                            echo '<div class="document-item">
+                                <div class="document-title">
+                                    <h6 class="mb-0">Dokumen Pengesahan Ayah</h6>
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <input type="file" class="form-control" name="dokumen_sokongan[]" accept=".pdf,.jpg,.jpeg,.png">
                             </div>
-                            <input type="file" class="form-control" name="dokumen_sokongan[]" accept=".pdf,.jpg,.jpeg,.png">
-                        </div>
-                        <div class="document-item mt-3">
-                            <div class="document-title">
-                                <h6 class="mb-0">Dokumen Pengesahan Ibu</h6>
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                            <input type="file" class="form-control" name="dokumen_sokongan[]" accept=".pdf,.jpg,.jpeg,.png">
-                        </div>
+                            <div class="document-item mt-3">
+                                <div class="document-title">
+                                    <h6 class="mb-0">Dokumen Pengesahan Ibu</h6>
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <input type="file" class="form-control" name="dokumen_sokongan[]" accept=".pdf,.jpg,.jpeg,.png">
+                            </div>';
+                        }
+                        ?>
                     </div>
                     <button type="button" class="btn btn-outline-primary btn-sm add-more-btn" onclick="addSokongan()">
                         <i class="fas fa-plus me-2"></i>Tambah Dokumen Sokongan
@@ -311,6 +465,12 @@ $user_role = $user_data['bahagian'];
             </div>
         `;
         container.appendChild(newItem);
+    }
+
+    // Function to view uploaded files
+    function viewFile(filePath) {
+        const url = 'http://localhost/reAllTras/' + filePath;
+        window.open(url, '_blank');
     }
 </script>
 </body>

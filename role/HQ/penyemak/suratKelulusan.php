@@ -69,18 +69,6 @@ $year = date("Y");
 
 $full_date = "$day $month_malay $year";
 
-// Islamic date formatter
-// $today = date('Y-m-d'); // format: 2025-06-03
-// $api = "http://api.aladhan.com/v1/gToH?date=$today";
-
-// $response = file_get_contents($api);
-// $data = json_decode($response, true);
-
-// if ($data && $data['code'] == 200) {
-//     $hijri = $data['data']['hijri']['date']; // e.g. "26-11-1446"
-//     $day = $data['data']['hijri']['day'];
-//     $month = $data['data']['hijri']['month']['ar']; // Arabic
-//     $year = $data['data']['hijri']['year'];
 
 $fullName = $application_data['nama_first'] . ' ' . $application_data['nama_last'];
 $fullNameCleaned = preg_replace('/[^A-Za-z0-9\- ]/', '', $fullName);
@@ -284,7 +272,7 @@ WP Kuala Lumpur<br>
 </p>
 
 <div class="section">
-  <p>Puan,</p>
+  <p>Tuan/Puan,</p>
   <p style="margin-bottom: 0px; margin-top: 0px;"><strong>KELULUSAN KEMUDAHAN TAMBANG ZIARAH WILAYAH TAHUN 2025</strong></p>
 
   <table style="text-align: left;">
@@ -413,9 +401,12 @@ WP Kuala Lumpur<br>
     </tr>
   </table>
 
+  <?php
+  $nextYear = date("Y", strtotime("+1 year"));
+  ?>
   <ol start="3">
     <li>
-    &nbsp;&nbsp; &nbsp;&nbsp; Untuk makluman, kemudahan Tambang Ziarah Wilayah diberi <strong>sekali dalam tempoh (1) tahun kalendar</strong>. Kemudahan yang tidak digunakan dalam tempoh satu (1) tahun kalendar akan luput dan tidak boleh dibawa ke tahun berikutnya. Tarikh pegawai boleh menggunakan kemudahan seterusnya ialah mulai <strong>01 Januari 2026</strong> hingga <strong>31 Disember 2026</strong>.
+    &nbsp;&nbsp; &nbsp;&nbsp; Untuk makluman, kemudahan Tambang Ziarah Wilayah diberi <strong>sekali dalam tempoh (1) tahun kalendar</strong>. Kemudahan yang tidak digunakan dalam tempoh satu (1) tahun kalendar akan luput dan tidak boleh dibawa ke tahun berikutnya. Tarikh pegawai boleh menggunakan kemudahan seterusnya ialah mulai <strong>01 Januari  <?php echo $nextYear; ?> </strong> hingga <strong>31 Disember  <?php echo $nextYear; ?> </strong>.
     </li>
     <br><li>
     &nbsp;&nbsp; Bersama-sama ini dikembalikan borang permohonan yang telah diluluskan untuk tindakan pihak Puan selanjutnya. Kelulusan ini hendaklah direkodkan ke dalam Buku Perkhidmatan pegawai.
