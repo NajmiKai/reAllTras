@@ -35,7 +35,7 @@ $followers_data = [];
 
 if ($wilayah_asal_id) {
     // Get main data
-    $check_sql = "SELECT * FROM wilayah_asal WHERE id = ? AND wilayah_asal_from_stage = 'BorangWA4'";
+    $check_sql = "SELECT * FROM wilayah_asal WHERE id = ? AND wilayah_asal_from_stage NOT IN ('BorangWA3', 'Hantar') AND wilayah_asal_matang = false";
     $check_stmt = $conn->prepare($check_sql);
     $check_stmt->bind_param("i", $wilayah_asal_id);
     $check_stmt->execute();

@@ -50,7 +50,7 @@ if (isset($_SESSION['wilayah_asal_id'])) {
 // Check if we're in edit mode
 $is_edit_mode = false;
 if (isset($_SESSION['wilayah_asal_id'])) {
-    $sql = "SELECT wilayah_asal_from_stage FROM wilayah_asal WHERE id = ?";
+    $sql = "SELECT wilayah_asal_from_stage FROM wilayah_asal WHERE id = ? AND wilayah_asal_from_stage NOT IN ('BorangWA4', 'Hantar') AND wilayah_asal_matang = false";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $_SESSION['wilayah_asal_id']);
     $stmt->execute();

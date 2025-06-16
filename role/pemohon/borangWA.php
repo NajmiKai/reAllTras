@@ -28,7 +28,7 @@ $user_email = $user_data['email'];
 $user_phoneNo = $user_data['phone'];
 
 // Check if user has existing data in wilayah_asal
-$sql = "SELECT * FROM wilayah_asal WHERE user_kp = ? AND wilayah_asal_from_stage = 'BorangWA2'";
+$sql = "SELECT * FROM wilayah_asal WHERE user_kp = ? AND wilayah_asal_from_stage NOT IN ('BorangWA', 'Hantar') AND wilayah_asal_matang = false";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $user_icNo);
 $stmt->execute();
@@ -272,7 +272,10 @@ $wilayah_asal_data = $result->fetch_assoc();
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Tarikh Lapor Diri</label>
-                            <input type="date" class="form-control" name="tarikh_lapor_diri" value="<?= htmlspecialchars($wilayah_asal_data['tarikh_lapor_diri'] ?? '') ?>" required>
+                            <input type="date" class="form-control" name="tarikh_lapor_diri" id="tarikh_lapor_diri" value="<?= htmlspecialchars($wilayah_asal_data['tarikh_lapor_diri'] ?? '') ?>" required onchange="validateReportDate(this)">
+                            <div class="invalid-feedback" id="tarikh_lapor_diri_error">
+                                Tarikh lapor diri mestilah tepat 6 bulan dari tarikh permohonan.
+                            </div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Pernah Menggunakan Kemudahan Ini?</label>
@@ -287,7 +290,10 @@ $wilayah_asal_data = $result->fetch_assoc();
                         </div>
                         <div class="col-md-6" id="tarikh_terakhir_container" style="display: <?= (!empty($wilayah_asal_data['tarikh_terakhir_kemudahan'])) ? 'block' : 'none' ?>;">
                             <label class="form-label">Tarikh Terakhir Menggunakan Kemudahan</label>
-                            <input type="date" class="form-control" name="tarikh_terakhir_kemudahan" value="<?= htmlspecialchars($wilayah_asal_data['tarikh_terakhir_kemudahan'] ?? '') ?>">
+                            <input type="date" class="form-control" name="tarikh_terakhir_kemudahan" id="tarikh_terakhir_kemudahan" value="<?= htmlspecialchars($wilayah_asal_data['tarikh_terakhir_kemudahan'] ?? '') ?>" onchange="validateLastUsageDate(this)">
+                            <div class="invalid-feedback" id="tarikh_terakhir_error">
+                                Kuota Kemudahan sudah digunakan untuk tahun ini
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -467,6 +473,80 @@ $wilayah_asal_data = $result->fetch_assoc();
         }
         hiddenInput.value = input.value.replace(/\D/g, '');
     }
+
+    function validateReportDate(input) {
+        const selectedDate = new Date(input.value);
+        const currentDate = new Date();
+        
+        // Calculate 6 months from current date
+        const sixMonthsFromNow = new Date();
+        sixMonthsFromNow.setMonth(currentDate.getMonth() + 6);
+        
+        // Reset time part for accurate date comparison
+        selectedDate.setHours(0, 0, 0, 0);
+        sixMonthsFromNow.setHours(0, 0, 0, 0);
+        
+        // Check if dates are exactly 6 months apart
+        const isValid = selectedDate.getTime() === sixMonthsFromNow.getTime();
+        
+        if (!isValid) {
+            input.setCustomValidity('Tarikh lapor diri mestilah tepat 6 bulan dari tarikh permohonan.');
+            document.getElementById('tarikh_lapor_diri_error').style.display = 'block';
+        } else {
+            input.setCustomValidity('');
+            document.getElementById('tarikh_lapor_diri_error').style.display = 'none';
+        }
+        
+        // Update the validation state
+        input.reportValidity();
+    }
+
+    function validateLastUsageDate(input) {
+        const selectedDate = new Date(input.value);
+        const currentDate = new Date();
+        
+        // Check if the selected date is in 2024
+        const is2024 = selectedDate.getFullYear() === 2024;
+        
+        // If date is in 2024, allow application in 2025 regardless of the 6-month rule
+        if (is2024) {
+            input.setCustomValidity('');
+            document.getElementById('tarikh_terakhir_error').style.display = 'none';
+            
+            // Update the report date validation
+            const tarikhLaporDiri = document.getElementById('tarikh_lapor_diri');
+            if (tarikhLaporDiri) {
+                tarikhLaporDiri.removeAttribute('required');
+                tarikhLaporDiri.setCustomValidity('');
+            }
+        } else {
+            input.setCustomValidity('Kuota Kemudahan sudah digunakan untuk tahun ini');
+            document.getElementById('tarikh_terakhir_error').style.display = 'block';
+        }
+        
+        // Update the validation state
+        input.reportValidity();
+    }
+
+    // Modify the form submit validation
+    document.querySelector('form').addEventListener('submit', function(event) {
+        const tarikhTerakhir = document.getElementById('tarikh_terakhir_kemudahan');
+        const tarikhLaporDiri = document.getElementById('tarikh_lapor_diri');
+        
+        if (tarikhTerakhir && tarikhTerakhir.value) {
+            validateLastUsageDate(tarikhTerakhir);
+            if (!tarikhTerakhir.validity.valid) {
+                event.preventDefault();
+                return;
+            }
+        } else if (tarikhLaporDiri) {
+            validateReportDate(tarikhLaporDiri);
+            if (!tarikhLaporDiri.validity.valid) {
+                event.preventDefault();
+                return;
+            }
+        }
+    });
 </script>
 </body>
 </html>

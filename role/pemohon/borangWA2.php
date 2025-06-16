@@ -34,7 +34,7 @@ $user_email = $user_data['email'];
 $user_phoneNo = $user_data['phone'];
 
 // Check if user has existing data in wilayah_asal
-$sql = "SELECT * FROM wilayah_asal WHERE user_kp = ? AND wilayah_asal_from_stage = 'BorangWA3'";
+$sql = "SELECT * FROM wilayah_asal WHERE user_kp = ? AND wilayah_asal_from_stage NOT IN ('BorangWA2', 'Hantar') AND wilayah_asal_matang = false";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $user_icNo);
 $stmt->execute();
