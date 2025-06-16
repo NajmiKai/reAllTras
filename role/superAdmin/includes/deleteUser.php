@@ -92,10 +92,6 @@ try {
 
     // Delete all related records
     $tables_to_delete = [
-        'wilayah_asal_pengikut' => [
-            "DELETE FROM wilayah_asal_pengikut WHERE kp_ibuayah_pengikut = ? OR kp_pengikut = ?",
-            "ss"
-        ],
         'documents' => [
             "DELETE FROM documents WHERE file_origin_id = ?",
             "s"
@@ -119,9 +115,7 @@ try {
         }
 
         // Bind parameters based on the query type
-        if ($table === 'wilayah_asal_pengikut') {
-            $stmt->bind_param($types, $user_kp, $user_kp);
-        } else if ($table === 'user') {
+         if ($table === 'user') {
             $stmt->bind_param($types, $user_id);
         } else {
             $stmt->bind_param($types, $user_kp);
