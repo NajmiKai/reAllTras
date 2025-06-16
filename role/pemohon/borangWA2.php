@@ -34,12 +34,19 @@ $user_email = $user_data['email'];
 $user_phoneNo = $user_data['phone'];
 
 // Check if user has existing data in wilayah_asal
-$sql = "SELECT * FROM wilayah_asal WHERE user_kp = ? AND wilayah_asal_from_stage NOT IN ('BorangWA2', 'Hantar') AND wilayah_asal_matang = false";
+$sql = "SELECT * FROM wilayah_asal WHERE user_kp = ? AND wilayah_asal_matang = false";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $user_icNo);
 $stmt->execute();
 $result = $stmt->get_result();
 $wilayah_asal_data = $result->fetch_assoc();
+
+if ($wilayah_asal_data) {
+    $_SESSION['wilayah_asal_id'] = $wilayah_asal_data['id'];
+} else {
+    // Clear the session variable if no data found
+    unset($_SESSION['wilayah_asal_id']);
+}
 
 ?>
 <!DOCTYPE html>

@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $current_stage = $result->fetch_assoc()['wilayah_asal_from_stage'];
 
         // Only proceed with update if stage is BorangWA4
-        if ($current_stage === 'BorangWA4') {
+        if ($current_stage === 'BorangWA4' || $current_stage === 'BorangWA5') {
             // Prepare the SQL statement
             $sql = "UPDATE wilayah_asal SET 
                 jenis_permohonan = ?,

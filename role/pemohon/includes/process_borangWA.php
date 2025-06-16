@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $result = $check_stmt->get_result();
         $existing_record = $result->fetch_assoc();
 
-        if ($existing_record && $existing_record['wilayah_asal_from_stage'] === 'BorangWA2') {
+        if ($existing_record && ($existing_record['wilayah_asal_from_stage'] === 'BorangWA2' || $existing_record['wilayah_asal_from_stage'] === 'BorangWA5')) {
             // Update existing record
             $update_sql = "UPDATE wilayah_asal SET 
                 jawatan_gred = ?,

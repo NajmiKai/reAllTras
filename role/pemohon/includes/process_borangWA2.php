@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $negeri_menetap_ibu = $_POST['negeri_menetap_ibu'];
         $ibu_negeri_bandar_dituju_ibu = $_POST['ibu_negeri_bandar_dituju_ibu'];
 
-        if ($existing_record && $existing_record['wilayah_asal_from_stage'] === 'BorangWA3') {
+        if ($existing_record && ($existing_record['wilayah_asal_from_stage'] === 'BorangWA3' || $existing_record['wilayah_asal_from_stage'] === 'BorangWA5')) {
             // Update existing record
             $update_sql = "UPDATE wilayah_asal SET 
                 nama_bapa = ?,

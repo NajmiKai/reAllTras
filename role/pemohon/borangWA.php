@@ -28,12 +28,20 @@ $user_email = $user_data['email'];
 $user_phoneNo = $user_data['phone'];
 
 // Check if user has existing data in wilayah_asal
-$sql = "SELECT * FROM wilayah_asal WHERE user_kp = ? AND wilayah_asal_from_stage NOT IN ('BorangWA', 'Hantar') AND wilayah_asal_matang = false";
+$sql = "SELECT * FROM wilayah_asal WHERE user_kp = ? AND wilayah_asal_matang = false";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $user_icNo);
 $stmt->execute();
 $result = $stmt->get_result();
 $wilayah_asal_data = $result->fetch_assoc();
+
+// Store wilayah_asal_id in session if found
+if ($wilayah_asal_data) {
+    $_SESSION['wilayah_asal_id'] = $wilayah_asal_data['id'];
+} else {
+    // Clear the session variable if no data found
+    unset($_SESSION['wilayah_asal_id']);
+}
 
 ?>
 <!DOCTYPE html>
@@ -274,7 +282,7 @@ $wilayah_asal_data = $result->fetch_assoc();
                             <label class="form-label">Tarikh Lapor Diri</label>
                             <input type="date" class="form-control" name="tarikh_lapor_diri" id="tarikh_lapor_diri" value="<?= htmlspecialchars($wilayah_asal_data['tarikh_lapor_diri'] ?? '') ?>" required onchange="validateReportDate(this)">
                             <div class="invalid-feedback" id="tarikh_lapor_diri_error">
-                                Tarikh lapor diri mestilah tepat 6 bulan dari tarikh permohonan.
+                                Tarikh lapor diri mestilah sekurang-kurangnya 6 bulan lepas.
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -478,19 +486,20 @@ $wilayah_asal_data = $result->fetch_assoc();
         const selectedDate = new Date(input.value);
         const currentDate = new Date();
         
-        // Calculate 6 months from current date
-        const sixMonthsFromNow = new Date();
-        sixMonthsFromNow.setMonth(currentDate.getMonth() + 6);
+        // Calculate 6 months ago from current date
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(currentDate.getMonth() - 6);
         
         // Reset time part for accurate date comparison
         selectedDate.setHours(0, 0, 0, 0);
-        sixMonthsFromNow.setHours(0, 0, 0, 0);
+        currentDate.setHours(0, 0, 0, 0);
+        sixMonthsAgo.setHours(0, 0, 0, 0);
         
-        // Check if dates are exactly 6 months apart
-        const isValid = selectedDate.getTime() === sixMonthsFromNow.getTime();
+        // Check if selected date is in the past and at least 6 months ago
+        const isValid = selectedDate <= sixMonthsAgo;
         
         if (!isValid) {
-            input.setCustomValidity('Tarikh lapor diri mestilah tepat 6 bulan dari tarikh permohonan.');
+            input.setCustomValidity('Tarikh lapor diri mestilah sekurang-kurangnya 6 bulan lepas.');
             document.getElementById('tarikh_lapor_diri_error').style.display = 'block';
         } else {
             input.setCustomValidity('');

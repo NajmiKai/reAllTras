@@ -42,14 +42,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             // Log failed login attempt
             logAuthEvent($conn, 'login', 'user', $identifier, false);
-            $_SESSION['error'] = "Invalid password";
+            $_SESSION['error'] = "Kata laluan tidak sah";
             header("Location: loginUser.php");
             exit();
         }
     } else {
         // Log failed login attempt
         logAuthEvent($conn, 'login', 'user', $identifier, false);
-        $_SESSION['error'] = "User not found";
+        $_SESSION['error'] = "Kad Pengenalan atau Email tidak dijumpai";
         header("Location: loginUser.php");
         exit();
     }
@@ -171,8 +171,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ALL REGION TRAVELLING SYSTEM
         </div>
 
-       <!-- <form id="loginForm" onsubmit="return handleLogin(event)">-->
-       <form id="loginForm" method="POST" action="">
+        <?php if(isset($_SESSION['error'])): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <?php 
+                echo $_SESSION['error'];
+                unset($_SESSION['error']);
+            ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <?php endif; ?>
+
+        <form id="loginForm" method="POST" action="">
             <div class="mb-3">
                 <label class="form-label">Kad Pengenalan atau Email</label>
                 <input type="text" class="form-control" name="identifier" id="identifier" placeholder="Masukkan KP atau Email" required>

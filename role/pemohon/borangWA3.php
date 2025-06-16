@@ -32,10 +32,11 @@ $user_phoneNo = $user_data['phone'];
 $wilayah_asal_id = $_SESSION['wilayah_asal_id'] ?? null;
 $existing_data = null;
 $followers_data = [];
+$partner_has_different_dates = false; // Initialize the variable
 
 if ($wilayah_asal_id) {
     // Get main data
-    $check_sql = "SELECT * FROM wilayah_asal WHERE id = ? AND wilayah_asal_from_stage NOT IN ('BorangWA3', 'Hantar') AND wilayah_asal_matang = false";
+    $check_sql = "SELECT * FROM wilayah_asal WHERE id = ? AND wilayah_asal_matang = false";
     $check_stmt = $conn->prepare($check_sql);
     $check_stmt->bind_param("i", $wilayah_asal_id);
     $check_stmt->execute();
@@ -174,7 +175,6 @@ foreach ($followers_data as $follower) {
 
     <!-- Main Content -->
     <div class="col p-4">
-        <?php include 'includes/greeting.php'; ?>
         <h3 class="mb-3">Borang Permohonan Wilayah Asal (Bahagian 3)</h3>
         
         <!-- Multi-step Indicator -->

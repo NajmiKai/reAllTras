@@ -123,6 +123,7 @@ $documents = $result->fetch_all(MYSQLI_ASSOC);
 
     <!-- Main Content -->
     <div class="col p-4">
+        <?php include 'includes/greeting.php'; ?>
         <h3 class="mb-3">Pengesahan Maklumat</h3>
         
         <!-- Multi-step Indicator -->
@@ -383,9 +384,6 @@ $documents = $result->fetch_all(MYSQLI_ASSOC);
                 <div class="section-header">
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Dokumen</h5>
-                        <a href="borangWA4.php" class="btn btn-sm btn-light">
-                            <i class="fas fa-edit me-2"></i>Edit
-                        </a>
                     </div>
                 </div>
                 <div class="section-body">

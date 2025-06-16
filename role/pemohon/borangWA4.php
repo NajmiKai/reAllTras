@@ -50,7 +50,7 @@ if (isset($_SESSION['wilayah_asal_id'])) {
 // Check if we're in edit mode
 $is_edit_mode = false;
 if (isset($_SESSION['wilayah_asal_id'])) {
-    $sql = "SELECT wilayah_asal_from_stage FROM wilayah_asal WHERE id = ? AND wilayah_asal_from_stage NOT IN ('BorangWA4', 'Hantar') AND wilayah_asal_matang = false";
+    $sql = "SELECT wilayah_asal_from_stage FROM wilayah_asal WHERE id = ? AND wilayah_asal_matang = false";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $_SESSION['wilayah_asal_id']);
     $stmt->execute();
@@ -205,7 +205,7 @@ if (isset($_SESSION['wilayah_asal_id'])) {
                                 </div>
                             <?php endif; ?>
                         </div>
-                        <input type="file" class="form-control" name="dokumen_pegawai" accept=".pdf,.jpg,.jpeg,.png" <?php echo (!$is_edit_mode) ? 'required' : ''; ?>>
+                        <input type="file" class="form-control" name="dokumen_pegawai" accept=".pdf,.jpg,.jpeg,.png" <?php echo (!$is_edit_mode && !isset($existing_documents['Dokumen Pegawai'])) ? 'required' : ''; ?>>
                     </div>
                     <div class="document-item mt-3">
                         <div class="document-title">
@@ -222,7 +222,7 @@ if (isset($_SESSION['wilayah_asal_id'])) {
                                 </div>
                             <?php endif; ?>
                         </div>
-                        <input type="file" class="form-control" name="lampiran_ii" accept=".pdf,.jpg,.jpeg,.png" <?php echo (!$is_edit_mode) ? 'required' : ''; ?>>
+                        <input type="file" class="form-control" name="lampiran_ii" accept=".pdf,.jpg,.jpeg,.png" <?php echo (!$is_edit_mode && !isset($existing_documents['Lampiran II'])) ? 'required' : ''; ?>>
                     </div>
                 </div>
             </div>
@@ -390,7 +390,7 @@ if (isset($_SESSION['wilayah_asal_id'])) {
                 <a href="borangWA3.php" class="btn btn-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Kembali
                 </a>
-                <button type="submit" class="btn btn-success">
+                <button type="submit" class="btn btn-success" name="submit">
                     <i class="fas fa-check me-2"></i>Hantar Permohonan
                 </button>
             </div>
