@@ -42,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bind_param("ssi", $token, $expiry, $user['id']);
         $stmt->execute();
 
-        $resetLink = "http://localhost/reAllTras/resetPasswordUser.php?token=$token";
+        $resetLink = getFullUrl("resetPasswordUser.php?token=$token");
 
         // Send email using PHPMailer
         $mail = new PHPMailer(true);

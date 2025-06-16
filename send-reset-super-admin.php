@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bind_param("sss", $token, $expiry, $email);
         $stmt->execute();
 
-        $resetLink = "http://localhost/reAllTras/resetPasswordSuperAdmin.php?token=$token";
+        $resetLink = getFullUrl("resetPasswordSuperAdmin.php?token=$token");
 
         // Send email using PHPMailer
         $mail = new PHPMailer(true);
