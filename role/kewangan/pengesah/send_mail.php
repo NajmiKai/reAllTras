@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $ulasan = $_POST['ulasan'] ?? null;
 
             $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, ulasan_pengesah_kewangan = ?, pengesah_kewangan_id = ?, status_permohonan= ?, kedudukan_permohonan= ?, tarikh_keputusan_pengesah_kewangan = ? WHERE id = ?");
-            $stmt_wilayah->bind_param("ssssi", $status, $ulasan, $admin_id, $status_permohonan, $kedudukan_permohonan, $tarikh_keputusan, $wilayah_asal_id);
+            $stmt_wilayah->bind_param("ssssssi", $status, $ulasan, $admin_id, $status_permohonan, $kedudukan_permohonan, $tarikh_keputusan, $wilayah_asal_id);
             $stmt_wilayah->execute();
         }
 

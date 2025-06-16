@@ -150,7 +150,7 @@ $result = $conn->query($query);
 
                                 <?php if($user['status'] == 'Menunggu pengesahan PBR2 CSM'){ ?>
                                     <td><a href="viewdetailsfromHQ.php?kp=<?= $user['kp'] ?>" class="btn btn-info btn-sm">Lihat</a></td>
-                                <?php } elseif ($user['status'] == 'Permohonan dikuiri'){ ?>
+                                <?php } elseif ($user['status'] == 'Kembali ke PBR CSM'){ ?>
                                     <td><a href="viewdetailskuiri.php?kp=<?= $user['kp'] ?>" class="btn btn-info btn-sm">Lihat</a></td>
                                 <?php }else{ ?>
                                     <td><a href="viewdetails.php?kp=<?= $user['kp'] ?>" class="btn btn-info btn-sm">Lihat</a></td>

@@ -163,12 +163,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <div class="mb-3">
                         <label for="phoneNo">No. Telefon</label>
-                        <input type="text" id="phoneNo" name="phoneNo" class="form-control" value="<?= htmlspecialchars($user['phoneNo']) ?>" required>
+                        <input type="text" id="phoneNo" name="phoneNo" class="form-control" maxlength="11" value="<?= htmlspecialchars($user['phoneNo']) ?>" required>
                     </div>
 
                     <div class="mb-3">
                         <label for="icNo">No. IC</label>
-                        <input type="text" id="icNo" name="icNo" class="form-control" value="<?= htmlspecialchars($user['icNo']) ?>" required>
+                        <input type="text" id="icNo" name="icNo" class="form-control" maxlength="12"  value="<?= htmlspecialchars($user['icNo']) ?>" required>
                     </div>
 
 
