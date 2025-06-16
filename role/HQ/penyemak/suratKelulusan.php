@@ -146,7 +146,7 @@ $filename = "Kelulusan Kemudahan Tambang Ziarah Wilayah_" . $fullNameCleaned . "
         font-size: 9pt;
         text-align: center;
         border-top: 1px solid black;
-        padding-top: 5px;
+        padding-top: 3px;
         background: white;
       }
 
