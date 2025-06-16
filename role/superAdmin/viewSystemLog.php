@@ -96,9 +96,9 @@ $query .= " ORDER BY sl.created_at DESC";
                             <option value="">Semua</option>
                             <option value="login" <?= $event_type === 'login' ? 'selected' : '' ?>>Log Masuk</option>
                             <option value="logout" <?= $event_type === 'logout' ? 'selected' : '' ?>>Log Keluar</option>
-                            <option value="create" <?= $event_type === 'create' ? 'selected' : '' ?>>Cipta</option>
-                            <option value="update" <?= $event_type === 'update' ? 'selected' : '' ?>>Kemaskini</option>
-                            <option value="delete" <?= $event_type === 'delete' ? 'selected' : '' ?>>Padam</option>
+                            <option value="create" <?= ($event_type === 'data_create' || $event_type === 'document_upload') ? 'selected' : '' ?>>Cipta</option>
+                            <option value="update" <?= ($event_type === 'data_update' || $event_type === 'document_download' || $event_type === 'status_change' ) ? 'selected' : '' ?>>Kemaskini</option>
+                            <option value="delete" <?= ($event_type === 'data_delete' || $event_type === 'document_delete') ? 'selected' : '' ?>>Padam</option>
                         </select>
                     </div>
                     <div class="col-md-3">

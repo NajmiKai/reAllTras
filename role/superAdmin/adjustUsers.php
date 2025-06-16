@@ -244,17 +244,17 @@ while($bahagian = $bahagian_result->fetch_assoc()) {
 // Define deleteUser function first
 function deleteUser(userId) {
     if (confirm('Adakah anda pasti mahu memadamkan pengguna ini?')) {
-        fetch(`includes/deleteUser.php?id=${userId}`, {
+        fetch('includes/deleteUser.php', {
             method: 'POST',
             credentials: 'include',
             headers: {
-                'Accept': 'application/json'
-            }
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `id=${encodeURIComponent(userId)}`
         })
         .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             return response.json();
         })
         .then(data => {
@@ -271,6 +271,7 @@ function deleteUser(userId) {
         });
     }
 }
+
 
 // Initialize Select2 for bahagian dropdowns
 $(document).ready(function() {
