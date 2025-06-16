@@ -24,6 +24,17 @@ $wilayah_asal_id = $_POST['wilayah_asal_id'];
 $user_id = $_SESSION['user_id'];
 $user_kp = $_SESSION['user_kp'];
 
+// Check if we're in edit mode
+$is_edit_mode = false;
+$sql = "SELECT wilayah_asal_from_stage FROM wilayah_asal WHERE id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $wilayah_asal_id);
+$stmt->execute();
+$result = $stmt->get_result();
+if ($row = $result->fetch_assoc()) {
+    $is_edit_mode = ($row['wilayah_asal_from_stage'] === 'BorangWA5');
+}
+
 // Create upload directory if it doesn't exist
 $upload_dir = "../../../uploads/permohonan/" . $wilayah_asal_id;
 if (!file_exists($upload_dir)) {
@@ -32,7 +43,7 @@ if (!file_exists($upload_dir)) {
 
 // Function to handle file upload
 function handleFileUpload($file, $upload_dir, $wilayah_asal_id, $user_kp, $description = '') {
-    global $conn;
+    global $conn, $is_edit_mode;
     
     if ($file['error'] === UPLOAD_ERR_OK) {
         $file_name = basename($file['name']);
@@ -48,11 +59,31 @@ function handleFileUpload($file, $upload_dir, $wilayah_asal_id, $user_kp, $descr
             // Create the web-accessible path for database storage
             $web_path = '../../../uploads/permohonan/' . $wilayah_asal_id . '/' . $unique_filename;
             
-            // Insert into database
-            $sql = "INSERT INTO documents (wilayah_asal_id, file_name, file_path, file_type, file_size, description, file_origin_id, file_origin) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, 'pemohon')";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("isssiss", $wilayah_asal_id, $file_name, $web_path, $file_type, $file_size, $description, $user_kp);
+            if ($is_edit_mode) {
+                // Update existing document if it exists
+                $sql = "UPDATE documents SET 
+                        file_name = ?, 
+                        file_path = ?, 
+                        file_type = ?, 
+                        file_size = ? 
+                        WHERE wilayah_asal_id = ? AND description = ? AND file_origin = 'pemohon'";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("sssiss", $file_name, $web_path, $file_type, $file_size, $wilayah_asal_id, $description);
+                
+                if ($stmt->execute() && $stmt->affected_rows === 0) {
+                    // If no update occurred, insert new record
+                    $sql = "INSERT INTO documents (wilayah_asal_id, file_name, file_path, file_type, file_size, description, file_origin_id, file_origin) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?, 'pemohon')";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("isssiss", $wilayah_asal_id, $file_name, $web_path, $file_type, $file_size, $description, $user_kp);
+                }
+            } else {
+                // Insert new document
+                $sql = "INSERT INTO documents (wilayah_asal_id, file_name, file_path, file_type, file_size, description, file_origin_id, file_origin) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?, 'pemohon')";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("isssiss", $wilayah_asal_id, $file_name, $web_path, $file_type, $file_size, $description, $user_kp);
+            }
             
             if ($stmt->execute()) {
                 // Log document upload
@@ -67,22 +98,22 @@ function handleFileUpload($file, $upload_dir, $wilayah_asal_id, $user_kp, $descr
 $success = true;
 $error_messages = [];
 
-// Handle Dokumen Pegawai (Required)
-if (!isset($_FILES['dokumen_pegawai']) || $_FILES['dokumen_pegawai']['error'] === UPLOAD_ERR_NO_FILE) {
+// Handle Dokumen Pegawai (Required if not in edit mode)
+if (!$is_edit_mode && (!isset($_FILES['dokumen_pegawai']) || $_FILES['dokumen_pegawai']['error'] === UPLOAD_ERR_NO_FILE)) {
     $success = false;
     $error_messages[] = "Dokumen Pegawai diperlukan.";
-} else {
+} else if (isset($_FILES['dokumen_pegawai']) && $_FILES['dokumen_pegawai']['error'] !== UPLOAD_ERR_NO_FILE) {
     if (!handleFileUpload($_FILES['dokumen_pegawai'], $upload_dir, $wilayah_asal_id, $user_kp, 'Dokumen Pegawai')) {
         $success = false;
         $error_messages[] = "Gagal memuat naik Dokumen Pegawai.";
     }
 }
 
-// Handle Lampiran II (Required)
-if (!isset($_FILES['lampiran_ii']) || $_FILES['lampiran_ii']['error'] === UPLOAD_ERR_NO_FILE) {
+// Handle Lampiran II (Required if not in edit mode)
+if (!$is_edit_mode && (!isset($_FILES['lampiran_ii']) || $_FILES['lampiran_ii']['error'] === UPLOAD_ERR_NO_FILE)) {
     $success = false;
     $error_messages[] = "Lampiran II diperlukan.";
-} else {
+} else if (isset($_FILES['lampiran_ii']) && $_FILES['lampiran_ii']['error'] !== UPLOAD_ERR_NO_FILE) {
     if (!handleFileUpload($_FILES['lampiran_ii'], $upload_dir, $wilayah_asal_id, $user_kp, 'Lampiran II')) {
         $success = false;
         $error_messages[] = "Gagal memuat naik Lampiran II.";
@@ -107,6 +138,7 @@ if (isset($_FILES['sijil_perkahwinan']) && $_FILES['sijil_perkahwinan']['error']
 
 // Handle Dokumen Pengikut (Multiple)
 if (isset($_FILES['dokumen_pengikut'])) {
+    $pengikut_count = 1;
     foreach ($_FILES['dokumen_pengikut']['tmp_name'] as $key => $tmp_name) {
         if ($_FILES['dokumen_pengikut']['error'][$key] === UPLOAD_ERR_OK) {
             $file = [
@@ -117,10 +149,11 @@ if (isset($_FILES['dokumen_pengikut'])) {
                 'size' => $_FILES['dokumen_pengikut']['size'][$key]
             ];
             
-            if (!handleFileUpload($file, $upload_dir, $wilayah_asal_id, $user_kp, 'Dokumen Pengikut')) {
+            if (!handleFileUpload($file, $upload_dir, $wilayah_asal_id, $user_kp, 'Dokumen Pengikut ' . $pengikut_count)) {
                 $success = false;
-                $error_messages[] = "Gagal memuat naik Dokumen Pengikut #" . ($key + 1);
+                $error_messages[] = "Gagal memuat naik Dokumen Pengikut #" . $pengikut_count;
             }
+            $pengikut_count++;
         }
     }
 }

@@ -4,20 +4,6 @@ include '../../../connection.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
-        // Prepare the SQL statement
-        $sql = "INSERT INTO wilayah_asal (
-            user_kp, jawatan_gred, email_penyelia,
-            alamat_menetap_1, alamat_menetap_2, poskod_menetap, bandar_menetap, negeri_menetap,
-            alamat_berkhidmat_1, alamat_berkhidmat_2, poskod_berkhidmat, bandar_berkhidmat, negeri_berkhidmat,
-            tarikh_lapor_diri, tarikh_terakhir_kemudahan,
-            nama_first_pasangan, nama_last_pasangan, no_kp_pasangan,
-            alamat_berkhidmat_1_pasangan, alamat_berkhidmat_2_pasangan,
-            poskod_berkhidmat_pasangan, bandar_berkhidmat_pasangan, negeri_berkhidmat_pasangan,
-            wilayah_menetap_pasangan
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-        $stmt = $conn->prepare($sql);
-        
         // Prepare values for binding
         $user_kp = $_POST['user_kp_raw'] ?? $_POST['user_kp'];
         $jawatan_gred = $_POST['jawatan_gred'];
@@ -46,87 +32,168 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $negeri_berkhidmat_pasangan = ($_POST['ada_pasangan'] === 'ya') ? $_POST['negeri_berkhidmat_pasangan'] : null;
         $wilayah_menetap_pasangan = ($_POST['ada_pasangan'] === 'ya') ? $_POST['wilayah_menetap_pasangan'] : null;
 
-        // Bind parameters
-        $stmt->bind_param("ssssssssssssssssssssssss",
-            $user_kp,
-            $jawatan_gred,
-            $email_penyelia,
-            $alamat_menetap_1,
-            $alamat_menetap_2,
-            $poskod_menetap,
-            $bandar_menetap,
-            $negeri_menetap,
-            $alamat_berkhidmat_1,
-            $alamat_berkhidmat_2,
-            $poskod_berkhidmat,
-            $bandar_berkhidmat,
-            $negeri_berkhidmat,
-            $tarikh_lapor_diri,
-            $tarikh_terakhir_kemudahan,
-            $nama_first_pasangan,
-            $nama_last_pasangan,
-            $no_kp_pasangan,
-            $alamat_berkhidmat_1_pasangan,
-            $alamat_berkhidmat_2_pasangan,
-            $poskod_berkhidmat_pasangan,
-            $bandar_berkhidmat_pasangan,
-            $negeri_berkhidmat_pasangan,
-            $wilayah_menetap_pasangan
-        );
+        // Check if record exists and its stage
+        $check_sql = "SELECT id, wilayah_asal_from_stage FROM wilayah_asal WHERE user_kp = ?";
+        $check_stmt = $conn->prepare($check_sql);
+        $check_stmt->bind_param("s", $user_kp);
+        $check_stmt->execute();
+        $result = $check_stmt->get_result();
+        $existing_record = $result->fetch_assoc();
 
-        // Execute the statement
-        if ($stmt->execute()) {
-            // Get the insert ID
-            $insert_id = $stmt->insert_id;
-            
-            // Update wilayah_asal_from_stage
-            $update_stage_sql = "UPDATE wilayah_asal SET wilayah_asal_from_stage = 'BorangWA2' WHERE id = ?";
-            $update_stage_stmt = $conn->prepare($update_stage_sql);
-            $update_stage_stmt->bind_param("i", $insert_id);
-            $update_stage_stmt->execute();
-            $update_stage_stmt->close();
+        if ($existing_record && $existing_record['wilayah_asal_from_stage'] === 'BorangWA2') {
+            // Update existing record
+            $update_sql = "UPDATE wilayah_asal SET 
+                jawatan_gred = ?,
+                email_penyelia = ?,
+                alamat_menetap_1 = ?,
+                alamat_menetap_2 = ?,
+                poskod_menetap = ?,
+                bandar_menetap = ?,
+                negeri_menetap = ?,
+                alamat_berkhidmat_1 = ?,
+                alamat_berkhidmat_2 = ?,
+                poskod_berkhidmat = ?,
+                bandar_berkhidmat = ?,
+                negeri_berkhidmat = ?,
+                tarikh_lapor_diri = ?,
+                tarikh_terakhir_kemudahan = ?,
+                nama_first_pasangan = ?,
+                nama_last_pasangan = ?,
+                no_kp_pasangan = ?,
+                alamat_berkhidmat_1_pasangan = ?,
+                alamat_berkhidmat_2_pasangan = ?,
+                poskod_berkhidmat_pasangan = ?,
+                bandar_berkhidmat_pasangan = ?,
+                negeri_berkhidmat_pasangan = ?,
+                wilayah_menetap_pasangan = ?
+                WHERE id = ?";
 
-            // Store form data in session for next step
-            $_SESSION['borangWA_data'] = [
-                'user_kp' => $user_kp,
-                'jawatan_gred' => $jawatan_gred,
-                'email_penyelia' => $email_penyelia,
-                'alamat_menetap_1' => $alamat_menetap_1,
-                'alamat_menetap_2' => $alamat_menetap_2,
-                'poskod_menetap' => $poskod_menetap,
-                'bandar_menetap' => $bandar_menetap,
-                'negeri_menetap' => $negeri_menetap,
-                'alamat_berkhidmat_1' => $alamat_berkhidmat_1,
-                'alamat_berkhidmat_2' => $alamat_berkhidmat_2,
-                'poskod_berkhidmat' => $poskod_berkhidmat,
-                'bandar_berkhidmat' => $bandar_berkhidmat,
-                'negeri_berkhidmat' => $negeri_berkhidmat,
-                'tarikh_lapor_diri' => $tarikh_lapor_diri,
-                'pernah_guna' => $_POST['pernah_guna'],
-                'tarikh_terakhir_kemudahan' => $tarikh_terakhir_kemudahan,
-                
-                // Partner Information
-                'ada_pasangan' => $_POST['ada_pasangan'],
-                'nama_first_pasangan' => $nama_first_pasangan,
-                'nama_last_pasangan' => $nama_last_pasangan,
-                'no_kp_pasangan' => $no_kp_pasangan,
-                'wilayah_menetap_pasangan' => $wilayah_menetap_pasangan,
-                'alamat_berkhidmat_1_pasangan' => $alamat_berkhidmat_1_pasangan,
-                'alamat_berkhidmat_2_pasangan' => $alamat_berkhidmat_2_pasangan,
-                'poskod_berkhidmat_pasangan' => $poskod_berkhidmat_pasangan,
-                'bandar_berkhidmat_pasangan' => $bandar_berkhidmat_pasangan,
-                'negeri_berkhidmat_pasangan' => $negeri_berkhidmat_pasangan
-            ];
+            $update_stmt = $conn->prepare($update_sql);
+            $update_stmt->bind_param("sssssssssssssssssssssssi",
+                $jawatan_gred,
+                $email_penyelia,
+                $alamat_menetap_1,
+                $alamat_menetap_2,
+                $poskod_menetap,
+                $bandar_menetap,
+                $negeri_menetap,
+                $alamat_berkhidmat_1,
+                $alamat_berkhidmat_2,
+                $poskod_berkhidmat,
+                $bandar_berkhidmat,
+                $negeri_berkhidmat,
+                $tarikh_lapor_diri,
+                $tarikh_terakhir_kemudahan,
+                $nama_first_pasangan,
+                $nama_last_pasangan,
+                $no_kp_pasangan,
+                $alamat_berkhidmat_1_pasangan,
+                $alamat_berkhidmat_2_pasangan,
+                $poskod_berkhidmat_pasangan,
+                $bandar_berkhidmat_pasangan,
+                $negeri_berkhidmat_pasangan,
+                $wilayah_menetap_pasangan,
+                $existing_record['id']
+            );
 
-            // Store the inserted ID in session
-            $_SESSION['wilayah_asal_id'] = $insert_id;
+            if (!$update_stmt->execute()) {
+                throw new Exception("Error updating record: " . $update_stmt->error);
+            }
 
-            // Redirect to the next form
-            header("Location: ../borangWA2.php");
-            exit();
+            $insert_id = $existing_record['id'];
         } else {
-            throw new Exception("Error executing statement: " . $stmt->error);
+            // Insert new record
+            $insert_sql = "INSERT INTO wilayah_asal (
+                user_kp, jawatan_gred, email_penyelia,
+                alamat_menetap_1, alamat_menetap_2, poskod_menetap, bandar_menetap, negeri_menetap,
+                alamat_berkhidmat_1, alamat_berkhidmat_2, poskod_berkhidmat, bandar_berkhidmat, negeri_berkhidmat,
+                tarikh_lapor_diri, tarikh_terakhir_kemudahan,
+                nama_first_pasangan, nama_last_pasangan, no_kp_pasangan,
+                alamat_berkhidmat_1_pasangan, alamat_berkhidmat_2_pasangan,
+                poskod_berkhidmat_pasangan, bandar_berkhidmat_pasangan, negeri_berkhidmat_pasangan,
+                wilayah_menetap_pasangan
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+            $insert_stmt = $conn->prepare($insert_sql);
+            $insert_stmt->bind_param("ssssssssssssssssssssssss",
+                $user_kp,
+                $jawatan_gred,
+                $email_penyelia,
+                $alamat_menetap_1,
+                $alamat_menetap_2,
+                $poskod_menetap,
+                $bandar_menetap,
+                $negeri_menetap,
+                $alamat_berkhidmat_1,
+                $alamat_berkhidmat_2,
+                $poskod_berkhidmat,
+                $bandar_berkhidmat,
+                $negeri_berkhidmat,
+                $tarikh_lapor_diri,
+                $tarikh_terakhir_kemudahan,
+                $nama_first_pasangan,
+                $nama_last_pasangan,
+                $no_kp_pasangan,
+                $alamat_berkhidmat_1_pasangan,
+                $alamat_berkhidmat_2_pasangan,
+                $poskod_berkhidmat_pasangan,
+                $bandar_berkhidmat_pasangan,
+                $negeri_berkhidmat_pasangan,
+                $wilayah_menetap_pasangan
+            );
+
+            if (!$insert_stmt->execute()) {
+                throw new Exception("Error inserting record: " . $insert_stmt->error);
+            }
+
+            $insert_id = $insert_stmt->insert_id;
         }
+
+        // Update wilayah_asal_from_stage
+        $update_stage_sql = "UPDATE wilayah_asal SET wilayah_asal_from_stage = 'BorangWA2' WHERE id = ?";
+        $update_stage_stmt = $conn->prepare($update_stage_sql);
+        $update_stage_stmt->bind_param("i", $insert_id);
+        $update_stage_stmt->execute();
+        $update_stage_stmt->close();
+
+        // Store form data in session for next step
+        $_SESSION['borangWA_data'] = [
+            'user_kp' => $user_kp,
+            'jawatan_gred' => $jawatan_gred,
+            'email_penyelia' => $email_penyelia,
+            'alamat_menetap_1' => $alamat_menetap_1,
+            'alamat_menetap_2' => $alamat_menetap_2,
+            'poskod_menetap' => $poskod_menetap,
+            'bandar_menetap' => $bandar_menetap,
+            'negeri_menetap' => $negeri_menetap,
+            'alamat_berkhidmat_1' => $alamat_berkhidmat_1,
+            'alamat_berkhidmat_2' => $alamat_berkhidmat_2,
+            'poskod_berkhidmat' => $poskod_berkhidmat,
+            'bandar_berkhidmat' => $bandar_berkhidmat,
+            'negeri_berkhidmat' => $negeri_berkhidmat,
+            'tarikh_lapor_diri' => $tarikh_lapor_diri,
+            'pernah_guna' => $_POST['pernah_guna'],
+            'tarikh_terakhir_kemudahan' => $tarikh_terakhir_kemudahan,
+            
+            // Partner Information
+            'ada_pasangan' => $_POST['ada_pasangan'],
+            'nama_first_pasangan' => $nama_first_pasangan,
+            'nama_last_pasangan' => $nama_last_pasangan,
+            'no_kp_pasangan' => $no_kp_pasangan,
+            'wilayah_menetap_pasangan' => $wilayah_menetap_pasangan,
+            'alamat_berkhidmat_1_pasangan' => $alamat_berkhidmat_1_pasangan,
+            'alamat_berkhidmat_2_pasangan' => $alamat_berkhidmat_2_pasangan,
+            'poskod_berkhidmat_pasangan' => $poskod_berkhidmat_pasangan,
+            'bandar_berkhidmat_pasangan' => $bandar_berkhidmat_pasangan,
+            'negeri_berkhidmat_pasangan' => $negeri_berkhidmat_pasangan
+        ];
+
+        // Store the inserted ID in session
+        $_SESSION['wilayah_asal_id'] = $insert_id;
+
+        // Redirect to the next form
+        header("Location: ../borangWA2.php");
+        exit();
     } catch (Exception $e) {
         // Log the error
         error_log("Error in process_borangWA.php: " . $e->getMessage());
