@@ -8,6 +8,10 @@ if (!isset($_SESSION['wilayah_asal_id'])) {
     exit();
 }
 
+// Set user ID in session if not set
+if (!isset($_SESSION['user_id'])) {
+    $_SESSION['user_id'] = 1; // Set default user ID to 1
+}
 
 // Fetch user data from database
 $user_id = $_SESSION['user_id'];
@@ -255,7 +259,7 @@ $user_phoneNo = $user_data['phone'];
             </div>
 
             <div class="d-flex justify-content-between mt-4">
-                <a href="javascript:void(0)" onclick="goBack()" class="btn btn-secondary">
+                <a href="borangWA.php" class="btn btn-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Kembali
                 </a>
                 <button type="submit" class="btn btn-primary">
@@ -317,39 +321,6 @@ $user_phoneNo = $user_data['phone'];
         e.preventDefault();
         document.getElementById('sidebar').classList.toggle('hidden');
     });
-
-    function goBack() {
-        // Create a form to submit the data
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = 'borangWA.php';
-        
-        // Get all form data
-        const currentForm = document.querySelector('form');
-        const formData = new FormData(currentForm);
-        
-        // Add all form data as hidden inputs
-        for (let [key, value] of formData.entries()) {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = key;
-            input.value = value;
-            form.appendChild(input);
-        }
-        
-        // Add wilayah_asal_id from session
-        const wilayahAsalId = '<?php echo $_SESSION['wilayah_asal_id']; ?>';
-        if (wilayahAsalId) {
-            const idInput = document.createElement('input');
-            idInput.type = 'hidden';
-            idInput.name = 'wilayah_asal_id';
-            idInput.value = wilayahAsalId;
-            form.appendChild(idInput);
-        }
-        
-        document.body.appendChild(form);
-        form.submit();
-    }
 </script>
 </body>
 </html> 
