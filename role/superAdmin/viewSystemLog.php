@@ -37,10 +37,23 @@ $params = [];
 $types = "";
 
 if (!empty($event_type)) {
-    $query .= " AND sl.event_type = ?";
-    $params[] = $event_type;
-    $types .= "s";
+    switch ($event_type) {
+        case 'create':
+            $query .= " AND sl.event_type IN ('data_create', 'document_upload')";
+            break;
+        case 'update':
+            $query .= " AND sl.event_type IN ('data_update', 'document_download', 'status_change')";
+            break;
+        case 'delete':
+            $query .= " AND sl.event_type IN ('data_delete', 'document_delete')";
+            break;
+        default:
+            $query .= " AND sl.event_type = ?";
+            $params[] = $event_type;
+            $types .= "s";
+    }
 }
+
 
 if (!empty($user_type)) {
     $query .= " AND sl.user_type = ?";
