@@ -341,7 +341,7 @@ if (isset($_SESSION['wilayah_asal_id'])) {
                         }
                         ?>
                     </div>
-                    <button type="button" class="btn btn-outline-primary btn-sm add-more-btn" onclick="addPengikut()">
+                    <button type="button" class="btn btn-outline-primary btn-sm add-more-btn" onclick="window.addPengikut()">
                         <i class="fas fa-plus me-2"></i>Tambah Pengikut
                     </button>
                 </div>
@@ -448,9 +448,11 @@ if (isset($_SESSION['wilayah_asal_id'])) {
             }
         });
     });
+</script>
 
+<script>
     // Add more pengikut
-    function addPengikut() {
+    window.addPengikut = function() {
         const container = document.getElementById('pengikut-container');
         const newItem = document.createElement('div');
         newItem.className = 'document-item';
@@ -470,7 +472,7 @@ if (isset($_SESSION['wilayah_asal_id'])) {
     }
 
     // Add more sokongan
-    function addSokongan() {
+    window.addSokongan = function() {
         const container = document.getElementById('sokongan-container');
         const newItem = document.createElement('div');
         newItem.className = 'document-item';
@@ -490,7 +492,7 @@ if (isset($_SESSION['wilayah_asal_id'])) {
     }
 
     // Function to view uploaded files
-    function viewFile(filePath) {
+    window.viewFile = function(filePath) {
         const url = '<?= getBasePath() ?>/' + filePath;
         window.open(url, '_blank');
     }
