@@ -175,7 +175,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         // Redirect to the next form based on the stage
-        if ($existing_record && $existing_record['wilayah_asal_from_stage'] === 'BorangWA5') {
+        if ($existing_record['wilayah_asal_form_fill'] === 1) {
             header("Location: ../borangWA5.php");
         } else {
             header("Location: ../borangWA3.php");

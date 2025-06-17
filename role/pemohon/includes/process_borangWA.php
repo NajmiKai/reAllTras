@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $wilayah_menetap_pasangan = ($_POST['ada_pasangan'] === 'ya') ? $_POST['wilayah_menetap_pasangan'] : null;
 
         // Check if record exists and its stage
-        $check_sql = "SELECT id, wilayah_asal_from_stage FROM wilayah_asal WHERE user_kp = ?";
+        $check_sql = "SELECT id, wilayah_asal_from_stage, wilayah_asal_form_fill FROM wilayah_asal WHERE user_kp = ?";
         $check_stmt = $conn->prepare($check_sql);
         $check_stmt->bind_param("s", $user_kp);
         $check_stmt->execute();
@@ -192,7 +192,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['wilayah_asal_id'] = $insert_id;
 
         // Redirect to the next form based on the stage
-        if ($existing_record && $existing_record['wilayah_asal_from_stage'] === 'BorangWA5') {
+        if ($existing_record['wilayah_asal_form_fill'] === 1) {
             header("Location: ../borangWA5.php");
         } else {
             header("Location: ../borangWA2.php");

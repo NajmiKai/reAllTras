@@ -12,12 +12,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $wilayah_asal_id = $_SESSION['wilayah_asal_id'];
 
         // Check current stage
-        $check_sql = "SELECT wilayah_asal_from_stage FROM wilayah_asal WHERE id = ?";
+        $check_sql = "SELECT wilayah_asal_from_stage, wilayah_asal_form_fill FROM wilayah_asal WHERE id = ?";
         $check_stmt = $conn->prepare($check_sql);
         $check_stmt->bind_param("i", $wilayah_asal_id);
         $check_stmt->execute();
         $result = $check_stmt->get_result();
-        $current_stage = $result->fetch_assoc()['wilayah_asal_from_stage'];
+        $current_record = $result->fetch_assoc();
+        $current_stage = $current_record['wilayah_asal_from_stage'];
 
         // Only proceed with update if stage is BorangWA4
         if ($current_stage === 'BorangWA4' || $current_stage === 'BorangWA5') {
@@ -224,7 +225,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         // Redirect to the next form based on the stage
-        if ($current_stage === 'BorangWA5') {
+        if ($current_record['wilayah_asal_form_fill'] === 1) {
             header("Location: ../borangWA5.php");
         } else {
             header("Location: ../borangWA4.php");
