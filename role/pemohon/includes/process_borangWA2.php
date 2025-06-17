@@ -174,8 +174,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['borangWA_data'] = [];
         }
 
-        // Redirect to the next form
-        header("Location: ../borangWA3.php");
+        // Redirect to the next form based on the stage
+        if ($existing_record && $existing_record['wilayah_asal_from_stage'] === 'BorangWA5') {
+            header("Location: ../borangWA5.php");
+        } else {
+            header("Location: ../borangWA3.php");
+        }
         exit();
     } catch (Exception $e) {
         // Log the error

@@ -223,8 +223,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['borangWA_data'] = [];
         }
 
-        // Redirect to the next form
-        header("Location: ../borangWA4.php");
+        // Redirect to the next form based on the stage
+        if ($current_stage === 'BorangWA5') {
+            header("Location: ../borangWA5.php");
+        } else {
+            header("Location: ../borangWA4.php");
+        }
         exit();
     } catch (Exception $e) {
         // Log the error

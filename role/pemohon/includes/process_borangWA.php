@@ -191,8 +191,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Store the inserted ID in session
         $_SESSION['wilayah_asal_id'] = $insert_id;
 
-        // Redirect to the next form
-        header("Location: ../borangWA2.php");
+        // Redirect to the next form based on the stage
+        if ($existing_record && $existing_record['wilayah_asal_from_stage'] === 'BorangWA5') {
+            header("Location: ../borangWA5.php");
+        } else {
+            header("Location: ../borangWA2.php");
+        }
         exit();
     } catch (Exception $e) {
         // Log the error
