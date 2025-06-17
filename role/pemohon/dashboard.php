@@ -25,29 +25,38 @@ $user_phoneNo = $user_data['phone'];
 
 function getUlasan($application_data) {
     if (!empty($application_data['ulasan_pengesah_kewangan'])) {
+        $_SESSION['wilayah_asal_ulasan'] = $application_data['ulasan_pengesah_kewangan'];
         return $application_data['ulasan_pengesah_kewangan'];
     }
     if (!empty($application_data['ulasan_penyemakBaki_kewangan'])) {
+        $_SESSION['wilayah_asal_ulasan'] = $application_data['ulasan_penyemakBaki_kewangan'];
         return $application_data['ulasan_penyemakBaki_kewangan'];
     }
     if (!empty($application_data['ulasan_pelulus_HQ'])) {
+        $_SESSION['wilayah_asal_ulasan'] = $application_data['ulasan_pelulus_HQ'];
         return $application_data['ulasan_pelulus_HQ'];
     }
     if (!empty($application_data['ulasan_pengesah_HQ'])) {
+        $_SESSION['wilayah_asal_ulasan'] = $application_data['ulasan_pengesah_HQ'];
         return $application_data['ulasan_pengesah_HQ'];
     }
     if (!empty($application_data['ulasan_penyemak_HQ'])) {
+        $_SESSION['wilayah_asal_ulasan'] = $application_data['ulasan_penyemak_HQ'];
         return $application_data['ulasan_penyemak_HQ'];
     }
     if (!empty($application_data['ulasan_pengesah_csm2'])) {
+        $_SESSION['wilayah_asal_ulasan'] = $application_data['ulasan_pengesah_csm2'];
         return $application_data['ulasan_pengesah_csm2'];
     }
     if (!empty($application_data['ulasan_pengesah_csm1'])) {
+        $_SESSION['wilayah_asal_ulasan'] = $application_data['ulasan_pengesah_csm1'];
         return $application_data['ulasan_pengesah_csm1'];
     }
     if (!empty($application_data['ulasan_pbr_csm1'])) {
+        $_SESSION['wilayah_asal_ulasan'] = $application_data['ulasan_pbr_csm1'];
         return $application_data['ulasan_pbr_csm1'];
     }
+    $_SESSION['wilayah_asal_ulasan'] = "Tiada Kuiri yang dapat dikesan";
     return "Tiada Kuiri yang dapat dikesan";
 }
 

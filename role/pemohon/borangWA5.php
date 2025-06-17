@@ -396,7 +396,7 @@ $documents = $result->fetch_all(MYSQLI_ASSOC);
                                 <small class="text-muted ms-2">(<?= htmlspecialchars($doc['description']) ?>)</small>
                             </div>
                             <div class="actions">
-                                <a href="../../<?= htmlspecialchars($doc['file_path']) ?>" target="_blank" class="btn btn-sm btn-primary">
+                                <a href="<?= getUploadPath(str_replace('../../../uploads/', '', htmlspecialchars($doc['file_path']))) ?>" target="_blank" class="btn btn-sm btn-primary">
                                     <i class="fas fa-eye"></i>
                                 </a>
                             </div>

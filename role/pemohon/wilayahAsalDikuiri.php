@@ -116,6 +116,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <h3 class="mb-0">Edit Wilayah Asal</h3>
         </div>
 
+        <!-- Ulasan Display -->
+        <div class="alert alert-warning mb-4">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-info-circle fa-2x me-3"></i>
+                <div>
+                    <p class="mb-0"><?php echo $_SESSION['wilayah_asal_ulasan']; ?></p>
+                </div>
+            </div>
+        </div>
+
         <div class="section-card">
             <div class="section-header">
                 <h5 class="mb-0">

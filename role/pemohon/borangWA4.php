@@ -198,14 +198,19 @@ if (isset($_SESSION['wilayah_asal_id'])) {
                                 <div class="mt-2">
                                     <small class="text-muted">Current file: <?php echo htmlspecialchars($existing_documents['Dokumen Pegawai']['file_name']); ?></small>
                                     <div class="file-actions">
-                                        <a href="/reAllTras/<?php echo str_replace('../../../', '', htmlspecialchars($existing_documents['Dokumen Pegawai']['file_path'])); ?>" target="_blank" class="view-file-btn">
+                                        <a href="<?= getUploadPath(str_replace('../../../uploads/', '', htmlspecialchars($existing_documents['Dokumen Pegawai']['file_path']))) ?>" target="_blank" class="view-file-btn">
                                             <i class="fa-solid fa-eye"></i>View File
                                         </a>
                                     </div>
                                 </div>
                             <?php endif; ?>
                         </div>
-                        <input type="file" class="form-control" name="dokumen_pegawai" accept=".pdf,.jpg,.jpeg,.png" <?php echo (!$is_edit_mode && !isset($existing_documents['Dokumen Pegawai'])) ? 'required' : ''; ?>>
+                        <div class="d-flex align-items-center">
+                            <input type="file" class="form-control" name="dokumen_pegawai" accept=".pdf,.jpg,.jpeg,.png" <?php echo (!$is_edit_mode && !isset($existing_documents['Dokumen Pegawai'])) ? 'required' : ''; ?>>
+                            <?php if (isset($existing_documents['Dokumen Pegawai'])): ?>
+                                <span class="ms-2 text-muted"><?php echo htmlspecialchars($existing_documents['Dokumen Pegawai']['file_name']); ?></span>
+                            <?php endif; ?>
+                        </div>
                     </div>
                     <div class="document-item mt-3">
                         <div class="document-title">
@@ -215,14 +220,19 @@ if (isset($_SESSION['wilayah_asal_id'])) {
                                 <div class="mt-2">
                                     <small class="text-muted">Current file: <?php echo htmlspecialchars($existing_documents['Lampiran II']['file_name']); ?></small>
                                     <div class="file-actions">
-                                        <a href="/reAllTras/<?php echo str_replace('../../../', '', htmlspecialchars($existing_documents['Lampiran II']['file_path'])); ?>" target="_blank" class="view-file-btn">
+                                        <a href="<?= getUploadPath(str_replace('../../../uploads/', '', htmlspecialchars($existing_documents['Lampiran II']['file_path']))) ?>" target="_blank" class="view-file-btn">
                                             <i class="fa-solid fa-eye"></i>View File
                                         </a>
                                     </div>
                                 </div>
                             <?php endif; ?>
                         </div>
-                        <input type="file" class="form-control" name="lampiran_ii" accept=".pdf,.jpg,.jpeg,.png" <?php echo (!$is_edit_mode && !isset($existing_documents['Lampiran II'])) ? 'required' : ''; ?>>
+                        <div class="d-flex align-items-center">
+                            <input type="file" class="form-control" name="lampiran_ii" accept=".pdf,.jpg,.jpeg,.png" <?php echo (!$is_edit_mode && !isset($existing_documents['Lampiran II'])) ? 'required' : ''; ?>>
+                            <?php if (isset($existing_documents['Lampiran II'])): ?>
+                                <span class="ms-2 text-muted"><?php echo htmlspecialchars($existing_documents['Lampiran II']['file_name']); ?></span>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -241,14 +251,19 @@ if (isset($_SESSION['wilayah_asal_id'])) {
                                 <div class="mt-2">
                                     <small class="text-muted">Current file: <?php echo htmlspecialchars($existing_documents['Dokumen Pasangan']['file_name']); ?></small>
                                     <div class="file-actions">
-                                        <a href="/reAllTras/<?php echo str_replace('../../../', '', htmlspecialchars($existing_documents['Dokumen Pasangan']['file_path'])); ?>" target="_blank" class="view-file-btn">
+                                        <a href="<?= getUploadPath(str_replace('../../../uploads/', '', htmlspecialchars($existing_documents['Dokumen Pasangan']['file_path']))) ?>" target="_blank" class="view-file-btn">
                                             <i class="fa-solid fa-eye"></i>View File
                                         </a>
                                     </div>
                                 </div>
                             <?php endif; ?>
                         </div>
-                        <input type="file" class="form-control" name="dokumen_pasangan" accept=".pdf,.jpg,.jpeg,.png">
+                        <div class="d-flex align-items-center">
+                            <input type="file" class="form-control" name="dokumen_pasangan" accept=".pdf,.jpg,.jpeg,.png">
+                            <?php if (isset($existing_documents['Dokumen Pasangan'])): ?>
+                                <span class="ms-2 text-muted"><?php echo htmlspecialchars($existing_documents['Dokumen Pasangan']['file_name']); ?></span>
+                            <?php endif; ?>
+                        </div>
                     </div>
                     <div class="document-item mt-3">
                         <div class="document-title">
@@ -258,14 +273,19 @@ if (isset($_SESSION['wilayah_asal_id'])) {
                                 <div class="mt-2">
                                     <small class="text-muted">Current file: <?php echo htmlspecialchars($existing_documents['Sijil Perkahwinan']['file_name']); ?></small>
                                     <div class="file-actions">
-                                        <a href="/reAllTras/<?php echo str_replace('../../../', '', htmlspecialchars($existing_documents['Sijil Perkahwinan']['file_path'])); ?>" target="_blank" class="view-file-btn">
+                                        <a href="<?= getUploadPath(str_replace('../../../uploads/', '', htmlspecialchars($existing_documents['Sijil Perkahwinan']['file_path']))) ?>" target="_blank" class="view-file-btn">
                                             <i class="fa-solid fa-eye"></i>View File
                                         </a>
                                     </div>
                                 </div>
                             <?php endif; ?>
                         </div>
-                        <input type="file" class="form-control" name="sijil_perkahwinan" accept=".pdf,.jpg,.jpeg,.png">
+                        <div class="d-flex align-items-center">
+                            <input type="file" class="form-control" name="sijil_perkahwinan" accept=".pdf,.jpg,.jpeg,.png">
+                            <?php if (isset($existing_documents['Sijil Perkahwinan'])): ?>
+                                <span class="ms-2 text-muted"><?php echo htmlspecialchars($existing_documents['Sijil Perkahwinan']['file_name']); ?></span>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -294,14 +314,15 @@ if (isset($_SESSION['wilayah_asal_id'])) {
                                         <div class="mt-2">
                                             <small class="text-muted">Current file: ' . htmlspecialchars($doc['file_name']) . '</small>
                                             <div class="file-actions">
-                                                <a href="/reAllTras/' . str_replace('../../../', '', htmlspecialchars($doc['file_path'])) . '" target="_blank" class="view-file-btn">
+                                                <a href="' . getUploadPath(str_replace('../../../uploads/', '', htmlspecialchars($doc['file_path']))) . '" target="_blank" class="view-file-btn">
                                                     <i class="fa-solid fa-eye"></i>View File
                                                 </a>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="d-flex">
+                                    <div class="d-flex align-items-center">
                                         <input type="file" class="form-control" name="dokumen_pengikut[]" accept=".pdf,.jpg,.jpeg,.png">
+                                        <span class="ms-2 text-muted">' . htmlspecialchars($doc['file_name']) . '</span>
                                         <button type="button" class="btn btn-danger ms-2" onclick="this.parentElement.parentElement.remove()">
                                             <i class="fas fa-times"></i>
                                         </button>
@@ -345,14 +366,15 @@ if (isset($_SESSION['wilayah_asal_id'])) {
                                         <div class="mt-2">
                                             <small class="text-muted">Current file: ' . htmlspecialchars($doc['file_name']) . '</small>
                                             <div class="file-actions">
-                                                <a href="/reAllTras/' . str_replace('../../../', '', htmlspecialchars($doc['file_path'])) . '" target="_blank" class="view-file-btn">
+                                                <a href="' . getUploadPath(str_replace('../../../uploads/', '', htmlspecialchars($doc['file_path']))) . '" target="_blank" class="view-file-btn">
                                                     <i class="fa-solid fa-eye"></i>View File
                                                 </a>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="d-flex">
+                                    <div class="d-flex align-items-center">
                                         <input type="file" class="form-control" name="dokumen_sokongan[]" accept=".pdf,.jpg,.jpeg,.png">
+                                        <span class="ms-2 text-muted">' . htmlspecialchars($doc['file_name']) . '</span>
                                         <button type="button" class="btn btn-danger ms-2" onclick="this.parentElement.parentElement.remove()">
                                             <i class="fas fa-times"></i>
                                         </button>
@@ -469,7 +491,7 @@ if (isset($_SESSION['wilayah_asal_id'])) {
 
     // Function to view uploaded files
     function viewFile(filePath) {
-        const url = 'http://localhost/reAllTras/' + filePath;
+        const url = '<?= getBasePath() ?>/' + filePath;
         window.open(url, '_blank');
     }
 </script>

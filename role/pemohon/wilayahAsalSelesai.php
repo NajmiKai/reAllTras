@@ -241,10 +241,10 @@ while ($row = $doc_result->fetch_assoc()) {
                             </div>
                         </div>
                         <div class="actions">
-                            <a href="/reAllTras/<?= str_replace('../../../', '', htmlspecialchars($doc['file_path'])) ?>" target="_blank" class="btn btn-sm btn-primary me-2">
+                            <a href="<?= getUploadPath(str_replace('../../../uploads/', '', htmlspecialchars($doc['file_path']))) ?>" target="_blank" class="btn btn-sm btn-primary me-2">
                                 <i class="fas fa-eye"></i> Lihat
                             </a>
-                            <a href="/reAllTras/<?= str_replace('../../../', '', htmlspecialchars($doc['file_path'])) ?>" download class="btn btn-sm btn-success">
+                            <a href="<?= getUploadPath(str_replace('../../../uploads/', '', htmlspecialchars($doc['file_path']))) ?>" download class="btn btn-sm btn-success">
                                 <i class="fas fa-download"></i> Muat Turun
                             </a>
                         </div>

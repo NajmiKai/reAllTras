@@ -40,7 +40,7 @@ if (!$wilayah_asal_data) {
 }
 
 // Check if application is completed and in Kewangan
-if ($wilayah_asal_data['status_permohonan'] === 'Selesai' && $wilayah_asal_data['kedudukan_permohonan'] === 'Kewangan') {
+if (($wilayah_asal_data['status_permohonan'] === 'Selesai' && $wilayah_asal_data['kedudukan_permohonan'] === 'Kewangan') && !($wilayah_asal_data['wilayah_asal_matang'] == 0)) {
     header("Location: wilayahAsalSelesai.php");
     exit();
 }
@@ -70,7 +70,7 @@ while ($row = $doc_result->fetch_assoc()) {
 // Get the current status and position
 $status_permohonan = $wilayah_asal_data['status_permohonan'];
 $kedudukan_permohonan = $wilayah_asal_data['kedudukan_permohonan'];
-$ulasan = $wilayah_asal_data['ulasan_pbr_csm1'];
+$ulasan = $_SESSION['wilayah_asal_ulasan'];
 
 
 ?>
@@ -472,7 +472,7 @@ $ulasan = $wilayah_asal_data['ulasan_pbr_csm1'];
                             </div>
                         </div>
                         <div class="actions">
-                            <a href="/reAllTras/<?= str_replace('../../../', '', htmlspecialchars($doc['file_path'])) ?>" target="_blank" class="btn btn-sm btn-primary">
+                            <a href="<?= getUploadPath(str_replace('../../../uploads/', '', htmlspecialchars($doc['file_path']))) ?>" target="_blank" class="btn btn-sm btn-primary">
                                 <i class="fas fa-eye"></i>
                             </a>
                         </div>
