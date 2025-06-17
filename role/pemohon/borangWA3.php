@@ -1,6 +1,7 @@
 <?php
 session_start();
 include '../../connection.php';
+include '../../includes/config.php';
 
 // Check if required session data exists
 if (!isset($_SESSION['borangWA_data']) || !isset($_SESSION['parent_info'])) {
