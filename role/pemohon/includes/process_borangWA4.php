@@ -91,6 +91,13 @@ if ($is_edit_mode) {
         $update_stage_stmt->execute();
         $update_stage_stmt->close();
         
+        // Update wilayah_asal_form_fill to true
+        $update_form_fill_sql = "UPDATE wilayah_asal SET wilayah_asal_form_fill = true WHERE id = ?";
+        $update_form_fill_stmt = $conn->prepare($update_form_fill_sql);
+        $update_form_fill_stmt->bind_param("i", $wilayah_asal_id);
+        $update_form_fill_stmt->execute();
+        $update_form_fill_stmt->close();
+
         $_SESSION['success'] = "No changes made. Proceeding to next step.";
         header("Location: ../borangWA5.php?id=" . $wilayah_asal_id);
         exit();
@@ -254,6 +261,13 @@ if ($success) {
     $update_stage_stmt->bind_param("i", $current_id);
     $update_stage_stmt->execute();
     $update_stage_stmt->close();
+
+    // Update wilayah_asal_form_fill to true
+    $update_form_fill_sql = "UPDATE wilayah_asal SET wilayah_asal_form_fill = true WHERE id = ?";
+    $update_form_fill_stmt = $conn->prepare($update_form_fill_sql);
+    $update_form_fill_stmt->bind_param("i", $current_id);
+    $update_form_fill_stmt->execute();
+    $update_form_fill_stmt->close();
 
     $_SESSION['success'] = "Semua dokumen berjaya dimuat naik.";
     header("Location: ../borangWA5.php?id=" . $wilayah_asal_id);
