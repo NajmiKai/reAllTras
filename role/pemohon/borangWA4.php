@@ -132,6 +132,50 @@ if (isset($_SESSION['wilayah_asal_id'])) {
             font-size: 1rem;
         }
     </style>
+    <script>
+        function addPengikut() {
+            const container = document.getElementById('pengikut-container');
+            const newItem = document.createElement('div');
+            newItem.className = 'document-item';
+            newItem.innerHTML = `
+                <div class="document-title">
+                    <h6 class="mb-0">Salinan IC Pengikut / Sijil Kelahiran Pengikut</h6>
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="d-flex">
+                    <input type="file" class="form-control" name="dokumen_pengikut[]" accept=".pdf,.jpg,.jpeg,.png">
+                    <button type="button" class="btn btn-danger ms-2" onclick="this.parentElement.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            container.appendChild(newItem);
+        }
+
+        function addSokongan() {
+            const container = document.getElementById('sokongan-container');
+            const newItem = document.createElement('div');
+            newItem.className = 'document-item';
+            newItem.innerHTML = `
+                <div class="document-title">
+                    <h6 class="mb-0">Dokumen Sokongan</h6>
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="d-flex">
+                    <input type="file" class="form-control" name="dokumen_sokongan[]" accept=".pdf,.jpg,.jpeg,.png">
+                    <button type="button" class="btn btn-danger ms-2" onclick="this.parentElement.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            container.appendChild(newItem);
+        }
+
+        function viewFile(filePath) {
+            const url = '<?= getBasePath() ?>/' + filePath;
+            window.open(url, '_blank');
+        }
+    </script>
 </head>
 <body>
 
@@ -341,7 +385,7 @@ if (isset($_SESSION['wilayah_asal_id'])) {
                         }
                         ?>
                     </div>
-                    <button type="button" class="btn btn-outline-primary btn-sm add-more-btn" onclick="window.addPengikut()">
+                    <button type="button" class="btn btn-outline-primary btn-sm add-more-btn" onclick="addPengikut()">
                         <i class="fas fa-plus me-2"></i>Tambah Pengikut
                     </button>
                 </div>
@@ -448,54 +492,6 @@ if (isset($_SESSION['wilayah_asal_id'])) {
             }
         });
     });
-</script>
-
-<script>
-    // Add more pengikut
-    window.addPengikut = function() {
-        const container = document.getElementById('pengikut-container');
-        const newItem = document.createElement('div');
-        newItem.className = 'document-item';
-        newItem.innerHTML = `
-            <div class="document-title">
-                <h6 class="mb-0">Salinan IC Pengikut / Sijil Kelahiran Pengikut</h6>
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <div class="d-flex">
-                <input type="file" class="form-control" name="dokumen_pengikut[]" accept=".pdf,.jpg,.jpeg,.png">
-                <button type="button" class="btn btn-danger ms-2" onclick="this.parentElement.parentElement.remove()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        `;
-        container.appendChild(newItem);
-    }
-
-    // Add more sokongan
-    window.addSokongan = function() {
-        const container = document.getElementById('sokongan-container');
-        const newItem = document.createElement('div');
-        newItem.className = 'document-item';
-        newItem.innerHTML = `
-            <div class="document-title">
-                <h6 class="mb-0">Dokumen Sokongan</h6>
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <div class="d-flex">
-                <input type="file" class="form-control" name="dokumen_sokongan[]" accept=".pdf,.jpg,.jpeg,.png">
-                <button type="button" class="btn btn-danger ms-2" onclick="this.parentElement.parentElement.remove()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        `;
-        container.appendChild(newItem);
-    }
-
-    // Function to view uploaded files
-    window.viewFile = function(filePath) {
-        const url = '<?= getBasePath() ?>/' + filePath;
-        window.open(url, '_blank');
-    }
 </script>
 </body>
 </html> 
