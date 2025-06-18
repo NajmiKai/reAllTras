@@ -1,6 +1,7 @@
 <?php
 session_start();
 include '../../connection.php';
+include '../../includes/config.php';
 
 // Get wilayah_asal_id from session
 $wilayah_asal_id = $_SESSION['wilayah_asal_id'] ?? null;

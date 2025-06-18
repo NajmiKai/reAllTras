@@ -1,5 +1,6 @@
 <?php
 include '../../connection.php';
+include '../../includes/config.php';
 
 
 // Add after session_start() and include

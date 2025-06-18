@@ -1,5 +1,6 @@
 <?php
 include '../../connection.php';
+include '../../includes/config.php';
 
 $wilayah_asal_id = $_SESSION['wilayah_asal_id'] ?? null;
 
