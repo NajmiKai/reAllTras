@@ -1,6 +1,7 @@
 <?php
 session_start();
 include '../../connection.php';
+include '../../includes/config.php';
 
 
 // Fetch user data from database
