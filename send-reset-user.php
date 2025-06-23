@@ -13,17 +13,14 @@ date_default_timezone_set('Asia/Kuala_Lumpur');
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $identifier = $_POST['identifier'];
     
-    // Check if identifier is email or KP
-    $isEmail = filter_var($identifier, FILTER_VALIDATE_EMAIL);
-    
-    if ($isEmail) {
-        // Search by email
-        $stmt = $conn->prepare("SELECT * FROM user WHERE email = ?");
-    } else {
-        // Search by KP
-        $stmt = $conn->prepare("SELECT * FROM user WHERE kp = ?");
+    // Only allow email
+    if (!filter_var($identifier, FILTER_VALIDATE_EMAIL)) {
+        echo "<script>alert('Sila masukkan emel yang sah.'); window.location.href = 'forgotpasswordUser.php';</script>";
+        exit;
     }
     
+    // Search by email only
+    $stmt = $conn->prepare("SELECT * FROM user WHERE email = ?");
     $stmt->bind_param("s", $identifier);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -77,7 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo "<script>alert('Gagal menghantar emel: {$mail->ErrorInfo}'); window.location.href = 'forgotpasswordUser.php';</script>";
         }
     } else {
-        echo "<script>alert('Emel atau Kad Pengenalan tidak dijumpai.'); window.location.href = 'forgotpasswordUser.php';</script>";
+        echo "<script>alert('Emel tidak dijumpai.'); window.location.href = 'forgotpasswordUser.php';</script>";
     }
 }
 ?>
