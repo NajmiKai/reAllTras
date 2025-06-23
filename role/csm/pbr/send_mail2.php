@@ -15,8 +15,9 @@ include '../../../connection.php';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $wilayah_asal_id = $_POST['wilayah_asal_id'];
-        // $keputusan = $_POST['keputusan'];
         $admin_id = $_SESSION['admin_id'];
+        $admin_name = $_SESSION['admin_name'];
+        $admin_role = $_SESSION['admin_role'];
         $status = 'Menunggu pengesahan pengesah2 CSM';
 
 
@@ -27,6 +28,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt_wilayah->bind_param("sssi", $status, $admin_id, $tarikh_keputusan, $wilayah_asal_id);
         $stmt_wilayah->execute();
         $stmt_wilayah->close();
+
+        //insert into document_logs
+        $tindakan = "Telah direkodkan di dalam buku log";
+        $catatan = "-";
+        $ulasan = $_POST['ulasan'] ?? "-";
+            
+        $log_sql = "INSERT INTO document_logs (tarikh, namaAdmin, peranan, tindakan, catatan, wilayah_asal_id) VALUES (NOW(), ?, ?, ?, ?, ?)";
+            
+        $log_stmt = $conn->prepare($log_sql);
+        $log_stmt->bind_param("ssssi", $admin_name, $admin_role, $tindakan, $ulasan, $wilayah_asal_id);
+            
+        if (!$log_stmt->execute()) {
+            error_log("Gagal masukkan ke document_logs: " . $log_stmt->error);
+        }
+        $log_stmt->close();
+            
+    
 
 
         $sql = "SELECT * FROM admin WHERE role = 'Pengesah CSM'";

@@ -18,6 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $wilayah_asal_id = $_POST['wilayah_asal_id'];
         $status_permohonan = $_POST['status_permohonan'];
         $admin_id = $_SESSION['admin_id'];
+        $admin_name = $_SESSION['admin_name'];
+        $admin_role = $_SESSION['admin_role'];
 
         // Get current status before update
         $stmt_current = $conn->prepare("SELECT status FROM wilayah_asal WHERE id = ?");
@@ -27,14 +29,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $current_data = $result_current->fetch_assoc();
         $old_status = $current_data['status'];
 
-        if ($status_permohonan === 'diterima') {
+        if ($status_permohonan === 'disahkan') {
             $status = 'Menunggu Pengesahan Pelulus HQ';
         } else {
             $status = 'Kembali ke penyemak HQ';
         }
 
         $ulasan = null;
-        if ($status_permohonan === 'tidak diterima') {
+        if ($status_permohonan === 'tidak disahkan') {
             $ulasan = $_POST['ulasan'] ?? null;
         }
         
@@ -48,6 +50,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         logApplicationStatusChange($conn, 'admin', $admin_id, $wilayah_asal_id, $old_status, $status, "HQ Pengesah updated application status");
         
         $stmt_wilayah->close();
+
+         //insert into document_logs
+         $tindakan = ($status_permohonan === 'tidak disahkan') ? "Dikuiri" : "Disahkan";
+         $ulasan = $_POST['ulasan'] ?? "-";
+ 
+         $log_sql = "INSERT INTO document_logs (tarikh, namaAdmin, peranan, tindakan, catatan, wilayah_asal_id) VALUES (NOW(), ?, ?, ?, ?, ?)";
+               
+         $log_stmt = $conn->prepare($log_sql);
+         $log_stmt->bind_param("ssssi", $admin_name, $admin_role, $tindakan, $ulasan, $wilayah_asal_id);
+               
+         if (!$log_stmt->execute()) {
+           error_log("Gagal masukkan ke document_logs: " . $log_stmt->error);
+         }
+         $log_stmt->close();
 
         $sql = "SELECT * FROM admin WHERE role = 'Pelulus HQ'";
         $result = $conn->query($sql);

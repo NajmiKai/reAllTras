@@ -18,6 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $markah = $_POST['markah'];
         $hukuman_tatatertib = $_POST['hukuman_tatatertib'];
         $admin_id = $_SESSION['admin_id'];
+        $admin_name = $_SESSION['admin_name'];
+        $admin_role = $_SESSION['admin_role'];
         $status = 'Menunggu pengesahan pengesah CSM';
         
 
@@ -27,6 +29,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt_wilayah->bind_param("sssisi", $status, $markah, $hukuman_tatatertib, $admin_id, $tarikh_keputusan, $wilayah_asal_id);
         $stmt_wilayah->execute();
         $stmt_wilayah->close();
+
+        //insert into document_logs
+        $tindakan = "Telah diisi markah prestasi";
+        $ulasan = "-";
+            
+        $log_sql = "INSERT INTO document_logs (tarikh, namaAdmin, peranan, tindakan, catatan, wilayah_asal_id) VALUES (NOW(), ?, ?, ?, ?, ?)";
+            
+        $log_stmt = $conn->prepare($log_sql);
+        $log_stmt->bind_param("ssssi", $admin_name, $admin_role, $tindakan, $ulasan, $wilayah_asal_id);
+            
+        if (!$log_stmt->execute()) {
+            error_log("Gagal masukkan ke document_logs: " . $log_stmt->error);
+        }
+        $log_stmt->close();
+            
+    
 
 
         $sql = "SELECT * FROM admin WHERE role = 'Pengesah CSM'";

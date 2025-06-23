@@ -16,6 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $wilayah_asal_id = $_POST['wilayah_asal_id'];
         $admin_id = $_SESSION['admin_id'];
+        $admin_name = $_SESSION['admin_name'];
+        $admin_role = $_SESSION['admin_role'];
         $status = 'Permohonan diluluskan';
 
 
@@ -87,6 +89,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt_wilayah->bind_param("sssssi", $status, $status_permohonan, $kedudukan_permohonan, $admin_id, $tarikh_keputusan, $wilayah_asal_id);
         $stmt_wilayah->execute();
         $stmt_wilayah->close();
+
+          
+          //insert into document_logs
+          $tindakan = "Telah muat naik e-tiket";
+          $ulasan = "-";
+  
+          $log_sql = "INSERT INTO document_logs (tarikh, namaAdmin, peranan, tindakan, catatan, wilayah_asal_id) VALUES (NOW(), ?, ?, ?, ?, ?)";
+                
+          $log_stmt = $conn->prepare($log_sql);
+          $log_stmt->bind_param("ssssi", $admin_name, $admin_role, $tindakan, $ulasan, $wilayah_asal_id);
+                
+          if (!$log_stmt->execute()) {
+            error_log("Gagal masukkan ke document_logs: " . $log_stmt->error);
+          }
+          $log_stmt->close();
+
 
             // Fetch user details
             $stmt_user = $conn->prepare("

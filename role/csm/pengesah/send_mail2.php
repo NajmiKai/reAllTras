@@ -18,6 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $wilayah_asal_id = $_POST['wilayah_asal_id'];
         $status_permohonan = $_POST['status_permohonan'];
         $admin_id = $_SESSION['admin_id'];
+        $admin_name = $_SESSION['admin_name'];
+        $admin_role = $_SESSION['admin_role'];
     
         // Get current status before update
         $stmt_current = $conn->prepare("SELECT status FROM wilayah_asal WHERE id = ?");
@@ -49,6 +51,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         logApplicationStatusChange($conn, 'admin', $admin_id, $wilayah_asal_id, $old_status, $status, "CSM Pengesah2 updated application status");
         
         $stmt_wilayah->close();
+
+        //insert into document_logs
+        $tindakan = ($status_permohonan === 'tidak disokong') ? "Dikuiri" : "Sah/Perakuan I";
+        $ulasan = $_POST['ulasan'] ?? "-";
+
+        $log_sql = "INSERT INTO document_logs (tarikh, namaAdmin, peranan, tindakan, catatan, wilayah_asal_id) VALUES (NOW(), ?, ?, ?, ?, ?)";
+              
+        $log_stmt = $conn->prepare($log_sql);
+        $log_stmt->bind_param("ssssi", $admin_name, $admin_role, $tindakan, $ulasan, $wilayah_asal_id);
+              
+        if (!$log_stmt->execute()) {
+          error_log("Gagal masukkan ke document_logs: " . $log_stmt->error);
+        }
+        $log_stmt->close();
+              
 
         $sql = "SELECT * FROM admin WHERE role = 'Penyemak Baki Kewangan'";
         $result = $conn->query($sql);
