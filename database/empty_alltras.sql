@@ -184,11 +184,24 @@ CREATE TABLE `system_logs` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `system_logs`
---
 
--- --------------------------------------------------------
+--
+-- Table structure for table `document_logs`
+--
+CREATE TABLE `document_logs` (
+  `id` int(11) NOT NULL,
+  `tarikh` date NOT NULL,
+  `namaAdmin` varchar(255) NOT NULL,
+  `peranan` varchar(255) NOT NULL,
+  `tindakan` varchar(255) NOT NULL,
+  `catatan` varchar(255) NOT NULL,
+  `wilayah_asal_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `document_logs`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `wilayah_asal_id` (`wilayah_asal_id`);
+
 
 --
 -- Table structure for table `user`
