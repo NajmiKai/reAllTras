@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             // Fetch user details from wilayah_asal and user tables
             $stmt_user = $conn->prepare("
-            SELECT u.nama_first, u.nama_last, u.kp, u.bahagian
+            SELECT u.nama_first, u.nama_last, u.kp, u.bahagian, u.email, wa.email_penyelia
             FROM wilayah_asal wa
             JOIN user u ON wa.user_kp = u.kp
             WHERE wa.id = ?
@@ -113,6 +113,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $nama = $userData['nama_first'] . ' ' . $userData['nama_last'];
             $kp = $userData['kp'];
             $bahagian = $userData['bahagian'];
+            $user_email = $userData['email'];
+            $penyelia_email = $userData['email_penyelia'];
             } else {
             $nama = $kp = $bahagian = "Tidak Dikenal Pasti";
             }
@@ -135,6 +137,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
                     $mail->setFrom($mail->Username, 'ALLTRAS');
                     $mail->addAddress($receiver_email);
+                    $mail->addCC($penyelia_email); // CC recipient
+                    $mail->addCC($user_email); // CC recipient
         
                     $mail->isHTML(true);
                     $mail->Subject = 'Permohonan Tambang Ziarah Wilayah (TZW) : Permohonan Diluluskan';

@@ -423,15 +423,14 @@ include '../../../connection.php';
                     <label for="status_select" class="form-label">Status Permohonan</label>
                     <select class="form-select" name="status_permohonan" id="status_select" required onchange="toggleUlasan()" <?php if ($isApproved) echo 'disabled'; ?>>
                         <option value="">-- Sila Pilih --</option>
-                        <option value="Diluluskan">Diterima</option>
-                        <option value="Tidak diluluskan">Tidak diterima</option>
+                        <option value="Diterima">Diterima</option>
+                        <option value="Tidak diterima">Tidak diterima</option>
                     </select>
                 </div>
                 <div class="col-md-12 mb-3" id="ulasanDiv" style="display: none;">
                     <label for="ulasanText" class="form-label">Ulasan (jika dikuiri)</label>
                     <textarea class="form-control" name="ulasan" id="ulasanText" rows="4" placeholder="Nyatakan sebab dikuiri..." <?php if ($isApproved) echo 'disabled'; ?>></textarea>
                 </div>
-
             </div>
         </div>
 
@@ -471,7 +470,9 @@ document.querySelector('.toggle-sidebar').addEventListener('click', function (e)
     function toggleSubMenu() {
         const submenu = document.getElementById("wilayahSubmenu");
         submenu.style.display = submenu.style.display === "block" ? "none" : "block";
-    }    function toggleUlasan() {
+    }    
+    
+    function toggleUlasan() {
         const select = document.getElementById('status_select');
         const ulasanDiv = document.getElementById('ulasanDiv');
         const ulasanText = document.getElementById('ulasanText');
@@ -484,6 +485,7 @@ document.querySelector('.toggle-sidebar').addEventListener('click', function (e)
             ulasanText.removeAttribute('required');
         }
     }
+
 
     function handleFormSubmit() {
         const form = document.getElementById('permohonanForm');
