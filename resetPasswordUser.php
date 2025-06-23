@@ -22,8 +22,9 @@ if (isset($_GET['token'])) {
         $newPassword = $_POST['password'];
         $confirmPassword = $_POST['confirm_password'];
 
+        $errorMsg = '';
         if ($newPassword !== $confirmPassword) {
-            echo "<p style='color:red'>Kata laluan tidak sepadan.</p>";
+            $errorMsg = "Kata laluan tidak sepadan.";
         } else {
             $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
 
@@ -36,7 +37,6 @@ if (isset($_GET['token'])) {
             } else {
                 echo "<script>alert('Kata laluan tidak dapat direset. Sila cuba lagi.'); window.location.href = 'loginUser.php';</script>";
             }
-            
             exit;
         }
     }
@@ -129,9 +129,15 @@ if (isset($_GET['token'])) {
 <body style="background-color: #f0f2f5;">
     <div class="login-wrapper">
     <div class="login-title">
-            <img src="assets/ALLTRAS_logo.jpg" alt="ALLTRAS" height="60"><br>
+            <img src="assets/ALLTRAS_logo.jpg" alt="ALLTRAS" height="120"><br>
             ALL REGION TRAVELLING SYSTEM
         </div>
+
+       <?php if (!empty($errorMsg)): ?>
+           <div class="alert alert-danger text-center" role="alert">
+               <?= htmlspecialchars($errorMsg) ?>
+           </div>
+       <?php endif; ?>
 
        <form method="POST" >
             <div class="mb-3">
@@ -150,6 +156,11 @@ if (isset($_GET['token'])) {
             <label for="confirm_password" class="form-label">Pengesahan Kata Laluan Baru</label>
             <div class="input-group">
                 <input type="password" class="form-control" name="confirm_password" id="confirm_password" placeholder="Sahkan Kata Laluan Baru" required>
+                <span class="input-group-text p-0" style="height: 40px;">
+                    <span class="d-flex align-items-center justify-content-center px-3" style="height: 100%; width: 100%; cursor: pointer;" onclick="toggleConfirmPassword()">
+                        <i class="fa-solid fa-eye" id="toggleConfirmIcon"></i>
+                    </span>
+                </span>
             </div>
         </div>
 
@@ -171,6 +182,21 @@ if (isset($_GET['token'])) {
                 passwordInput.type = 'password';
                 toggleIcon.classList.remove('fa-eye-slash');
                 toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        function toggleConfirmPassword() {
+            const confirmPasswordInput = document.getElementById('confirm_password');
+            const toggleConfirmIcon = document.getElementById('toggleConfirmIcon');
+            
+            if (confirmPasswordInput.type === 'password') {
+                confirmPasswordInput.type = 'text';
+                toggleConfirmIcon.classList.remove('fa-eye');
+                toggleConfirmIcon.classList.add('fa-eye-slash');
+            } else {
+                confirmPasswordInput.type = 'password';
+                toggleConfirmIcon.classList.remove('fa-eye-slash');
+                toggleConfirmIcon.classList.add('fa-eye');
             }
         }
     </script>

@@ -4,18 +4,17 @@ include 'connection.php';
 include 'includes/system_logger.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $identifier = $_POST['identifier']; // This will be either KP or email
+    $identifier = $_POST['identifier']; // This will be email only
     $password = $_POST['password'];
 
-    // Check if the identifier is an email or KP
-    $isEmail = filter_var($identifier, FILTER_VALIDATE_EMAIL);
-    
-    if ($isEmail) {
-        $stmt = $conn->prepare("SELECT * FROM user WHERE email = ?");
-    } else {
-        $stmt = $conn->prepare("SELECT * FROM user WHERE kp = ?");
+    // Only allow email
+    if (!filter_var($identifier, FILTER_VALIDATE_EMAIL)) {
+        $_SESSION['error'] = "Sila masukkan emel yang sah";
+        header("Location: loginUser.php");
+        exit();
     }
-    
+
+    $stmt = $conn->prepare("SELECT * FROM user WHERE email = ?");
     $stmt->bind_param("s", $identifier);
     $stmt->execute();
     $stmt->store_result();
@@ -49,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         // Log failed login attempt
         logAuthEvent($conn, 'login', 'user', $identifier, false);
-        $_SESSION['error'] = "Kad Pengenalan atau Email tidak dijumpai";
+        $_SESSION['error'] = "Emel tidak dijumpai";
         header("Location: loginUser.php");
         exit();
     }
@@ -171,20 +170,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ALL REGION TRAVELLING SYSTEM
         </div>
 
-        <?php if(isset($_SESSION['error'])): ?>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <?php 
-                echo $_SESSION['error'];
-                unset($_SESSION['error']);
-            ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+        <?php if (!empty($_SESSION['error'])): ?>
+            <div class="alert alert-danger text-center" role="alert">
+                <?= htmlspecialchars($_SESSION['error']) ?>
+            </div>
+            <?php unset($_SESSION['error']); ?>
         <?php endif; ?>
 
         <form id="loginForm" method="POST" action="">
             <div class="mb-3">
-                <label class="form-label">Kad Pengenalan atau Email</label>
-                <input type="text" class="form-control" name="identifier" id="identifier" placeholder="Masukkan KP atau Email" required>
+                <label class="form-label">Emel</label>
+                <input type="email" class="form-control" name="identifier" id="identifier" placeholder="Masukkan Emel" required>
             </div>
 
             <div class="mb-3">
@@ -225,21 +221,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 toggleIcon.classList.add('fa-eye');
             }
         }
-
-       /* function handleLogin(event) {
-            event.preventDefault();
-            
-            const identifier = document.getElementById('identifier').value;
-            const password = document.getElementById('password').value;
-
-            // Here you would typically make an API call to your backend
-            console.log('Login attempt:', { identifier, password });
-            
-            // For now, we'll just show an alert
-            alert('Login functionality will be implemented with backend integration');
-            
-            return false;
-        }*/
     </script>
 </body>
 </html> 

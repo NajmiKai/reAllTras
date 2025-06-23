@@ -113,16 +113,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="row g-3">
             <div class="col-md-6">
                 <label class="form-label">Nama Pertama</label>
-                <input type="text" class="form-control" name="nama_first" placeholder="Nama Pertama" required>
+                <input type="text" class="form-control" name="nama_first" placeholder="cth: AHMAD ALI" required>
             </div>
             <div class="col-md-6">
                 <label class="form-label">Nama Akhir</label>
-                <input type="text" class="form-control" name="nama_last" placeholder="Nama Akhir" required>
+                <input type="text" class="form-control" name="nama_last" placeholder="cth: BIN ABU" required>
             </div>
 
             <div class="col-md-6">
                 <label class="form-label">Email</label>
-                <input type="email" class="form-control" name="email" placeholder="Email" required>
+                <input type="email" class="form-control" name="email" placeholder="cth: aAliAbu@customs.gov.my" required>
             </div>
             <div class="col-md-6">
                 <label class="form-label">No Telefon</label>
