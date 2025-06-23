@@ -1,4 +1,5 @@
 <?php
+//this is .pdf format
 session_start();
 include '../../../connection.php';
 

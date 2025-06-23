@@ -94,15 +94,27 @@ $result = $conn->query($query);
 
 <div class="main-container">
     <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
+   <div class="sidebar" id="sidebar">
         <h6><img src="../../../assets/ALLTRAS.png" alt="ALLTRAS" width="140" style="margin-left: 20px;"><br>ALL REGION TRAVELLING SYSTEM</h6><br>
-        <a href="dashboard.php"> <i class="fas fa-home me-2" class="active"></i>Laman Utama</a>
+        <a href="dashboard.php"> <i class="fas fa-home me-2"></i>Laman Utama</a>
         <h6 class="text mt-4">BORANG PERMOHONAN</h6>
-        <a href="wilayahAsal.php"><i class="fas fa-tasks me-2"></i>Wilayah Asal</a>
+
+        <a href="javascript:void(0);" onclick="toggleSubMenu()" class="<?= $submenuOpen ? 'active' : '' ?>">
+            <i class="fas fa-map-marker-alt me-2"></i>Wilayah Asal
+            <i class="fas fa-chevron-down" style="float: right; margin-right: 10px;"></i>
+        </a>
+        
+        <!-- Submenu -->
+        <div id="wilayahSubmenu" class="submenu" style="display: <?= $submenuOpen ? 'block' : 'none' ?>;">
+            <a href="permohonanPengguna.php">Permohonan Pengguna</a>
+            <a href="permohonanIbuPejabat.php">Permohonan Ibu Pejabat</a>
+        </div>
+
         <!-- <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a> -->
         <a href="profile.php"><i class="fas fa-user me-2"></i>Paparan Profil</a>
         <a href="../../../logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
     </div>
+
 
     <!-- Main Content -->
     <div class="col p-4">
@@ -154,3 +166,15 @@ $result = $conn->query($query);
     </div>
 </body>
 </html>
+
+<script>
+     document.querySelector('.toggle-sidebar').addEventListener('click', function (e) {
+        e.preventDefault();
+        document.getElementById('sidebar').classList.toggle('hidden');
+    });
+
+    function toggleSubMenu() {
+        const submenu = document.getElementById("wilayahSubmenu");
+        submenu.style.display = submenu.style.display === "block" ? "none" : "block";
+    }
+</script>

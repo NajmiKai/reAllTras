@@ -85,13 +85,10 @@ include '../../../connection.php';
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../../assets/css/adminStyle.css">
     <link rel="stylesheet" href="../../../assets/css/multi-step.css">
-
+     <!-- Bootstrap 5 JS (includes collapse) -->
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
 </head>
 <body>
@@ -425,8 +422,11 @@ include '../../../connection.php';
            
             <!-- Pengesahan -->
             <div class="card shadow-sm mb-4">
-                <div class="card-header" style="background-color: #d59e3e; color: white;">
+                <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #d59e3e; color: white;">
                     <h5 class="mb-0"><strong>Pengesahan</strong></h5>
+                    <a class="text-black text-decoration-underline" data-bs-toggle="collapse" href="#logDokumenTable" role="button" aria-expanded="false" aria-controls="logDokumenTable" style="font-size: 0.8rem;">
+                        Rekod Log Dokumen
+                    </a>
                 </div>
             <div class="card-body row">
                 <div class="col-md-6 mb-3">
@@ -454,6 +454,55 @@ include '../../../connection.php';
                 </div>
             </div>
         </div>
+
+         <!-- Collapsible Log Table -->
+         <div class="collapse mt-4" id="logDokumenTable">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th class="fw-bold">Tarikh</th>
+                                            <th class="fw-bold">Nama Admin</th>
+                                            <th class="fw-bold">Peranan</th>
+                                            <th class="fw-bold">Tindakan</th>
+                                            <th class="fw-bold">Catatan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        $log_sql = "SELECT * FROM document_logs WHERE wilayah_asal_id = ? ORDER BY tarikh DESC";
+                                        $log_stmt = $conn->prepare($log_sql);
+                                        $log_stmt->bind_param("i", $wilayah_asal_id);
+                                        $log_stmt->execute();
+                                        $log_result = $log_stmt->get_result();
+
+                                        if ($log_result->num_rows > 0):
+                                            while ($log = $log_result->fetch_assoc()):
+                                        ?>
+                                            <tr>
+                                                <td><?= htmlspecialchars(date('d/m/Y', strtotime($log['tarikh']))) ?></td>
+                                                <td><?= htmlspecialchars($log['namaAdmin']) ?></td>
+                                                <td><?= htmlspecialchars($log['peranan']) ?></td>
+                                                <td><?= htmlspecialchars($log['tindakan']) ?></td>
+                                                <td><?= nl2br(htmlspecialchars($log['catatan'])) ?></td>
+                                            </tr>
+                                        <?php
+                                            endwhile;
+                                        else:
+                                        ?>
+                                            <tr>
+                                                <td colspan="5" class="text-center">Tiada rekod log untuk wilayah ini.</td>
+                                            </tr>
+                                        <?php endif;
+                                        $log_stmt->close();
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                    </div>
+                </div>
+            </div>
+
 
             </div>
             <input type="hidden" name="wilayah_asal_id" value="<?= $wilayah_asal_id ?>">

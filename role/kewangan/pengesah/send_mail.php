@@ -28,13 +28,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $result_current = $stmt_current->get_result();
         $current_data = $result_current->fetch_assoc();
         $old_status = $current_data['status'];
-        $ulasan = null;
         $tarikh_keputusan = date('Y-m-d H:i:s');
 
         if ($status_permohonan === 'mencukupi') {
             $status = 'Menunggu pengesahan penyedia kemudahan kewangan';
-            $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, ulasan_pengesah_kewangan = ?, pengesah_kewangan_id = ?, tarikh_keputusan_pengesah_kewangan = ? WHERE id = ?");
-            $stmt_wilayah->bind_param("ssssi", $status, $ulasan, $admin_id, $tarikh_keputusan, $wilayah_asal_id);
+            $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, pengesah_kewangan_id = ?, tarikh_keputusan_pengesah_kewangan = ? WHERE id = ?");
+            $stmt_wilayah->bind_param("ssssi", $status, $admin_id, $tarikh_keputusan, $wilayah_asal_id);
             $stmt_wilayah->execute();
         } else {
             $status = 'Kembali ke PBR CSM';
@@ -52,9 +51,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         $stmt_wilayah->close();
 
-        
+          $original_status_permohonan = $_POST['status_permohonan'] ?? '';
           //insert into document_logs
-          $tindakan = ($status_permohonan === 'tidak mencukupi') ? "Dikuiri" : "Disahkan";
+          $tindakan = ($original_status_permohonan === 'tidak mencukupi') ? "Dikuiri" : "Disahkan";
           $ulasan = $_POST['ulasan'] ?? "-";
   
           $log_sql = "INSERT INTO document_logs (tarikh, namaAdmin, peranan, tindakan, catatan, wilayah_asal_id) VALUES (NOW(), ?, ?, ?, ?, ?)";

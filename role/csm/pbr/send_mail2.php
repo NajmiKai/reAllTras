@@ -20,8 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $admin_role = $_SESSION['admin_role'];
         $status = 'Menunggu pengesahan pengesah2 CSM';
 
-
-
         $tarikh_keputusan = date('Y-m-d H:i:s');
         // 2. Update wilayah_asal
         $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, pbr_csm2_id = ?, tarikh_keputusan_csm2 = ? WHERE id = ?");

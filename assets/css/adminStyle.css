@@ -11,6 +11,15 @@ nav.navbar {
     z-index: 1030; /* above sidebar */
 }
 
+.alert {
+    max-width: 600px;
+    margin-left: 250px;
+    margin-right: auto;
+    margin-top: 24px;
+    box-sizing: border-box;
+}
+
+
 .main-container {
     display: flex;
     min-height: 100vh;
@@ -255,3 +264,13 @@ input[type="file"] {
   }
   
 
+/* Custom alert alignment for main content */
+.main-alert {
+    max-width: 600px;
+    margin-left: 0;
+    margin-right: auto;
+    margin-top: 24px;
+    box-sizing: border-box;
+}
+
+  

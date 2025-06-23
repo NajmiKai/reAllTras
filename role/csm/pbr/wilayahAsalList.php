@@ -99,7 +99,7 @@ $result = $conn->query($query);
         <a href="dashboard.php" class="active"> <i class="fas fa-home me-2"></i>Laman Utama</a>
         <h6 class="text mt-4">BORANG PERMOHONAN</h6>
 
-        <a href="javascript:void(0);" onclick="toggleSubMenu1()" class="<?= $submenuOpen ? 'active' : '' ?>">
+        <a href="javascript:void(0);" onclick="toggleSubMenu()" class="<?= $submenuOpen ? 'active' : '' ?>">
             <i class="fas fa-map-marker-alt me-2"></i>Wilayah Asal
             <i class="fas fa-chevron-down" style="float: right; margin-right: 10px;"></i>
         </a>
@@ -170,3 +170,16 @@ $result = $conn->query($query);
     </div>
 </body>
 </html>
+
+<script>
+     document.querySelector('.toggle-sidebar').addEventListener('click', function (e) {
+        e.preventDefault();
+        document.getElementById('sidebar').classList.toggle('hidden');
+    });
+
+    function toggleSubMenu() {
+        const submenu = document.getElementById("wilayahSubmenu");
+        submenu.style.display = submenu.style.display === "block" ? "none" : "block";
+    }
+
+</script>

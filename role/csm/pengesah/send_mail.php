@@ -56,8 +56,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         $stmt_wilayah->close();
 
+        $original_status_permohonan = $_POST['status_permohonan'] ?? '';
         //insert into document_logs
-        $tindakan = ($status_permohonan === 'tidak disahkan') ? "Dikuiri" : "Sah/Perakuan I";
+        $tindakan = ($original_status_permohonan === 'tidak disahkan') ? "Dikuiri" : "Sah/Perakuan I";
         $ulasan = $_POST['ulasan'] ?? "-";
 
         $log_sql = "INSERT INTO document_logs (tarikh, namaAdmin, peranan, tindakan, catatan, wilayah_asal_id) VALUES (NOW(), ?, ?, ?, ?, ?)";
