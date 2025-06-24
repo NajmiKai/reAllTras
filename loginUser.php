@@ -1,6 +1,7 @@
 <?php
 session_start();
-include 'connection.php'; 
+include_once 'includes/config.php';
+date_default_timezone_set('Asia/Kuala_Lumpur');
 include 'includes/system_logger.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../../connection.php';
+include '../../../includes/config.php';
 require '../../../PHPMailer/src/Exception.php';
 require '../../../PHPMailer/src/PHPMailer.php';
 require '../../../PHPMailer/src/SMTP.php';

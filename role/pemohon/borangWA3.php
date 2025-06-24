@@ -1,9 +1,9 @@
 <?php
 session_start();
-include '../../connection.php';
+include_once '../../includes/config.php';
 
 // Check if required session data exists
-if (!isset($_SESSION['borangWA_data']) || !isset($_SESSION['parent_info'])) {
+if (!isset($_SESSION['wilayah_asal_id'])) {
     header("Location: borangWA.php");
     exit();
 }
@@ -36,7 +36,7 @@ $partner_has_different_dates = false; // Initialize the variable
 
 if ($wilayah_asal_id) {
     // Get main data
-    $check_sql = "SELECT * FROM wilayah_asal WHERE id = ? AND wilayah_asal_matang = false";
+    $check_sql = "SELECT * FROM wilayah_asal WHERE id = ?";
     $check_stmt = $conn->prepare($check_sql);
     $check_stmt->bind_param("i", $wilayah_asal_id);
     $check_stmt->execute();
@@ -411,7 +411,8 @@ foreach ($followers_data as $follower) {
                 </div>
                 <div class="col-md-6 mb-2">
                     <label class="form-label">No. KP</label>
-                    <input type="text" class="form-control" name="followers[${followerCount}][kp]" required value="${existingData ? existingData.kp_pengikut : ''}">
+                    <input type="text" class="form-control" name="followers[${followerCount}][kp]" id="follower_kp_${followerCount}" maxlength="14" oninput="formatIC(this)" required value="${existingData ? (existingData.kp_pengikut ? (existingData.kp_pengikut.replace(/(\d{6})(\d{2})(\d{4})/, '$1-$2-$3')) : '') : ''}">
+                    <input type="hidden" name="followers[${followerCount}][kp]_raw" id="follower_kp_${followerCount}_raw" value="${existingData ? (existingData.kp_pengikut ? existingData.kp_pengikut.replace(/\D/g, '') : '') : ''}">
                 </div>
                 <div class="col-12 mb-2">
                     <label class="form-label">Tarikh Penerbangan</label>
@@ -447,6 +448,34 @@ foreach ($followers_data as $follower) {
         followerCount++;
         console.log("Added follower. New count: " + followerCount);
         syncDates(); // Sync dates after adding new follower
+    }
+
+    // Function to format IC number
+    function formatIC(input) {
+        // Remove all non-digit characters
+        let value = input.value.replace(/\D/g, '');
+        // Format the value with hyphens
+        if (value.length > 0) {
+            if (value.length <= 6) {
+                value = value;
+            } else if (value.length <= 8) {
+                value = value.slice(0, 6) + '-' + value.slice(6);
+            } else {
+                value = value.slice(0, 6) + '-' + value.slice(6, 8) + '-' + value.slice(8, 12);
+            }
+        }
+        // Update the display value
+        input.value = value;
+        // Create or update a hidden input to store the raw value
+        let hiddenInput = document.getElementById(input.id + '_raw');
+        if (!hiddenInput) {
+            hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.id = input.id + '_raw';
+            hiddenInput.name = input.name + '_raw';
+            input.parentNode.appendChild(hiddenInput);
+        }
+        hiddenInput.value = input.value.replace(/\D/g, '');
     }
 
     function toggleFlightDates(followerIndex, type) {
@@ -555,4 +584,4 @@ foreach ($followers_data as $follower) {
     });
 </script>
 </body>
-</html> 
+</html>
