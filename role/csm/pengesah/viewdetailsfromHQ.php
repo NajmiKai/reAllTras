@@ -415,6 +415,16 @@ include '../../../connection.php';
                         Rekod Log Dokumen
                     </a>
                 </div>
+
+            <div class="card-body row">
+                <div class="form-check" style="margin-left: 10px;">
+                    <input class="form-check-input" type="checkbox" id="buku_rekod" name="buku_rekod" required checked>
+                    <label class="form-check-label " for="buku_rekod">
+                        Telah direkod dalam buku perkhidmatan
+                    </label>
+                </div>
+            </div>
+
             <div class="card-body row">
                 <div class="col-md-6 mb-3">
                     <label for="status_select" class="form-label">Status Permohonan</label>

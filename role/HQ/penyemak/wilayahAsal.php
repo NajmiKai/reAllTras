@@ -42,20 +42,14 @@ $admin_email = $_SESSION['admin_email'];
 $admin_phoneNo = $_SESSION['admin_phoneNo'];
 
 // Query user table
-$sql = "SELECT * FROM user JOIN wilayah_asal ON user.kp = wilayah_asal.user_kp WHERE status = 'Menunggu pengesahan penyemak1 HQ' OR status = 'Kembali ke penyemak HQ' OR status = 'Menunggu pengesahan penyemak2 HQ'";
+$sql = "SELECT * FROM user JOIN wilayah_asal ON user.kp = wilayah_asal.user_kp WHERE status = 'Menunggu pengesahan penyemak1 HQ'";
 $result = $conn->query($sql);
 
 $users = [];
 
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        if ($row['status'] == 'Kembali ke penyemak HQ') {
-            $row['status'] = 'Permohonan dikuiri';
-        }elseif($row['status'] == 'Menunggu pengesahan penyemak2 HQ'){
-            $row['status'] = 'Upload borang pengesahan';
-        }else{
-            $row['status'] = 'Sedang diproses'; 
-        }
+        $row['status'] = 'Sedang diproses';
         $users[] = $row;
     }
 } else {
@@ -100,7 +94,17 @@ if ($result->num_rows > 0) {
         <h6><img src="../../../assets/ALLTRAS.png" alt="ALLTRAS" width="140" style="margin-left: 20px;"><br>ALL REGION TRAVELLING SYSTEM</h6><br>
         <a href="dashboard.php"> <i class="fas fa-home me-2"></i>Laman Utama</a>
         <h6 class="text mt-4">BORANG PERMOHONAN</h6>
-        <a href="wilayahAsal.php" class="active"><i class="fas fa-tasks me-2"></i>Wilayah Asal</a>
+        <!-- <a href="wilayahAsal.php" class="active"><i class="fas fa-tasks me-2"></i>Wilayah Asal</a> -->
+        <a href="javascript:void(0);" onclick="toggleSubMenu1()" class="<?= $submenuOpen ? 'active' : '' ?>">
+            <i class="fas fa-map-marker-alt me-2"></i>Wilayah Asal
+            <i class="fas fa-chevron-down" style="float: right; margin-right: 10px;"></i>
+        </a>
+         <!-- Submenu -->
+         <div id="wilayahSubmenu" class="submenu" style="display: <?= $submenuOpen ? 'block' : 'none' ?>;">
+            <a href="wilayahAsal.php">Semakan I</a>
+            <a href="wilayahAsal2.php">Semakan II</a>
+            <a href="wilayahAsalDikuiri.php">Permohonan DIkuiri</a>
+        </div>
         <!-- <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a> -->
         <a href="profile.php"><i class="fas fa-user me-2"></i>Paparan Profil</a>
         <a href="../../../logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Keluar</a>
@@ -110,7 +114,7 @@ if ($result->num_rows > 0) {
     <div class="col p-4">
     <br><br>
 
-    <h5 class="mb-3">Senarai Pemohon Wilayah Asal </h5>
+    <h5 class="mb-3">Senarai Pemohon Wilayah Asal (Semakan I)</h5>
             <div class="card shadow-sm">
                 <div class="card-body">
                     <table class="table table-hover" id="myTable">
@@ -135,24 +139,7 @@ if ($result->num_rows > 0) {
                                 <td><?php echo htmlspecialchars($user['kp']); ?></td>
                                 <td><?php echo htmlspecialchars($user['bahagian']); ?></td>                              
                                 <td><?php echo htmlspecialchars($user['status']); ?></td>
-                                <?php if($user['status'] == 'Upload borang pengesahan'){ ?>
-                                    <td>
-                                        <a class="button" href="viewdetails2.php?kp=<?= $user['kp'] ?>">View Details</a>
-                                        <div style="margin-top: 10px;">
-                                            <button type="button" onclick="openAndPrint('<?= $user['kp'] ?>')">
-                                                Cetak Memo Kelulusan
-                                            </button>
-                                        </div> 
-                                    </td>
-                                <?php } elseif ($user['status'] == 'Permohonan dikuiri'){ ?>
-                                    <td>
-                                        <a class="button" href="viewdetailsdikuiri.php?kp=<?= $user['kp'] ?>">View Details</a>
-                                    </td>
-                                <?php }else{ ?>
-                                    <td>
-                                        <a class="button" href="viewdetails.php?kp=<?= $user['kp'] ?>">View Details</a>
-                                    </td>
-                                <?php } ?>
+                                <td><a class="button" href="viewdetails.php?kp=<?= $user['kp'] ?>">View Details</a></td>
                             </tr>
                         <?php endforeach; ?>
                             <?php else: ?>
@@ -167,6 +154,17 @@ if ($result->num_rows > 0) {
 
 
 <script>
+    function toggleSubMenu(event) {
+        event.preventDefault();
+        const submenu = event.target.closest('.sidebar-link').nextElementSibling;
+        submenu.style.display = submenu.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function toggleSubMenu1() {
+        const submenu = document.getElementById("wilayahSubmenu");
+        submenu.style.display = submenu.style.display === "block" ? "none" : "block";
+    }
+    
     document.querySelector('.toggle-sidebar').addEventListener('click', function (e) {
         e.preventDefault();
         document.getElementById('sidebar').classList.toggle('hidden');
@@ -175,7 +173,6 @@ if ($result->num_rows > 0) {
 
     function openAndPrint(kp) {
         const printWindow = window.open('suratKelulusan.php?kp=' + encodeURIComponent(kp));
-
         printWindow.onload = function() {
             printWindow.print();
         };

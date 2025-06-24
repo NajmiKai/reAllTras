@@ -406,7 +406,19 @@ include '../../../connection.php';
                 </div>
             </div>
 
-           
+            <?php
+         
+         $pengesah_kewangan_id = $application_data['pengesah_kewangan_id'];
+
+         $sql_admin = "SELECT name FROM admin WHERE id = ?";
+         $stmt = $conn->prepare($sql_admin);
+         $stmt->bind_param("i", $pengesah_kewangan_id);
+         $stmt->execute();
+         $stmt->bind_result($pengesah_name);
+         $stmt->fetch();
+         $stmt->close();
+
+         ?>    
 
             <!-- Pengesahan -->
             <div class="card shadow-sm mb-4">
@@ -419,6 +431,18 @@ include '../../../connection.php';
 
             <div class="card-body row">
                 <div class="col-md-6 mb-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Markah prestasi :</label>
+                        <p class="form-control-static ps-2">  <?= htmlspecialchars($application_data['markah_prestasi_user']) ?></p>                    
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Hukuman tatatertib : </label>
+                        <p class="form-control-static ps-2"> <?= htmlspecialchars($application_data['hukuman_tatatertib_user']) ?></p>                    
+                    </div>
+
+
                     <label for="status_select" class="form-label">Status Permohonan</label>
                     <select class="form-select" name="status_permohonan" id="status_select" required onchange="toggleUlasan()" <?php if ($isApproved) echo 'disabled'; ?>>
                         <option value="">-- Sila Pilih --</option>

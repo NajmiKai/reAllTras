@@ -405,8 +405,27 @@ include '../../../connection.php';
                         Rekod Log Dokumen
                     </a>
                 </div>
+
+        <?php
+         
+         $pengesah_kewangan_id = $application_data['pengesah_kewangan_id'];
+
+         $sql_admin = "SELECT name FROM admin WHERE id = ?";
+         $stmt = $conn->prepare($sql_admin);
+         $stmt->bind_param("i", $pengesah_kewangan_id);
+         $stmt->execute();
+         $stmt->bind_result($pengesah_name);
+         $stmt->fetch();
+         $stmt->close();
+
+         ?>     
                 <div class="card-body row">
                     <div class="col-md-6 mb-3"><br>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Telah disahkan oleh :</label>
+                        <p class="form-control-static ps-2"><?= $pengesah_name ?></p>                    
+                    </div>
+
                         <label for="formUpload" class="form-label">Muat naik e-ticket</label>
                         <input class="form-control" type="file"  name="dokumen[]" accept=".pdf, image/*" required <?php if ($isApproved) echo 'disabled'; ?>>
                     </div>

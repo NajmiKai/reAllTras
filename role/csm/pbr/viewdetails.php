@@ -412,7 +412,7 @@ include '../../../connection.php';
 
             <!-- Pengesahan -->
             <div class="card shadow-sm mb-4">
-                <div class="card-header" style="background-color: #d59e3e; color: white;">
+                <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #d59e3e; color: white;">
                     <h5 class="mb-0"><strong>Pengesahan</strong></h5>
                     <a class="text-black text-decoration-underline" data-bs-toggle="collapse" href="#logDokumenTable" role="button" aria-expanded="false" aria-controls="logDokumenTable" style="font-size: 0.8rem;">
                         Rekod Log Dokumen
