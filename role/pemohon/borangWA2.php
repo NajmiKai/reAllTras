@@ -1,7 +1,7 @@
 <?php
 session_start();
 include '../../connection.php';
-include '../../includes/config.php';
+
 
 // Check if user has completed the first form
 if (!isset($_SESSION['wilayah_asal_id'])) {

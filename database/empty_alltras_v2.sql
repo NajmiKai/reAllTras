@@ -287,7 +287,7 @@ CREATE TABLE `wilayah_asal` (
   `keputusan_permohonan_ketua_jabatan` enum('Diterima','Ditolak','Belum Pasti') DEFAULT 'Belum Pasti',
   `kp_ketua_jabatan` varchar(50) DEFAULT NULL,
   `tarikh_keputusan_ketua_jabatan` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `status_permohonan` enum('Belum Disemak','Selesai','Dikuiri','Tolak','Lulus') DEFAULT 'Belum Disemak',
+  `status_permohonan` enum('Belum Disemak','Selesai','Dikuiri','Tolak','Lulus','Batal') DEFAULT 'Belum Disemak',
   `kedudukan_permohonan` enum('Pemohon','CSM','HQ','CSM2','Kewangan') DEFAULT 'Pemohon',
   `status` varchar(255) DEFAULT NULL,
   `tarikh_keputusan_csm1` date DEFAULT NULL,

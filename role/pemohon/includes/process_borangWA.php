@@ -193,7 +193,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Redirect to the next form based on the stage
         if ($existing_record['wilayah_asal_form_fill'] === 1) {
-            header("Location: ../borangWA5.php");
+            
+            $update_stage_sql2 = "UPDATE wilayah_asal SET wilayah_asal_from_stage = 'BorangWA5' WHERE id = ?";
+            $update_stage_stmt2 = $conn->prepare($update_stage_sql2);
+            $update_stage_stmt2->bind_param("i", $_SESSION['wilayah_asal_id']);
+            $update_stage_stmt2->execute();
+            $update_stage_stmt2->close();
+            header("Location: ../borangWA5.php?id=" . $_SESSION['wilayah_asal_id']);
+            
         } else {
             header("Location: ../borangWA2.php");
         }

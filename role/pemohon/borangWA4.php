@@ -1,7 +1,6 @@
 <?php
 session_start();
 include '../../connection.php';
-include '../../includes/config.php';
 
 // Enable error reporting
 error_reporting(E_ALL);

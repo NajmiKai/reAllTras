@@ -1,7 +1,6 @@
 <?php
 session_start();
 include '../../connection.php';
-include '../../includes/config.php';
 
 // Enable error reporting
 error_reporting(E_ALL);
@@ -409,18 +408,15 @@ $documents = $result->fetch_all(MYSQLI_ASSOC);
                 </div>
             </div>
 
-            <div class="text-end">
+            <div class="text-end mt-4">
                     <div class="form-check mb-3">
                         <input class="form-check-input" type="checkbox" id="confirmation" required>
-                        <label class="form-check-label" for="confirmation">
+                        <label class="form-check-label text-start" for="confirmation">
                             Saya mengesahkan bahawa semua maklumat dan kenyataan yang diberikan adalah benar dan sah. Saya juga memahami bahawa sekiranya terdapat maklumat palsu, tidak benar atau tidak lengkap, maka saya boleh dikenakan tindakan tatatertib di bawah Peraturan-Peraturan Pegawai Awam (Kelakuan dan Tatatertib) 1993
                         </label>
             </div>
 
-            <div class="d-flex justify-content-between mt-4">
-                <a href="borangWA4.php" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left me-2"></i>Kembali
-                </a>
+            <div class="text-end mt-4">
                     <button type="submit" class="btn btn-success">
                         <i class="fas fa-check me-2"></i>Hantar Permohonan
                     </button>

@@ -44,6 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -105,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <div class="form-wrapper">
     <div class="form-title">
-        <img src="assets/ALLTRAS_logo.jpg" alt="ALLTRAS" height="60"><br>
+        <img src="assets/ALLTRAS_logo.jpg" alt="ALLTRAS" height="120"><br>
         ALL REGION TRAVELLING SYSTEM
     </div>
 
@@ -125,13 +126,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="email" class="form-control" name="email" placeholder="cth: aAliAbu@customs.gov.my" required>
             </div>
             <div class="col-md-6">
-                <label class="form-label">No Telefon</label>
-                <input type="text" class="form-control" name="phone" placeholder="No Telefon" maxlength="11" required>
+                <label class="form-label">Nombor Telefon</label>
+                <input type="text" class="form-control" name="phone" placeholder="cth: 60179813005" maxlength="11" required>
             </div>
 
             <div class="col-md-6">
                 <label class="form-label">Kad Pengenalan</label>
-                <input type="text" class="form-control" name="kp" placeholder="Nombor KP" maxlength="14" required>
+                <input type="text" class="form-control" name="kp" id="kp" placeholder="cth: 010203-04-0506" maxlength="14" required>
             </div>
             <div class="col-md-6">
                 <label class="form-label">Cawangan / Unit</label>
@@ -149,11 +150,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="col-md-6">
                 <label class="form-label">Kata Laluan</label>
-                <input type="password" class="form-control" name="password" placeholder="Kata Laluan" required>
+                <div style="position: relative;">
+                    <input type="password" class="form-control" name="password" id="password" placeholder="Kata Laluan" required>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);" onclick="togglePassword('password', this)">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
             </div>
             <div class="col-md-6">
                 <label class="form-label">Pengesahan Kata Laluan</label>
-                <input type="password" class="form-control" name="confirmPassword" placeholder="Pengesahan Kata Laluan" required>
+                <div style="position: relative;">
+                    <input type="password" class="form-control" name="confirmPassword" id="confirmPassword" placeholder="Pengesahan Kata Laluan" required>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);" onclick="togglePassword('confirmPassword', this)">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
             </div>
 
             <div class="col-md-12 text-center mt-4">
@@ -173,6 +184,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             allowClear: true,
             width: '100%'
         });
+    });
+    function togglePassword(fieldId, btn) {
+        var input = document.getElementById(fieldId);
+        var icon = btn.querySelector('i');
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        } else {
+            input.type = "password";
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        }
+    }
+
+    // Format IC number as XXXXXX-XX-XXXX while typing
+    document.getElementById('kp').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/[^0-9]/g, '');
+        let formatted = '';
+        if (value.length > 6) {
+            formatted += value.substr(0, 6) + '-';
+            if (value.length > 8) {
+                formatted += value.substr(6, 2) + '-';
+                formatted += value.substr(8, 4);
+            } else {
+                formatted += value.substr(6);
+            }
+        } else {
+            formatted = value;
+        }
+        e.target.value = formatted;
+    });
+
+    // Remove dashes before submitting the form
+    document.querySelector('form').addEventListener('submit', function(e) {
+        var kpInput = document.getElementById('kp');
+        kpInput.value = kpInput.value.replace(/-/g, '');
     });
 </script>
 

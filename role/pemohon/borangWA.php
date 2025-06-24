@@ -1,7 +1,6 @@
 <?php
 session_start();
 include '../../connection.php';
-include '../../includes/config.php';
 
 // Set user ID in session if not set
 if (!isset($_SESSION['user_id'])) {
