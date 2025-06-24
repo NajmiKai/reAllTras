@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $wilayah_asal_id = $_SESSION['wilayah_asal_id'];
 
         // Check if record exists and its stage
-        $check_sql = "SELECT id, wilayah_asal_from_stage FROM wilayah_asal WHERE id = ?";
+        $check_sql = "SELECT * FROM wilayah_asal WHERE id = ?";
         $check_stmt = $conn->prepare($check_sql);
         $check_stmt->bind_param("i", $wilayah_asal_id);
         $check_stmt->execute();
@@ -176,7 +176,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Redirect to the next form based on the stage
         if ($existing_record['wilayah_asal_form_fill'] === 1) {
-            header("Location: ../borangWA5.php");
+
+            $update_stage_sql2 = "UPDATE wilayah_asal SET wilayah_asal_from_stage = 'BorangWA5' WHERE id = ?";
+            $update_stage_stmt2 = $conn->prepare($update_stage_sql2);
+            $update_stage_stmt2->bind_param("i", $wilayah_asal_id);
+            $update_stage_stmt2->execute();
+            $update_stage_stmt2->close();
+            header("Location: ../borangWA5.php?id=" . $wilayah_asal_id);
+
         } else {
             header("Location: ../borangWA3.php");
         }
