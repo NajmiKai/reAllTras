@@ -155,7 +155,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $mail->setFrom($mail->Username, 'ALLTRAS');
                     $mail->addAddress($receiver_email);
                     $mail->addCC($penyelia_email); // CC recipient
-                    $mail->addCC($user_email); // CC recipient
+                    // $mail->addCC($user_email); // CC recipient
         
                     $mail->isHTML(true);
                     $mail->Subject = 'Permohonan Tambang Ziarah Wilayah (TZW) : Permohonan Diluluskan';

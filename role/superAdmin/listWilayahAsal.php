@@ -110,6 +110,9 @@ $display_result = $conn->query($sql);
                                             case 'Tolak':
                                                 $status_class = 'bg-danger';
                                                 break;
+                                            case 'Batal':
+                                                $status_class = 'bg-danger';
+                                                break;
                                             case 'Lulus':
                                                 $status_class = 'bg-primary';
                                                 break;
@@ -127,12 +130,17 @@ $display_result = $conn->query($sql);
                                         <a href="viewWilayahAsal.php?id=<?php echo $row['id']; ?>" class="btn btn-info btn-sm">
                                             <i class="fas fa-eye"></i> Lihat
                                         </a>
-                                        <a href="deleteWilayahAsal.php?id=<?php echo $row['id']; ?>" 
+                                        <!-- <a href="deleteWilayahAsal.php?id=<?php echo $row['id']; ?>" 
                                         class="btn btn-danger btn-sm"
                                         onclick="return confirm('Anda pasti ingin padam rekod ini?');">
-                                            <i class="fas fa-trash"></i> Padam
-                                        </a>
-
+                                            <i class="fas fa-trash"></i> Batal
+                                        </a> -->
+                                        <button type="button" class="btn btn-danger btn-sm" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#batalModal" 
+                                                data-id="<?php echo $row['id']; ?>">
+                                            <i class="fas fa-trash"></i> Batal
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -145,9 +153,51 @@ $display_result = $conn->query($sql);
     </div>
 </div>
 
+<!-- Batal Modal -->
+<div class="modal fade" id="batalModal" tabindex="-1" aria-labelledby="batalModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form method="POST" action="deleteWilayahAsal.php">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="batalModalLabel">Batal Permohonan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="ulasan" class="form-label">Ulasan</label>
+                    <textarea class="form-control" name="ulasan" id="ulasan" rows="3" required></textarea>
+                </div>
+                <p class="text-danger small">Tindakan ini akan membatalkan permohonan secara kekal.</p>
+                <input type="hidden" name="wilayah_asal_id" id="batal-id">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="submit" class="btn btn-danger">Sahkan Batal</button>
+            </div>
+        </div>
+    </form>
+  </div>
+</div>
+
+
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var batalModal = document.getElementById('batalModal');
+
+  batalModal.addEventListener('show.bs.modal', function (event) {
+    var button = event.relatedTarget;
+    var id = button.getAttribute('data-id');
+
+    var hiddenInput = document.getElementById('batal-id');
+    hiddenInput.value = id;
+  });
+});
+
+</script>
 </body>
 </html> 
