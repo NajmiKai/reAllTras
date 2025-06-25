@@ -307,6 +307,20 @@ $documents = $result->fetch_all(MYSQLI_ASSOC);
                     <?php if ($wilayah_asal_data): ?>
                         <div class="info-row">
                             <div class="row">
+                                <div class="col-12">
+                                    <p class="mb-1"><strong>Jenis Permohonan:</strong></p>
+                                    <p>
+                                        <?php if ($wilayah_asal_data['jenis_permohonan'] === 'diri_sendiri'): ?>
+                                            Permohonan Diri Sendiri/Pengikut ke Wilayah Menetap
+                                        <?php elseif ($wilayah_asal_data['jenis_permohonan'] === 'keluarga'): ?>
+                                            Permohonan Keluarga Pegawai ke Wilayah Berkhidmat
+                                        <?php endif; ?>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="row">
                                 <div class="col-md-6">
                                     <p class="mb-1"><strong>Tarikh Penerbangan:</strong></p>
                                     <p>
