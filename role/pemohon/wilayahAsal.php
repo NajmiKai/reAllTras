@@ -198,7 +198,15 @@ $ulasan = $_SESSION['wilayah_asal_ulasan'] ?? null;
     <div class="col p-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3 class="mb-0">Wilayah Asal</h3>
-            <?php include 'includes/greeting.php'; ?>
+            <div class="d-flex align-items-center">
+                <?php include 'includes/greeting.php'; ?>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end mb-4">
+            <a href="cetak_wilayah_asal.php" target="_blank" class="btn btn-primary">
+                <i class="fas fa-print me-2"></i>Cetak PDF
+            </a>
         </div>
 
         <?php if ($status_permohonan === 'Dikuiri'): ?>
@@ -380,6 +388,16 @@ $ulasan = $_SESSION['wilayah_asal_ulasan'] ?? null;
             </div>
             <div class="section-body">
                 <?php if ($wilayah_asal_data): ?>
+                    <div class="info-row mb-3">
+                        <p class="info-label">Jenis Permohonan</p>
+                        <p class="info-value">
+                            <?php if ($wilayah_asal_data['jenis_permohonan'] === 'diri_sendiri'): ?>
+                                Permohonan Diri Sendiri/Pengikut ke Wilayah Menetap
+                            <?php elseif ($wilayah_asal_data['jenis_permohonan'] === 'keluarga'): ?>
+                                Permohonan Keluarga Pegawai ke Wilayah Berkhidmat
+                            <?php endif; ?>
+                        </p>
+                    </div>
                     <!-- Pemohon's Flight Information -->
                     <div class="info-row mb-4">
                         <h6 class="text-primary mb-3">Pemohon</h6>

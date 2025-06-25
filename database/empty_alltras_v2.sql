@@ -28,7 +28,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `admin` (
-  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `ID` int(11) NOT NULL,
   `Name` varchar(255) NOT NULL,
   `ICNo` varchar(255) NOT NULL,
   `Email` varchar(255) NOT NULL,
