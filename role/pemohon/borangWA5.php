@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../connection.php';
+include_once '../../includes/config.php';
 
 // Enable error reporting
 error_reporting(E_ALL);
@@ -384,6 +384,9 @@ $documents = $result->fetch_all(MYSQLI_ASSOC);
                 <div class="section-header">
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Dokumen</h5>
+                        <a href="borangWA4Edit.php" class="btn btn-sm btn-light">
+                            <i class="fas fa-edit me-2"></i>Edit
+                        </a>
                     </div>
                 </div>
                 <div class="section-body">

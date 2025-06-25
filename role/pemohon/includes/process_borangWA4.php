@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../../connection.php';
+include '../../../includes/config.php';
 include '../../../includes/system_logger.php';
 
 // Enable error reporting

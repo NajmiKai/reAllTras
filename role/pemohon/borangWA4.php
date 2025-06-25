@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../connection.php';
+include_once '../../includes/config.php';
 
 // Enable error reporting
 error_reporting(E_ALL);
@@ -30,11 +30,14 @@ if (!$user_data) {
 
 $user_name = $user_data['nama_first'] . ' ' . $user_data['nama_last'];
 $user_role = $user_data['bahagian'];
+$user_icNo = $user_data['kp'];
+$user_email = $user_data['email'];
+$user_phoneNo = $user_data['phone'];
 
 // Fetch existing documents if wilayah_asal_from_stage is BorangWA5
 $existing_documents = [];
 if (isset($_SESSION['wilayah_asal_id'])) {
-    $sql = "SELECT d.*, w.wilayah_asal_from_stage 
+    $sql = "SELECT d.*, w.*
             FROM documents d 
             JOIN wilayah_asal w ON d.wilayah_asal_id = w.id 
             WHERE d.wilayah_asal_id = ? AND d.file_origin = 'pemohon'";
@@ -50,7 +53,7 @@ if (isset($_SESSION['wilayah_asal_id'])) {
 // Check if we're in edit mode
 $is_edit_mode = false;
 if (isset($_SESSION['wilayah_asal_id'])) {
-    $sql = "SELECT wilayah_asal_from_stage FROM wilayah_asal WHERE id = ? AND wilayah_asal_matang = false";
+    $sql = "SELECT wilayah_asal_from_stage FROM wilayah_asal WHERE id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $_SESSION['wilayah_asal_id']);
     $stmt->execute();

@@ -1,6 +1,7 @@
 <?php
 session_start();
-include '../../../connection.php';
+include_once '../../../includes/config.php';
+$wilayah_asal_id = $_SESSION['wilayah_asal_id'] ?? null;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
@@ -33,9 +34,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $wilayah_menetap_pasangan = ($_POST['ada_pasangan'] === 'ya') ? $_POST['wilayah_menetap_pasangan'] : null;
 
         // Check if record exists and its stage
-        $check_sql = "SELECT id, wilayah_asal_from_stage, wilayah_asal_form_fill FROM wilayah_asal WHERE user_kp = ?";
+        $check_sql = "SELECT * FROM wilayah_asal WHERE id = ?";
         $check_stmt = $conn->prepare($check_sql);
-        $check_stmt->bind_param("s", $user_kp);
+        $check_stmt->bind_param("s", $wilayah_asal_id);
         $check_stmt->execute();
         $result = $check_stmt->get_result();
         $existing_record = $result->fetch_assoc();

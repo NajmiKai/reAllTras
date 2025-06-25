@@ -1,7 +1,6 @@
 <?php
 session_start();
-include '../../connection.php';
-include '../../includes/config.php';
+include_once '../../includes/config.php';
 
 // Get wilayah_asal_id from session
 $wilayah_asal_id = $_SESSION['wilayah_asal_id'] ?? null;
@@ -71,7 +70,7 @@ while ($row = $doc_result->fetch_assoc()) {
 // Get the current status and position
 $status_permohonan = $wilayah_asal_data['status_permohonan'];
 $kedudukan_permohonan = $wilayah_asal_data['kedudukan_permohonan'];
-$ulasan = $_SESSION['wilayah_asal_ulasan'];
+$ulasan = $_SESSION['wilayah_asal_ulasan'] ?? null;
 
 
 ?>

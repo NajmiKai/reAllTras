@@ -1,7 +1,6 @@
 <?php
 session_start();
-include '../../connection.php';
-
+include_once '../../includes/config.php';
 
 // Fetch user data from database
 $user_id = $_SESSION['user_id'];
@@ -114,6 +113,7 @@ function getUlasan($application_data) {
                             $update_stmt->bind_param("i", $application_data['id']);
                             $update_stmt->execute();
                             $application_data['wilayah_asal_matang'] = true;
+                            
                         }
                     }
 

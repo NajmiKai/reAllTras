@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../connection.php';
+include_once '../../includes/config.php';
 
 // Set user ID in session if not set
 if (!isset($_SESSION['user_id'])) {
@@ -28,7 +28,7 @@ $user_email = $user_data['email'];
 $user_phoneNo = $user_data['phone'];
 
 // Check if user has existing data in wilayah_asal
-$sql = "SELECT * FROM wilayah_asal WHERE user_kp = ? AND wilayah_asal_matang = false";
+$sql = "SELECT * FROM wilayah_asal WHERE user_kp = ? AND wilayah_asal_matang = false ORDER BY id DESC LIMIT 1";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $user_icNo);
 $stmt->execute();
@@ -226,7 +226,7 @@ if ($wilayah_asal_data) {
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Poskod</label>
-                            <input type="text" class="form-control" name="poskod_menetap" value="<?= htmlspecialchars($wilayah_asal_data['poskod_menetap'] ?? '') ?>" required>
+                            <input type="text" class="form-control" name="poskod_menetap" pattern="^[0-9]{5}$" maxlength="5" minlength="5" title="Masukkan 5 digit poskod Malaysia" value="<?= htmlspecialchars($wilayah_asal_data['poskod_menetap'] ?? '') ?>" required>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Bandar</label>
@@ -257,7 +257,7 @@ if ($wilayah_asal_data) {
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Poskod</label>
-                            <input type="text" class="form-control" name="poskod_berkhidmat" value="<?= htmlspecialchars($wilayah_asal_data['poskod_berkhidmat'] ?? '') ?>" required>
+                            <input type="text" class="form-control" name="poskod_berkhidmat" pattern="^[0-9]{5}$" maxlength="5" minlength="5" title="Masukkan 5 digit poskod Malaysia" value="<?= htmlspecialchars($wilayah_asal_data['poskod_berkhidmat'] ?? '') ?>" required>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Bandar</label>
@@ -361,7 +361,7 @@ if ($wilayah_asal_data) {
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">Poskod</label>
-                                        <input type="text" class="form-control" name="poskod_berkhidmat_pasangan" maxlength="10" pattern="[0-9]{5}" title="5 digit poskod" value="<?= htmlspecialchars($wilayah_asal_data['poskod_berkhidmat_pasangan'] ?? '') ?>">
+                                        <input type="text" class="form-control" name="poskod_berkhidmat_pasangan" pattern="^[0-9]{5}$" maxlength="5" minlength="5" title="Masukkan 5 digit poskod Malaysia" value="<?= htmlspecialchars($wilayah_asal_data['poskod_berkhidmat_pasangan'] ?? '') ?>">
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">Bandar</label>

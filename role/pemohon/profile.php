@@ -1,6 +1,5 @@
 <?php
 session_start();
-include '../../connection.php';
 include '../../includes/config.php';
 
 // Fetch user data from database
@@ -60,7 +59,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($update_stmt->execute()) {
                     $success_message = "Profil berjaya dikemaskini!";
                     // Refresh user data
-                    $result = $stmt->execute();
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("i", $user_id);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
                     $user_data = $result->fetch_assoc();
                 } else {
                     $error_message = "Ralat semasa mengemaskini profil. Sila cuba lagi.";
@@ -76,7 +78,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($update_stmt->execute()) {
             $success_message = "Profil berjaya dikemaskini!";
             // Refresh user data
-            $result = $stmt->execute();
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("i", $user_id);
+            $stmt->execute();
+            $result = $stmt->get_result();
             $user_data = $result->fetch_assoc();
         } else {
             $error_message = "Ralat semasa mengemaskini profil. Sila cuba lagi.";
