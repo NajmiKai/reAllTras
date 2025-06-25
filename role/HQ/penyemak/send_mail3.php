@@ -19,20 +19,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $admin_name = $_SESSION['admin_name'];
         $admin_role = $_SESSION['admin_role'];
         $status = 'Kembali ke PBR CSM';
+        $ulasan = $_POST['ulasan'] ?? null; // Get ulasan if provided, else set to null
 
         $tarikh_keputusan = date('Y-m-d H:i:s');
         $status_permohonan = "Dikuiri";
-        $kedudukan_permohonan = "CSM";
+        $kedudukan_permohonan = "HQ";
 
-        $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?,  status_permohonan = ?, kedudukan_permohonan = ? WHERE id = ?");
-        $stmt_wilayah->bind_param("sssi", $status, $status_permohonan, $kedudukan_permohonan, $wilayah_asal_id);
+        $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, ulasan_penyemak_HQ = ?, penyemak_HQ1_id = ?,  status_permohonan= ?, kedudukan_permohonan= ?, tarikh_keputusan_penyemak_HQ1 = ? WHERE id = ?");
+        $stmt_wilayah->bind_param("ssssssi", $status, $ulasan, $admin_id, $status_permohonan, $kedudukan_permohonan, $tarikh_keputusan, $wilayah_asal_id);
         $stmt_wilayah->execute();
         $stmt_wilayah->close();
 
 
           //insert into document_logs
           $tindakan = "Dikuiri";
-          $ulasan = "-";
   
           $log_sql = "INSERT INTO document_logs (tarikh, namaAdmin, peranan, tindakan, catatan, wilayah_asal_id) VALUES (NOW(), ?, ?, ?, ?, ?)";
                 
@@ -122,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         } 
         
-        header("Location: wilayahAsalDikuiri.php");
+        header("Location: wilayahAsal.php");
         exit();
     }
         

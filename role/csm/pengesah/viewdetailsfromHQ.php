@@ -175,7 +175,7 @@ include '../../../connection.php';
             </div>
         </div>
 
-        <form action="send_mail2.php" method="POST" enctype="multipart/form-data">            
+        <form action="send_mail2.php" method="POST" enctype="multipart/form-data" id="permohonanForm" onsubmit="return handleFormSubmit()">            
             <!-- Maklumat Pegawai -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #d59e3e; color: white;">
@@ -418,7 +418,7 @@ include '../../../connection.php';
 
             <div class="card-body row">
                 <div class="form-check" style="margin-left: 10px;">
-                    <input class="form-check-input" type="checkbox" id="buku_rekod" name="buku_rekod" required checked>
+                    <input class="form-check-input" type="checkbox" id="buku_rekod" name="buku_rekod" required checked disabled>
                     <label class="form-check-label " for="buku_rekod">
                         Telah direkod dalam buku perkhidmatan
                     </label>
@@ -536,7 +536,21 @@ document.querySelector('.toggle-sidebar').addEventListener('click', function (e)
         ulasanDiv.style.display = 'none';
         document.getElementById('ulasan').removeAttribute('required');
     }
-}
+    }
+
+
+    function handleFormSubmit() {
+            const form = document.getElementById('permohonanForm');
+            const status = document.getElementById('status_select').value;
+            
+            if (status === 'tidak disokong') {
+                form.action = 'send_mail4.php';
+            } else if (status === 'disokong') {
+                form.action = 'send_mail2.php';
+            }
+            
+            return true;
+        }
 </script>
 </body>
 </html>

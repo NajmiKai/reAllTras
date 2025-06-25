@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $status_permohonan = "Dikuiri";
         $kedudukan_permohonan = "HQ";
 
-        $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, ulasan_pbr_csm1 = ?, pbr_csm1_id = ?,  status_permohonan= ?, kedudukan_permohonan= ?, tarikh_keputusan_csm1 = ? WHERE id = ?");
+        $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, ulasan_pengesah_HQ = ?, pengesah_HQ_id = ?,  status_permohonan= ?, kedudukan_permohonan= ?, tarikh_keputusan_pengesah_HQ = ? WHERE id = ?");
         $stmt_wilayah->bind_param("ssssssi", $status, $ulasan, $admin_id, $status_permohonan, $kedudukan_permohonan, $tarikh_keputusan, $wilayah_asal_id);
         $stmt_wilayah->execute();
         $stmt_wilayah->close();

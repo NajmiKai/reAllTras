@@ -70,6 +70,11 @@ $result = $conn->query($query);
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../../assets/css/adminStyle.css">
+
+    <!-- Bootstrap 5 JS (includes collapse) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <!-- Top Navbar -->
@@ -145,11 +150,13 @@ $result = $conn->query($query);
                                 <td><?php echo htmlspecialchars($user['status']); ?></td>
 
                                 <?php if($user['status'] == 'Menunggu pengesahan penyemak2 HQ'){ ?>
-                                    <td><a class="button" href="viewdetails2.php?kp=<?= $user['kp'] ?>">View Details</a>
+                                    <td><a href="viewdetails2.php?kp=<?= $user['kp'] ?>" class="btn btn-info btn-sm">Lihat</a>
                                         <div style="margin-top: 10px;">
-                                            <button type="button" onclick="openAndPrint('<?= $user['kp'] ?>')">
+                                            <!-- <button type="button" onclick="openAndPrint('<?= $user['kp'] ?>')">
                                                 Cetak Memo Kelulusan
-                                            </button>
+                                            </button> -->
+                                            <a class="btn btn-success btn-sm" href="#" onclick="openAndPrint('<?= $user['kp'] ?>'); return false;">Cetak Memo</a>
+                                            
                                         </div> 
                                 </td>
                                 <?php } elseif ($user['status'] == 'Kembali ke penyemak HQ'){ ?>
@@ -178,4 +185,22 @@ $result = $conn->query($query);
         const submenu = document.getElementById("wilayahSubmenu");
         submenu.style.display = submenu.style.display === "block" ? "none" : "block";
     }
+
+    function openAndPrint(kp) {
+    const printWindow = window.open('suratKelulusan.php?kp=' + encodeURIComponent(kp), '_blank');
+
+    if (printWindow) {
+        const interval = setInterval(function () {
+            if (printWindow.document.readyState === 'complete') {
+                clearInterval(interval);
+                printWindow.focus();
+                printWindow.print();
+            }
+        }, 500);
+    } else {
+        alert("Popup blocked! Please allow popups for this website.");
+    }
+}
+
+ 
 </script>

@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($status_permohonan === 'mencukupi') {
             $status = 'Menunggu pengesahan penyedia kemudahan kewangan';
             $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, pengesah_kewangan_id = ?, tarikh_keputusan_pengesah_kewangan = ? WHERE id = ?");
-            $stmt_wilayah->bind_param("ssssi", $status, $admin_id, $tarikh_keputusan, $wilayah_asal_id);
+            $stmt_wilayah->bind_param("sssi", $status, $admin_id, $tarikh_keputusan, $wilayah_asal_id);
             $stmt_wilayah->execute();
         } else {
             $status = 'Kembali ke PBR CSM';

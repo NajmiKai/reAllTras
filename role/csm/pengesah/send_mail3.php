@@ -23,15 +23,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $tarikh_keputusan = date('Y-m-d H:i:s');
         $status_permohonan = "Dikuiri";
-        $kedudukan_permohonan = "Kewangan";
+        $kedudukan_permohonan = "CSM";
 
-        $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, ulasan_pengesah_kewangan = ?, pengesah_kewangan_id = ?,  status_permohonan= ?, kedudukan_permohonan= ?, tarikh_keputusan_pengesah_kewangan = ? WHERE id = ?");
+        $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, ulasan_pengesah_csm1 = ?, pengesah_csm1_id = ?,  status_permohonan= ?, kedudukan_permohonan= ?, tarikh_keputusan_pengesah_csm1 = ? WHERE id = ?");
         $stmt_wilayah->bind_param("ssssssi", $status, $ulasan, $admin_id, $status_permohonan, $kedudukan_permohonan, $tarikh_keputusan, $wilayah_asal_id);
         $stmt_wilayah->execute();
         $stmt_wilayah->close();
 
         //insert into document_logs
         $tindakan = "Dikuiri";
+        $ulasan = $_POST['ulasan'] ?? "-";
             
         $log_sql = "INSERT INTO document_logs (tarikh, namaAdmin, peranan, tindakan, catatan, wilayah_asal_id) VALUES (NOW(), ?, ?, ?, ?, ?)";
             
@@ -119,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         } 
         
-        header("Location: wilayahAsal.php");
+        header("Location: permohonanPengguna.php");
         exit();
     }
         

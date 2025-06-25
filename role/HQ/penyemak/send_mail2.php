@@ -154,8 +154,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
                     $mail->setFrom($mail->Username, 'ALLTRAS');
                     $mail->addAddress($receiver_email);
-                    $mail->addCC($penyelia_email); // CC recipient
-                    // $mail->addCC($user_email); // CC recipient
+                    if (!empty($penyelia_email)) 
+                    $mail->addCC($penyelia_email);//cc penyelia
         
                     $mail->isHTML(true);
                     $mail->Subject = 'Permohonan Tambang Ziarah Wilayah (TZW) : Permohonan Diluluskan';
@@ -187,7 +187,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         } 
         
-        header("Location: wilayahAsal.php");
+        header("Location: wilayahAsal2.php");
         exit();
     }
         
