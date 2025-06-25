@@ -517,6 +517,19 @@ document.querySelector('.toggle-sidebar').addEventListener('click', function (e)
         ulasanText.removeAttribute('required');
     }
 }
+
+    function handleFormSubmit() {
+            const form = document.getElementById('permohonanForm');
+            const status = document.getElementById('status_select').value;
+            
+            if (status === 'tidak mencukupi') {
+                form.action = 'send_mail3.php';
+            } else if (status === 'mencukupi') {
+                form.action = 'send_mail.php';
+            }
+            
+            return true;
+        }
 </script>
 </body>
 </html>

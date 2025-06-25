@@ -30,6 +30,8 @@ $result = $conn->query($sql);
 
 // Create a new result set for display
 $display_result = $conn->query($sql);
+
+
 ?>
 <!DOCTYPE html>
 <html lang="ms">
@@ -49,12 +51,21 @@ $display_result = $conn->query($sql);
     <!-- Sidebar -->
     <?php include 'includes/sidebar.php'; ?>
 
+
+
     <!-- Main Content -->
     <div class="col p-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3 class="mb-0">Senarai Permohonan</h3>
             <?php include 'includes/greeting.php'; ?>
         </div>
+
+        <?php if (isset($_GET['delete']) && $_GET['delete'] == 'success'): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                Rekod berjaya dipadam.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
 
         <!-- Permohonan Table -->
         <div class="card shadow-sm">
@@ -116,6 +127,12 @@ $display_result = $conn->query($sql);
                                         <a href="viewWilayahAsal.php?id=<?php echo $row['id']; ?>" class="btn btn-info btn-sm">
                                             <i class="fas fa-eye"></i> Lihat
                                         </a>
+                                        <a href="deleteWilayahAsal.php?id=<?php echo $row['id']; ?>" 
+                                        class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Anda pasti ingin padam rekod ini?');">
+                                            <i class="fas fa-trash"></i> Padam
+                                        </a>
+
                                     </div>
                                 </td>
                             </tr>

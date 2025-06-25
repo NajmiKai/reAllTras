@@ -176,7 +176,7 @@ include '../../../connection.php';
             </div>
         </div>
 
-        <form action="send_mail.php" method="POST" enctype="multipart/form-data" id="permohonanForm">            
+        <form action="send_mail.php" method="POST" enctype="multipart/form-data" id="permohonanForm" onsubmit="return handleFormSubmit()">            
             <!-- Maklumat Pegawai -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #d59e3e; color: white;">
@@ -545,6 +545,19 @@ function updateFormAction() {
         ulasanDiv.style.display = 'none';
     }
 }
+
+    function handleFormSubmit() {
+            const form = document.getElementById('permohonanForm');
+            const status = document.getElementById('status_select').value;
+            
+            if (status === 'tidak diterima') {
+                form.action = 'send_mail3.php';
+            } else if (status === 'diterima') {
+                form.action = 'send_mail.php';
+            }
+            
+            return true;
+        }
 
 </script>
 </body>

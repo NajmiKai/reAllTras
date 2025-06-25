@@ -19,70 +19,69 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $admin_name = $_SESSION['admin_name'];
         $admin_role = $_SESSION['admin_role'];
         $status = 'Kembali ke PBR CSM';
+        $ulasan = $_POST['ulasan'] ?? null; // Get ulasan if provided, else set to null
 
         $tarikh_keputusan = date('Y-m-d H:i:s');
         $status_permohonan = "Dikuiri";
-        $kedudukan_permohonan = "CSM";
+        $kedudukan_permohonan = "Kewangan";
 
-        $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?,  status_permohonan = ?, kedudukan_permohonan = ? WHERE id = ?");
-        $stmt_wilayah->bind_param("sssi", $status, $status_permohonan, $kedudukan_permohonan, $wilayah_asal_id);
+        $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, ulasan_pengesah_kewangan = ?, pengesah_kewangan_id = ?,  status_permohonan= ?, kedudukan_permohonan= ?, tarikh_keputusan_pengesah_kewangan = ? WHERE id = ?");
+        $stmt_wilayah->bind_param("ssssssi", $status, $ulasan, $admin_id, $status_permohonan, $kedudukan_permohonan, $tarikh_keputusan, $wilayah_asal_id);
         $stmt_wilayah->execute();
         $stmt_wilayah->close();
 
-
-          //insert into document_logs
-          $tindakan = "Dikuiri";
-          $ulasan = "-";
-  
-          $log_sql = "INSERT INTO document_logs (tarikh, namaAdmin, peranan, tindakan, catatan, wilayah_asal_id) VALUES (NOW(), ?, ?, ?, ?, ?)";
-                
-          $log_stmt = $conn->prepare($log_sql);
-          $log_stmt->bind_param("ssssi", $admin_name, $admin_role, $tindakan, $ulasan, $wilayah_asal_id);
-                
-          if (!$log_stmt->execute()) {
+        //insert into document_logs
+        $tindakan = "Dikuiri";
+        $ulasan = $_POST['ulasan'] ?? "-";
+            
+        $log_sql = "INSERT INTO document_logs (tarikh, namaAdmin, peranan, tindakan, catatan, wilayah_asal_id) VALUES (NOW(), ?, ?, ?, ?, ?)";
+            
+        $log_stmt = $conn->prepare($log_sql);
+        $log_stmt->bind_param("ssssi", $admin_name, $admin_role, $tindakan, $ulasan, $wilayah_asal_id);
+            
+        if (!$log_stmt->execute()) {
             error_log("Gagal masukkan ke document_logs: " . $log_stmt->error);
-          }
-          $log_stmt->close();
+        }
+        $log_stmt->close();
 
+        $sql = "SELECT * FROM admin WHERE role = 'PBR CSM'";
+        $result = $conn->query($sql);
         
-          $sql = "SELECT * FROM admin WHERE role = 'PBR CSM'";
-          $result = $conn->query($sql);
-          
-          if ($result->num_rows > 0) {
-            // Fetch user details
-          $stmt_user = $conn->prepare("
-              SELECT u.nama_first, u.nama_last, u.kp, u.bahagian, u.email
-              FROM wilayah_asal wa
-              JOIN user u ON wa.user_kp = u.kp
-              WHERE wa.id = ?
-          ");
-          $stmt_user->bind_param("i", $wilayah_asal_id);
-          $stmt_user->execute();
-          $result_user = $stmt_user->get_result();
-  
-          if ($result_user->num_rows > 0) {
-              $userData = $result_user->fetch_assoc();
-              $nama = $userData['nama_first'] . ' ' . $userData['nama_last'];
-              $kp = $userData['kp'];
-              $bahagian = $userData['bahagian'];
-              } else {
-              $nama = $kp = $bahagian = "Tidak Dikenal Pasti";
-              }
-              $stmt_user->close();
-          
-  
-             while ($data = $result->fetch_assoc()) {
-              $receiver_name = $data['Name'];
-              $receiver_email = $data['Email'];
-          
-                  // Send email to each admin
-                  $mail = new PHPMailer(true);
+        if ($result->num_rows > 0) {
+          // Fetch user details
+        $stmt_user = $conn->prepare("
+            SELECT u.nama_first, u.nama_last, u.kp, u.bahagian, u.email
+            FROM wilayah_asal wa
+            JOIN user u ON wa.user_kp = u.kp
+            WHERE wa.id = ?
+        ");
+        $stmt_user->bind_param("i", $wilayah_asal_id);
+        $stmt_user->execute();
+        $result_user = $stmt_user->get_result();
+
+        if ($result_user->num_rows > 0) {
+            $userData = $result_user->fetch_assoc();
+            $nama = $userData['nama_first'] . ' ' . $userData['nama_last'];
+            $kp = $userData['kp'];
+            $bahagian = $userData['bahagian'];
+            } else {
+            $nama = $kp = $bahagian = "Tidak Dikenal Pasti";
+            }
+            $stmt_user->close();
+        
+
+        while ($data = $result->fetch_assoc()) {
+            $receiver_name = $data['Name'];
+            $receiver_email = $data['Email'];
+        
+                // Send email to each admin
+                $mail = new PHPMailer(true);
                 try {
                     $mail->isSMTP();
                     $mail->Host = 'smtp.gmail.com';
                     $mail->SMTPAuth = true;
                     $mail->Username = 'alltras@customs.gov.my';  // your Gmail
-                    $mail->Password = 'wyob jyxf gzsy gbax';     // Gmail App Password 
+                    $mail->Password = 'wyob jyxf gzsy gbax';         // Gmail App Password 
                     $mail->SMTPSecure = 'tls';
                     $mail->Port = 587;
         
@@ -101,9 +100,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <p><b>Bahagian/Cawangan :</b> $bahagian</p><br>
         
                         <p>Permohonan Tambang Ziarah Wilayah (TZW) oleh pegawai telah <b>DIKUIRI</b>. <br>
-
                         <p>Mohon tuan/puan mengambil tindakan dan menghantar permohonan ke pihak yang berkaitan.</p>
-                        <p>Sila klik pautan/butang di bawah untuk tindakan lanjut dan maklumat permohonan.</p>    
+                        <p>Sila klik pautan/butang di bawah untuk tindakan lanjut dan maklumat permohonan.</p>
         
                         <p><a href='http://localhost/reAllTras/role/csm/pbr/viewdetailskuiri.php?kp=$kp'><b><u>PAPAR MAKLUMAT PERMOHONAN</u></b></a></p><br>
 
@@ -122,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         } 
         
-        header("Location: wilayahAsalDikuiri.php");
+        header("Location: wilayahAsal.php");
         exit();
     }
         

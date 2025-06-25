@@ -18,14 +18,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $admin_id = $_SESSION['admin_id'];
         $admin_name = $_SESSION['admin_name'];
         $admin_role = $_SESSION['admin_role'];
-        $status = 'Permohonan dikuiri';
+        $status = 'Kembali ke penyemak HQ';
         $ulasan = $_POST['ulasan'] ?? null; // Get ulasan if provided, else set to null
 
         $tarikh_keputusan = date('Y-m-d H:i:s');
         $status_permohonan = "Dikuiri";
-        $kedudukan_permohonan = "CSM";
+        $kedudukan_permohonan = "HQ";
 
-        $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, ulasan_pbr_csm1 = ?, pbr_csm1_id = ?,  status_permohonan= ?, kedudukan_permohonan= ?, tarikh_keputusan_csm1 = ? WHERE id = ?");
+        $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, ulasan_pelulus_HQ = ?, pelulus_HQ_id = ?,  status_permohonan= ?, kedudukan_permohonan= ?, tarikh_keputusan_pelulus_HQ = ? WHERE id = ?");
         $stmt_wilayah->bind_param("ssssssi", $status, $ulasan, $admin_id, $status_permohonan, $kedudukan_permohonan, $tarikh_keputusan, $wilayah_asal_id);
         $stmt_wilayah->execute();
         $stmt_wilayah->close();
@@ -43,10 +43,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             error_log("Gagal masukkan ke document_logs: " . $log_stmt->error);
         }
         $log_stmt->close();
-            
-    
 
-
+        $sql = "SELECT * FROM admin WHERE role = 'Penyemak HQ'";
+        $result = $conn->query($sql);
+        
+        if ($result->num_rows > 0) {
           // Fetch user details
         $stmt_user = $conn->prepare("
             SELECT u.nama_first, u.nama_last, u.kp, u.bahagian, u.email
@@ -63,9 +64,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $nama = $userData['nama_first'] . ' ' . $userData['nama_last'];
             $kp = $userData['kp'];
             $bahagian = $userData['bahagian'];
-            $receiver_email = $userData['email'];
+            } else {
+            $nama = $kp = $bahagian = "Tidak Dikenal Pasti";
+            }
+            $stmt_user->close();
+        
 
-            if (!empty($receiver_email)) {
+        while ($data = $result->fetch_assoc()) {
+            $receiver_name = $data['Name'];
+            $receiver_email = $data['Email'];
+        
+                // Send email to each admin
                 $mail = new PHPMailer(true);
                 try {
                     $mail->isSMTP();
@@ -91,10 +100,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <p><b>Bahagian/Cawangan :</b> $bahagian</p><br>
         
                         <p>Permohonan Tambang Ziarah Wilayah (TZW) oleh pegawai telah <b>DIKUIRI</b>. <br>
-                        <p>Mohon tuan/puan mengambil tindakan pembetulan dan menghantar semula permohonan untuk semakan lanjut.</p>
+                        <p>Mohon tuan/puan mengambil tindakan dan menghantar permohonan ke pihak yang berkaitan.</p>
                         <p>Sila klik pautan/butang di bawah untuk tindakan lanjut dan maklumat permohonan.</p>
         
-                        <p><a href='http://localhost/reAllTras/role/pemohon/dashboard.php'><b><u>PAPAR MAKLUMAT PERMOHONAN</u></b></a></p><br>
+                        <p><a href='http://localhost/reAllTras/role/HQ/penyemak/viewdetailsdikuiri.php?kp=$kp'><b><u>PAPAR MAKLUMAT PERMOHONAN</u></b></a></p><br>
+
         
                         <p>Sekian, terima kasih.</p>
                         <p>Emel ini dijana secara automatik oleh <i>All Region Travelling System (ALLTRAS)</i></p>
