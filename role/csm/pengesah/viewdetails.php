@@ -125,8 +125,8 @@ include '../../../connection.php';
         
         <!-- Submenu -->
         <div id="wilayahSubmenu" class="submenu" style="display: <?= $submenuOpen ? 'block' : 'none' ?>;">
-            <a href="permohonanPengguna.php" class="active">Permohonan Pengguna</a>
-            <a href="permohonanIbuPejabat.php">Permohonan Ibu Pejabat</a>
+            <a href="permohonanPengguna.php" class="active">Pengesahan I</a>
+            <a href="permohonanIbuPejabat.php">Pengesahan II</a>
         </div>
 
         <!-- <a href="tugasRasmi.php"><i class="fas fa-tasks me-2"></i>Tugas Rasmi / Kursus</a> -->
@@ -425,7 +425,7 @@ include '../../../connection.php';
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #d59e3e; color: white;">
                     <h5 class="mb-0"><strong>Pengesahan</strong></h5>
                     <a class="text-black text-decoration-underline" data-bs-toggle="collapse" href="#logDokumenTable" role="button" aria-expanded="false" aria-controls="logDokumenTable" style="font-size: 0.8rem;">
-                        Rekod Log Dokumen
+                         Log Rekod
                     </a>
                 </div>
 
@@ -502,13 +502,10 @@ include '../../../connection.php';
                                 </table>
                             </div>
                     </div>
-                </div>
-            </div>
-
-            </div>
+       
             <input type="hidden" name="wilayah_asal_id" value="<?= $wilayah_asal_id ?>">
 
-            <div class="d-flex justify-content-between mt-4">
+            <div class="d-flex justify-content-between mt-5">
                 <a href="permohonanPengguna.php" class="btn btn-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Kembali
                 </a>
@@ -517,15 +514,23 @@ include '../../../connection.php';
                 </button>
             </div>
             <?php if ($isApproved): ?>
-                <div class="alert alert-info mt-3">
-                    Permohonan telah diluluskan dan tidak boleh dikemaskini lagi.
+                <div class="row">
+                    <div class="col-12">
+                        <div class="alert alert-info mt-3 text-center">
+                            Permohonan telah diluluskan dan tidak boleh dikemaskini lagi.
+                        </div>
+                    </div>
                 </div>
             <?php endif; ?>
         </form>
         
     </div>
 </div>
-</div> 
+</div>
+</div>
+            </div>
+
+            </div> 
 
 
 

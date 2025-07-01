@@ -129,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
                         <p>Sila klik pautan/butang di bawah untuk tindakan lanjut dan maklumat permohonan.</p>
         
-                        <p><a href='http://localhost/reAllTras/role/kewangan/penyemakBaki/viewdetails.php?kp=$kp'><b><u>PAPAR MAKLUMAT PERMOHONAN</u></b></a></p><br>
+                        <p><a href='" . getFullUrl("role/kewangan/penyemakBaki/viewdetails.php?kp=$kp") . "'><b><u>PAPAR MAKLUMAT PERMOHONAN</u></b></a></p><br>
         
                         <p>Sekian, terima kasih.</p>
                         <p>Emel ini dijana secara automatik oleh <i>All Region Travelling System (ALLTRAS)</i></p>

@@ -10,7 +10,7 @@ require '../../../PHPMailer/src/PHPMailer.php';
 require '../../../PHPMailer/src/SMTP.php';
 
 session_start();
-include '../../../connection.php';
+include_once '../../../includes/config.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <p>Mohon tuan/puan mengambil tindakan dan menghantar permohonan ke pihak yang berkaitan.</p>
                         <p>Sila klik pautan/butang di bawah untuk tindakan lanjut dan maklumat permohonan.</p>
         
-                        <p><a href='http://localhost/reAllTras/role/HQ/penyemak/viewdetailsdikuiri.php?kp=$kp'><b><u>PAPAR MAKLUMAT PERMOHONAN</u></b></a></p><br>
+                        <p><a href='" . getFullUrl("role/HQ/penyemak/viewdetailsdikuiri.php?kp=$kp") . "'><b><u>PAPAR MAKLUMAT PERMOHONAN</u></b></a></p><br>
 
         
                         <p>Sekian, terima kasih.</p>

@@ -403,7 +403,7 @@ include '../../../connection.php';
             <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #d59e3e; color: white;">
                     <h5 class="mb-0"><strong>Pengesahan</strong></h5>
                     <a class="text-black text-decoration-underline" data-bs-toggle="collapse" href="#logDokumenTable" role="button" aria-expanded="false" aria-controls="logDokumenTable" style="font-size: 0.8rem;">
-                        Rekod Log Dokumen
+                         Log Rekod
                     </a>
                 </div>
                 
@@ -460,13 +460,10 @@ include '../../../connection.php';
                                 </table>
                             </div>
                     </div>
-                </div>
-            </div>
-
-            </div>
+         
             <input type="hidden" name="wilayah_asal_id" value="<?= $wilayah_asal_id ?>">
 
-            <div class="d-flex justify-content-between mt-4">
+            <div class="d-flex justify-content-between mt-5">
                 <a href="wilayahAsal.php" class="btn btn-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Kembali
                 </a>
@@ -475,8 +472,12 @@ include '../../../connection.php';
                 </button>
             </div>
             <?php if ($isApproved): ?>
-                <div class="alert alert-info mt-3">
-                    Permohonan telah diluluskan dan tidak boleh dikemaskini lagi.
+                <div class="row">
+                    <div class="col-12">
+                        <div class="alert alert-info mt-3 text-center">
+                            Permohonan telah diluluskan dan tidak boleh dikemaskini lagi.
+                        </div>
+                    </div>
                 </div>
             <?php endif; ?>
         </form>
@@ -484,6 +485,9 @@ include '../../../connection.php';
     </div>
 </div>
 </div> 
+</div>
+            </div>
+            </div>
 
 
 <script>

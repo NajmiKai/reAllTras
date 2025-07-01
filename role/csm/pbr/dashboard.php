@@ -125,8 +125,8 @@ $submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'permohonanIbuP
         
         <!-- Submenu -->
         <div id="wilayahSubmenu" class="submenu" style="display: <?= $submenuOpen ? 'block' : 'none' ?>;">
-            <a href="permohonanPengguna.php">Permohonan Pengguna</a>
-            <a href="permohonanIbuPejabat.php">Permohonan Ibu Pejabat</a>
+            <a href="permohonanPengguna.php">Semakan Permohonan</a>
+            <a href="permohonanIbuPejabat.php">Buku Rekod</a>
             <a href="permohonanDikuiri.php">Permohonan Dikuiri</a>
         </div>
 

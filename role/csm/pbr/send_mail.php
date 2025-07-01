@@ -12,7 +12,8 @@ require '../../../PHPMailer/src/PHPMailer.php';
 require '../../../PHPMailer/src/SMTP.php';
 
 session_start();
-include '../../../connection.php';
+include_once '../../../includes/config.php';
+
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -174,7 +175,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <p>Mohon pihak tuan/puan untuk semakan dan pengesahan maklumat berkaitan.</p>
                         <p>Sila klik pautan/butang di bawah untuk tindakan lanjut dan maklumat permohonan.</p>
         
-                        <p><a href='http://localhost/reAllTras/role/csm/pegawaiSulit/viewdetails.php?kp=$kp'><b><u>PAPAR MAKLUMAT PERMOHONAN</u></b></a></p><br>
+                        <p><a href='" . getFullUrl("role/csm/pegawaiSulit/viewdetails.php?kp=$kp") . "'><b><u>PAPAR MAKLUMAT PERMOHONAN</u></b></a></p><br>
+
         
                         <p>Sekian, terima kasih.</p>
                         <p>Emel ini dijana secara automatik oleh <i>All Region Travelling System (ALLTRAS)</i></p>

@@ -11,7 +11,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
         <i class="fas fa-map-marker-alt me-2"></i>Pengendalian Admin
     </a>
     <a href="adjustUsers.php" <?= $current_page === 'adjustUsers.php' ? 'class="active"' : '' ?>>
-        <i class="fa fa-users me-2"></i>Pengedalian Pengguna
+        <i class="fa fa-users me-2"></i>Pengendalian Pengguna
     </a>
     <a href="listWilayahAsal.php" <?= ($current_page === 'listWilayahAsal.php' || $current_page === 'viewWilayahAsal.php') ? 'class="active"' : '' ?>>
         <i class="fa fa-file-text me-2"></i>Pengendalian Wilayah Asal

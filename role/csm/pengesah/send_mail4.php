@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <p>Mohon tuan/puan mengambil tindakan dan menghantar permohonan ke pihak yang berkaitan.</p>
                         <p>Sila klik pautan/butang di bawah untuk tindakan lanjut dan maklumat permohonan.</p>
         
-                        <p><a href='http://localhost/reAllTras/role/csm/pbr/viewdetailskuiri.php?kp=$kp'><b><u>PAPAR MAKLUMAT PERMOHONAN</u></b></a></p><br>
+                        <p><a href='" . getFullUrl("role/csm/pbr/viewdetailskuiri.php?kp=$kp") . "'><b><u>PAPAR MAKLUMAT PERMOHONAN</u></b></a></p><br>
 
         
                         <p>Sekian, terima kasih.</p>

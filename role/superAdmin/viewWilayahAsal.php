@@ -442,8 +442,110 @@ $ulasan = $data['ulasan_pbr_csm1'];
             </div>
         </div>
 
+
+          <!-- Dokumen -->
+          <div class="section-card">
+            <div class="section-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-file-alt me-2"></i>Log Rekod
+                </h5>
+            </div>
+
+            <!-- Collapsible Log Table -->
+            <div class="section-body">
+          <div id="logDokumenTable">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="fw-bold">Tarikh</th>
+                            <th class="fw-bold">Nama Admin</th>
+                            <th class="fw-bold">Peranan</th>
+                            <th class="fw-bold">Tindakan</th>
+                            <th class="fw-bold">Catatan</th>
+                            <th class="fw-bold">Tindakan Admin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                            $log_sql = "SELECT * FROM document_logs WHERE wilayah_asal_id = ? ORDER BY tarikh DESC";
+                            $log_stmt = $conn->prepare($log_sql);
+                            $log_stmt->bind_param("i", $wilayah_id);
+                            $log_stmt->execute();
+                            $log_result = $log_stmt->get_result();
+
+                            if ($log_result->num_rows > 0):
+                                while ($log = $log_result->fetch_assoc()):
+                            ?>
+                        <tr>
+                            <td><?= htmlspecialchars(date('d/m/Y', strtotime($log['tarikh']))) ?></td>
+                            <td><?= htmlspecialchars($log['namaAdmin']) ?></td>
+                            <td><?= htmlspecialchars($log['peranan']) ?></td>
+                            <td><?= htmlspecialchars($log['tindakan']) ?></td>
+                            <td><?= nl2br(htmlspecialchars($log['catatan'])) ?></td>
+                            <td>
+                                <button type="button" class="btn btn-info btn-sm" onclick="viewDocumentLog(<?php echo $log['id']; ?>)">
+                                    <i class="fas fa-eye"></i> Lihat
+                                </button>
+                            </td>
+                        </tr>
+                            <?php
+                                endwhile;
+                                else:
+                            ?>
+                        <tr>
+                            <td colspan="5" class="text-center">Tiada rekod log untuk wilayah ini.</td>
+                        </tr>
+                            <?php endif;
+                            $log_stmt->close();
+                            ?>
+                        </tbody>
+                        </table>
+                    </div>
+                    </div>
+            </div>        
     </div>
 </div>
+
+
+
+<!-- View Admin Modal -->
+<div class="modal fade" id="viewAdminModal" tabindex="-1" aria-labelledby="viewAdminModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewAdminModalLabel">Maklumat Admin</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="adminDetails">
+                <form id="editAdminForm">
+                    <input type="hidden" id="editWilayahAsalId" name="id">
+                    <div class="mb-3">
+                        <label for="editNamaAdmin" class="form-label">Nama Admin</label>
+                        <input type="text" class="form-control" id="editNamaAdmin" name="adminName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editPeranan" class="form-label">Peranan</label>
+                        <input type="email" class="form-control" id="editPeranan" name="peranan" disabled required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editTindakan" class="form-label">Tindakan</label>
+                        <input type="text" class="form-control" id="editTindakan" name="phoneNo" maxlength="11" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editCatatan" class="form-label">Catatan</label>
+                        <input type="text" class="form-control" id="editCatatan" name="icNo" maxlength="12" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-primary" onclick="saveAdminChanges()">Simpan Perubahan</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -452,6 +554,24 @@ $ulasan = $data['ulasan_pbr_csm1'];
         e.preventDefault();
         document.getElementById('sidebar').classList.toggle('hidden');
     });
+
+
+    function viewDocumentLog(wilayah_id) {
+    // Fetch admin details via AJAX
+    fetch(`includes/getWilayahAdminDetails.php?id=${wilayah_id}`)
+        .then(response => response.json())
+        .then(data => {
+            // Populate form fields
+            document.getElementById('editWilayahAsalId').value = data.ID;
+            document.getElementById('editNamaAdmin').value = data.namaAdmin;
+            document.getElementById('editPeranan').value = data.peranan;
+            document.getElementById('editTindakan').value = data.tindakan;
+            document.getElementById('editCatatan').value = data.catatan;
+            
+            new bootstrap.Modal(document.getElementById('viewAdminModal')).show();
+        })
+        .catch(error => console.error('Error:', error));
+}
 </script>
 </body>
 </html>
