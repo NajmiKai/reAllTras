@@ -122,9 +122,16 @@ $user_role = $user_data['bahagian'];
                                         <?php echo htmlspecialchars($doc['file_name']); ?>
                                         <small class="text-muted ms-2">(<?php echo date('d/m/Y H:i', strtotime($doc['upload_date'])); ?>)</small>
                                     </div>
-                                    <a href="/reAllTras/<?= str_replace('../../../', '', htmlspecialchars($doc['file_path'])) ?>" target="_blank" class="btn btn-sm btn-primary">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
+                                    <div>
+                                        <a href="/reAllTras/<?= str_replace('../../../', '', htmlspecialchars($doc['file_path'])) ?>" target="_blank" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-danger ms-2 delete-document-btn"
+                                            data-doc-id="<?= $doc['id'] ?>"
+                                            data-file-path="<?= htmlspecialchars($doc['file_path']) ?>">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             <?php endwhile; ?>
@@ -138,6 +145,17 @@ $user_role = $user_data['bahagian'];
                                 <h6 class="mb-0">Dokumen Tambahan</h6>
                                 <i class="fas fa-check-circle"></i>
                             </div>
+                            <div class="mb-2">
+                                <select class="form-select" name="dokumen_dikuiri_desc[]" required>
+                                    <option value="">-- Jenis Dokumen --</option>
+                                    <option>Dokumen Pegawai</option>
+                                    <option>Lampiran II</option>
+                                    <option>Dokumen Pasangan</option>
+                                    <option>Sijil Perkahwinan</option>
+                                    <option>Dokumen Pengikut</option>
+                                    <option>Dokumen Sokongan</option>
+                                </select>
+                            </div>
                             <div class="d-flex">
                                 <input type="file" class="form-control" name="dokumen_dikuiri[]" accept=".pdf,.jpg,.jpeg,.png" required>
                             </div>
@@ -150,7 +168,7 @@ $user_role = $user_data['bahagian'];
             </div>
 
             <div class="d-flex justify-content-between mt-4">
-                <a href="wilayahAsal.php" class="btn btn-secondary">
+                <a href="borangWA5.php" class="btn btn-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Kembali
                 </a>
                 <button type="submit" class="btn btn-success">
@@ -198,8 +216,19 @@ $user_role = $user_data['bahagian'];
         newItem.className = 'document-item';
         newItem.innerHTML = `
             <div class="document-title">
-                <h6 class="mb-0">Dokumen Dikuiri</h6>
+                <h6 class="mb-0">Dokumen Tambahan</h6>
                 <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="mb-2">
+                <select class="form-select" name="dokumen_dikuiri_desc[]" required>
+                    <option value="">-- Pilih Keterangan --</option>
+                    <option>Dokumen Pegawai</option>
+                    <option>Lampiran II</option>
+                    <option>Dokumen Pasangan</option>
+                    <option>Sijil Perkahwinan</option>
+                    <option>Dokumen Pengikut</option>
+                    <option>Dokumen Sokongan</option>
+                </select>
             </div>
             <div class="d-flex">
                 <input type="file" class="form-control" name="dokumen_dikuiri[]" accept=".pdf,.jpg,.jpeg,.png" required>
@@ -210,6 +239,29 @@ $user_role = $user_data['bahagian'];
         `;
         container.appendChild(newItem);
     }
+
+    document.querySelectorAll('.delete-document-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            if (!confirm('Padam dokumen ini?')) return;
+            const docId = this.getAttribute('data-doc-id');
+            const listItem = this.closest('.list-group-item');
+
+            fetch('includes/delete_document.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: 'doc_id=' + encodeURIComponent(docId)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    listItem.remove();
+                } else {
+                    alert('Gagal padam dokumen.');
+                }
+            })
+            .catch(() => alert('Ralat rangkaian.'));
+        });
+    });
 </script>
 </body>
 </html>
