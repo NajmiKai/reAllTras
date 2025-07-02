@@ -30,7 +30,7 @@ if (!file_exists($upload_dir)) {
 }
 
 // Function to handle file upload
-function handleFileUpload($file, $upload_dir, $wilayah_asal_id, $user_kp) {
+function handleFileUpload($file, $upload_dir, $wilayah_asal_id, $user_kp, $description) {
     global $conn;
     
     if ($file['error'] === UPLOAD_ERR_OK) {
@@ -49,9 +49,9 @@ function handleFileUpload($file, $upload_dir, $wilayah_asal_id, $user_kp) {
             
             // Insert into database
             $sql = "INSERT INTO documents (wilayah_asal_id, file_name, file_path, file_type, file_size, description, file_origin_id, file_origin) 
-                    VALUES (?, ?, ?, ?, ?, 'Dokumen Tambahan', ?, 'pemohon')";
+                    VALUES (?, ?, ?, ?, ?, ?, ?, 'pemohon')";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("isssis", $wilayah_asal_id, $file_name, $web_path, $file_type, $file_size, $user_kp);
+            $stmt->bind_param("isssiss", $wilayah_asal_id, $file_name, $web_path, $file_type, $file_size, $description, $user_kp);
             
             if ($stmt->execute()) {
                 return true;
@@ -76,8 +76,8 @@ if (isset($_FILES['dokumen_dikuiri'])) {
                 'error' => $_FILES['dokumen_dikuiri']['error'][$key],
                 'size' => $_FILES['dokumen_dikuiri']['size'][$key]
             ];
-            
-            if (!handleFileUpload($file, $upload_dir, $wilayah_asal_id, $user_kp)) {
+            $description = $_POST['dokumen_dikuiri_desc'][$key] ?? '';
+            if (!handleFileUpload($file, $upload_dir, $wilayah_asal_id, $user_kp, $description)) {
                 $success = false;
                 $error_messages[] = "Gagal memuat naik Dokumen Dikuiri #" . ($key + 1);
             } else {

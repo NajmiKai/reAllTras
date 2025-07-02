@@ -437,14 +437,14 @@ if (isset($_SESSION['wilayah_asal_id'])) {
                                     <h6 class="mb-0">Dokumen Pengesahan Ayah</h6>
                                     <i class="fas fa-check-circle"></i>
                                 </div>
-                                <input type="file" class="form-control" name="dokumen_sokongan[]" accept=".pdf,.jpg,.jpeg,.png">
+                                <input type="file" class="form-control" name="dokumen_sokongan[]" accept=".pdf,.jpg,.jpeg,.png" required>
                             </div>
                             <div class="document-item mt-3">
                                 <div class="document-title">
                                     <h6 class="mb-0">Dokumen Pengesahan Ibu</h6>
                                     <i class="fas fa-check-circle"></i>
                                 </div>
-                                <input type="file" class="form-control" name="dokumen_sokongan[]" accept=".pdf,.jpg,.jpeg,.png">
+                                <input type="file" class="form-control" name="dokumen_sokongan[]" accept=".pdf,.jpg,.jpeg,.png" required>
                             </div>';
                         }
                         ?>

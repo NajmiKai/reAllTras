@@ -140,7 +140,7 @@ function getUlasan($application_data) {
                     if ($wilayah_asal_id) {
                         
                         //Stage UI (Pemohon)
-                        if (!$application_data['wilayah_asal_form_fill'] && $application_data['wilayah_asal_from_stage'] !== 'Hantar') {
+                        if ($application_data['wilayah_asal_from_stage'] !== 'Hantar') {
                             $current_stage = 'Pemohon';
                             $show_description = true;
                             
