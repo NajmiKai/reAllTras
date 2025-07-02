@@ -7,7 +7,7 @@ require 'PHPMailer/src/PHPMailer.php';
 require 'PHPMailer/src/SMTP.php';
 
 session_start();
-include 'connection.php';
+include_once 'includes/config.php';
 date_default_timezone_set('Asia/Kuala_Lumpur');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bind_param("sss", $token, $expiry, $email);
         $stmt->execute();
 
-        $resetLink = "http://localhost/reAllTras/resetPassword.php?token=$token";
+        $resetLink = getFullUrl("resetPassword.php?token=$token");
 
         // Send email using PHPMailer
         $mail = new PHPMailer(true);

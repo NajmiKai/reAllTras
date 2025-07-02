@@ -484,9 +484,10 @@ $ulasan = $data['ulasan_pbr_csm1'];
                             <td><?= htmlspecialchars($log['tindakan']) ?></td>
                             <td><?= nl2br(htmlspecialchars($log['catatan'])) ?></td>
                             <td>
-                                <button type="button" class="btn btn-info btn-sm" onclick="viewDocumentLog(<?php echo $log['id']; ?>)">
-                                    <i class="fas fa-eye"></i> Lihat
-                                </button>
+                            <button type="button" class="btn btn-warning btn-sm"
+                                onclick="kembaliTindakan(<?= $log['wilayah_asal_id'] ?>, <?= $log['id'] ?>)">
+                                <i class="fas fa-undo"></i> Undur Tindakan
+                            </button>
                             </td>
                         </tr>
                             <?php
@@ -510,11 +511,11 @@ $ulasan = $data['ulasan_pbr_csm1'];
 
 
 <!-- View Admin Modal -->
-<div class="modal fade" id="viewAdminModal" tabindex="-1" aria-labelledby="viewAdminModalLabel" aria-hidden="true">
+<!-- <div class="modal fade" id="viewAdminModal" tabindex="-1" aria-labelledby="viewAdminModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="viewAdminModalLabel">Maklumat Admin</h5>
+                <h5 class="modal-title" id="viewAdminModalLabel">Maklumat Log Rekod</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="adminDetails">
@@ -522,19 +523,20 @@ $ulasan = $data['ulasan_pbr_csm1'];
                     <input type="hidden" id="editWilayahAsalId" name="id">
                     <div class="mb-3">
                         <label for="editNamaAdmin" class="form-label">Nama Admin</label>
-                        <input type="text" class="form-control" id="editNamaAdmin" name="adminName" required>
+                        <input type="text" class="form-control" id="editNamaAdmin" name="editNamaAdmin" disabled required>
                     </div>
                     <div class="mb-3">
                         <label for="editPeranan" class="form-label">Peranan</label>
-                        <input type="email" class="form-control" id="editPeranan" name="peranan" disabled required>
+                        <input type="email" class="form-control" id="editPeranan" name="editPeranan" disabled required>
                     </div>
                     <div class="mb-3">
                         <label for="editTindakan" class="form-label">Tindakan</label>
-                        <input type="text" class="form-control" id="editTindakan" name="phoneNo" maxlength="11" required>
+                        <input type="text" class="form-control" id="editTindakan" name="editTindakan" required>
+                         <div id="tindakanWrapper"></div> 
                     </div>
                     <div class="mb-3">
                         <label for="editCatatan" class="form-label">Catatan</label>
-                        <input type="text" class="form-control" id="editCatatan" name="icNo" maxlength="12" required>
+                        <input type="text" class="form-control" id="editCatatan" name="editCatatan">
                     </div>
                 </form>
             </div>
@@ -544,7 +546,7 @@ $ulasan = $data['ulasan_pbr_csm1'];
             </div>
         </div>
     </div>
-</div>
+</div> -->
 
 
 <!-- Bootstrap JS -->
@@ -555,23 +557,109 @@ $ulasan = $data['ulasan_pbr_csm1'];
         document.getElementById('sidebar').classList.toggle('hidden');
     });
 
-
-    function viewDocumentLog(wilayah_id) {
-    // Fetch admin details via AJAX
-    fetch(`includes/getWilayahAdminDetails.php?id=${wilayah_id}`)
+    function kembaliTindakan(wilayah_id, log_id) {
+    if (confirm("Adakah anda pasti mahu undur tindakan ini?")) {
+        fetch('includes/kembaliTindakan.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ wilayah_id: wilayah_id, log_id: log_id })
+        })
         .then(response => response.json())
         .then(data => {
-            // Populate form fields
-            document.getElementById('editWilayahAsalId').value = data.ID;
-            document.getElementById('editNamaAdmin').value = data.namaAdmin;
-            document.getElementById('editPeranan').value = data.peranan;
-            document.getElementById('editTindakan').value = data.tindakan;
-            document.getElementById('editCatatan').value = data.catatan;
-            
-            new bootstrap.Modal(document.getElementById('viewAdminModal')).show();
+            alert(data.message);
+            location.reload();
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {
+            console.error('Error:', error);
+            alert("Ralat berlaku. Sila cuba lagi.");
+        });
+    }
 }
+
+    // function viewDocumentLog(wilayah_id) {
+    // fetch(`includes/getWilayahAdminDetails.php?id=${wilayah_id}`)
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         // Populate form fields
+    //         document.getElementById('editWilayahAsalId').value = data.ID;
+    //         document.getElementById('editNamaAdmin').value = data.namaAdmin;
+    //         document.getElementById('editPeranan').value = data.peranan;
+    //         document.getElementById('editCatatan').value = data.catatan;
+
+    //         const tindakanWrapper = document.getElementById('tindakanWrapper');
+    //         tindakanWrapper.innerHTML = ''; // clear old content
+
+    //         // Check value of tindakan
+    //         if (data.tindakan === 'Disahkan' || data.tindakan === 'Tidak disahkan') {
+    //             // Render dropdown
+    //             tindakanWrapper.innerHTML = `
+    //                 <label for="editTindakanSelect" class="form-label">Tindakan</label>
+    //                 <select class="form-select" id="editTindakanSelect" name="editTindakan">
+    //                     <option value="">-- Pilih Tindakan --</option>
+    //                     <option value="disahkan">Disahkan</option>
+    //                     <option value="tidak disahkan">Tidak Disahkan</option>
+    //                 </select>
+    //             `;
+
+    //             // Set selected value
+    //             document.getElementById('editTindakanSelect').value = data.tindakan;
+
+    //         }  // Check value of tindakan
+    //         else if (data.tindakan === 'Diterima' || data.tindakan === 'Tidak diterima') {
+    //             // Render dropdown
+    //             tindakanWrapper.innerHTML = `
+    //                 <label for="editTindakanSelect" class="form-label">Tindakan</label>
+    //                 <select class="form-select" id="editTindakanSelect" name="editTindakan">
+    //                     <option value="">-- Pilih Tindakan --</option>
+    //                     <option value="diterima">Diterima</option>
+    //                     <option value="tidak diterima">Tidak Diterima</option>
+    //                 </select>
+    //             `;
+
+    //             // Set selected value
+    //             document.getElementById('editTindakanSelect').value = data.tindakan;
+            
+            
+    //         }  else if (data.tindakan === 'Diluluskan' || data.tindakan === 'Tidak diluluskan') {
+    //             // Render dropdown
+    //             tindakanWrapper.innerHTML = `
+    //                 <label for="editTindakanSelect" class="form-label">Tindakan</label>
+    //                 <select class="form-select" id="editTindakanSelect" name="editTindakan">
+    //                     <option value="">-- Pilih Tindakan --</option>
+    //                     <option value="diluluskan">Diluluskan</option>
+    //                     <option value="tidak diluluskan">Tidak Diluluskan</option>
+    //                 </select>
+    //             `;
+
+    //             // Set selected value
+    //             document.getElementById('editTindakanSelect').value = data.tindakan;
+            
+    //         } else {
+    //             // Render checkboxes
+    //             const options = ['Telah disemak baki'];
+    //             let checkboxHTML = `<label class="form-label d-block">Tindakan</label>`;
+
+    //             options.forEach(opt => {
+    //                 const isChecked = data.tindakan.includes(opt) ? 'checked' : '';
+    //                 checkboxHTML += `
+    //                     <div class="form-check">
+    //                         <input class="form-check-input" type="checkbox" value="${opt}" name="editTindakan[]" id="tindakan_${opt}" ${isChecked}>
+    //                         <label class="form-check-label" for="tindakan_${opt}">${opt.charAt(0).toUpperCase() + opt.slice(1)}</label>
+    //                     </div>
+    //                 `;
+    //             });
+
+    //             tindakanWrapper.innerHTML = checkboxHTML;
+    //         }
+
+    //         // Show modal
+    //         new bootstrap.Modal(document.getElementById('viewAdminModal')).show();
+    //     })
+    //     .catch(error => console.error('Error:', error));
+    // }
+
 </script>
 </body>
 </html>
