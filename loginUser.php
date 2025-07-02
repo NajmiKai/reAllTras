@@ -8,6 +8,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $identifier = $_POST['identifier']; // This will be email only
     $password = $_POST['password'];
 
+    //testing auto pull from server
     // Only allow email
     if (!filter_var($identifier, FILTER_VALIDATE_EMAIL)) {
         $_SESSION['error'] = "Sila masukkan emel yang sah";
