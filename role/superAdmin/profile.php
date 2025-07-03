@@ -66,15 +66,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <!-- Main Content -->
     <div class="col p-3">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="mb-0">Profil Super Admin</h4>
+        <div class="d-flex justify-content-between align-items-center mb-5" style>
+            <h4 class="mb-0 ms-3"> Profil Super Admin</h4>
             <?php include 'includes/greeting.php'; ?>
         </div>
 
 
 <div class="container py-6">
     <div class="row justify-content-center">
-        <div class="col-lg-8">
+        <div class="col-lg-6">
             <div class="card card-profile shadow-sm p-4">
             <?php if (!empty($success)): ?>
                         <div class="alert alert-success text-center"><?= $success ?></div>

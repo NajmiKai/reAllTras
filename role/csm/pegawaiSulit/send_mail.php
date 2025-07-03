@@ -11,6 +11,7 @@ require '../../../PHPMailer/src/SMTP.php';
 
 session_start();
 include_once '../../../includes/config.php';
+include '../../../includes/system_logger.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -21,6 +22,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $admin_name = $_SESSION['admin_name'];
         $admin_role = $_SESSION['admin_role'];
         $status = 'Menunggu pengesahan pengesah CSM';
+
+        // Get current status before update
+        $stmt_current = $conn->prepare("SELECT status FROM wilayah_asal WHERE id = ?");
+        $stmt_current->bind_param("i", $wilayah_asal_id);
+        $stmt_current->execute();
+        $result_current = $stmt_current->get_result();
+        $current_data = $result_current->fetch_assoc();
+        $old_status = $current_data['status'];
         
 
         $tarikh_keputusan = date('Y-m-d H:i:s');
@@ -29,6 +38,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt_wilayah->bind_param("sssisi", $status, $markah, $hukuman_tatatertib, $admin_id, $tarikh_keputusan, $wilayah_asal_id);
         $stmt_wilayah->execute();
         $stmt_wilayah->close();
+
+         // Log the status change
+        logApplicationStatusChange($conn, 'admin', $admin_id, $wilayah_asal_id, $old_status, $status, "Pegawai Sulit CSM updated application status");
 
         //insert into document_logs
         $tindakan = "Telah diisi markah prestasi";
@@ -44,7 +56,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         $log_stmt->close();
             
-    
 
 
         $sql = "SELECT * FROM admin WHERE role = 'Pengesah CSM'";

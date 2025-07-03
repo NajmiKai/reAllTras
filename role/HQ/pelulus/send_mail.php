@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt_wilayah->execute();
         
         // Log the status change
-        logApplicationStatusChange($conn, 'admin', $admin_id, $wilayah_asal_id, $old_status, $status, "HQ Pelulus updated application status");
+        logApplicationStatusChange($conn, 'admin', $admin_id, $wilayah_asal_id, $old_status, $status, "Pelulus HQ updated application status");
         
         $stmt_wilayah->close();
 

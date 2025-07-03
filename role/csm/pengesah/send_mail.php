@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt_wilayah->execute();
         
         // Log the status change
-        logApplicationStatusChange($conn, 'admin', $admin_id, $wilayah_asal_id, $old_status, $status, "CSM Pengesah updated application status");
+        logApplicationStatusChange($conn, 'admin', $admin_id, $wilayah_asal_id, $old_status, $status, "Pengesah CSM updated application status");
         
         $stmt_wilayah->close();
 

@@ -34,9 +34,15 @@ if (!$row) {
     exit;
 }
 
+
 $peranan = $row['peranan'];
 $tindakan = $row['tindakan'];
 $editCatatan = $row['catatan'];
+
+// Then delete AFTER using the values
+$deleteQuery = $conn->prepare("DELETE FROM document_logs WHERE id = ?");
+$deleteQuery->bind_param("i", $log_id);
+$deleteQuery->execute();
 
 // your long PHP logic starts here
 $status = '';

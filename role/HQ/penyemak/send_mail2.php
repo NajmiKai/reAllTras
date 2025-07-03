@@ -11,6 +11,8 @@ require '../../../PHPMailer/src/SMTP.php';
 
 session_start();
 include_once '../../../includes/config.php';
+include '../../../includes/system_logger.php';
+
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -20,6 +22,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $admin_name = $_SESSION['admin_name'];
         $admin_role = $_SESSION['admin_role'];
         $status = 'Menunggu pengesahan PBR2 CSM';
+
+        // Get current status before update
+        $stmt_current = $conn->prepare("SELECT status FROM wilayah_asal WHERE id = ?");
+        $stmt_current->bind_param("i", $wilayah_asal_id);
+        $stmt_current->execute();
+        $result_current = $stmt_current->get_result();
+        $current_data = $result_current->fetch_assoc();
+        $old_status = $current_data['status'];
 
 
           // 1. Handle Multiple File Uploads
@@ -91,6 +101,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt_wilayah->bind_param("sssssi", $status, $status_permohonan, $kedudukan_permohonan, $admin_id, $tarikh_keputusan, $wilayah_asal_id);
         $stmt_wilayah->execute();
         $stmt_wilayah->close();
+
+         // Log the status change
+         logApplicationStatusChange($conn, 'admin', $admin_id, $wilayah_asal_id, $old_status, $status, "Penyemak HQ updated application status");
 
         
           //insert into document_logs

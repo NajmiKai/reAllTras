@@ -51,8 +51,6 @@ $display_result = $conn->query($sql);
     <!-- Sidebar -->
     <?php include 'includes/sidebar.php'; ?>
 
-
-
     <!-- Main Content -->
     <div class="col p-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -171,7 +169,7 @@ $display_result = $conn->query($sql);
                 <input type="hidden" name="wilayah_asal_id" id="batal-id">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kembali</button>
                 <button type="submit" class="btn btn-danger">Sahkan Batal</button>
             </div>
         </div>

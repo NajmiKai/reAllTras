@@ -11,6 +11,8 @@ require '../../../PHPMailer/src/SMTP.php';
 
 session_start();
 include_once '../../../includes/config.php';
+include '../../../includes/system_logger.php';
+
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -20,12 +22,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $admin_role = $_SESSION['admin_role'];
         $status = 'Menunggu pengesahan pengesah2 CSM';
 
+        // Get current status before update
+        $stmt_current = $conn->prepare("SELECT status FROM wilayah_asal WHERE id = ?");
+        $stmt_current->bind_param("i", $wilayah_asal_id);
+        $stmt_current->execute();
+        $result_current = $stmt_current->get_result();
+        $current_data = $result_current->fetch_assoc();
+        $old_status = $current_data['status'];
+
         $tarikh_keputusan = date('Y-m-d H:i:s');
         // 2. Update wilayah_asal
         $stmt_wilayah = $conn->prepare("UPDATE wilayah_asal SET status = ?, pbr_csm2_id = ?, tarikh_keputusan_csm2 = ? WHERE id = ?");
         $stmt_wilayah->bind_param("sssi", $status, $admin_id, $tarikh_keputusan, $wilayah_asal_id);
         $stmt_wilayah->execute();
         $stmt_wilayah->close();
+
+         // Log the status change
+         logApplicationStatusChange($conn, 'admin', $admin_id, $wilayah_asal_id, $old_status, $status, "PBR CSM2 updated application status");
 
         //insert into document_logs
         $tindakan = "Telah direkodkan di dalam buku log";

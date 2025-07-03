@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         // Log the status change
-        logApplicationStatusChange($conn, 'admin', $admin_id, $wilayah_asal_id, $old_status, $status, "Kewangan Pengesah updated application status");
+        logApplicationStatusChange($conn, 'admin', $admin_id, $wilayah_asal_id, $old_status, $status, "Pengesah Kewangan updated application status");
         
         $stmt_wilayah->close();
 
