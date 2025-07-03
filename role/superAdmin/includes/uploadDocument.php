@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['document_file'])) {
 
     if ($file['error'] === 0) {
         // Upload path
-        $upload_dir = "../../../uploads/permohonan/" . $wilayah_asal_id;
+        $upload_dir = "../../../uploads/superadmin/" . $wilayah_asal_id;
         if (!is_dir($upload_dir)) {
             mkdir($upload_dir, 0777, true);
         }
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['document_file'])) {
 
         if (move_uploaded_file($file['tmp_name'], $target_path)) {
             // Simpan path berdasarkan tempat sebenar fail diakses web
-            $web_path = "../../../uploads/permohonan/" . $wilayah_asal_id . '/' . $unique_filename;
+            $web_path = "../../../uploads/superadmin/" . $wilayah_asal_id . '/' . $unique_filename;
 
             // Save to database
             $sql = "INSERT INTO documents (wilayah_asal_id, file_name, file_path, file_type, file_size, description, file_origin_id, file_origin) 

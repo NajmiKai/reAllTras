@@ -92,6 +92,8 @@ include '../../../connection.php';
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../../assets/css/adminStyle.css">
     <link rel="stylesheet" href="../../../assets/css/multi-step.css">
+    <link rel="icon" href="../../../assets/ALLTRAS.png" type="image/x-icon">
+
     <!-- Bootstrap 5 JS (includes collapse) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 

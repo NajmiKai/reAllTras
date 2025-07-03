@@ -55,6 +55,7 @@ $user_phoneNo = $user_data['phone'];
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../assets/css/userStyle.css">
     <link rel="stylesheet" href="../../assets/css/multi-step.css">
+    <link rel="icon" href="../../../assets/ALLTRAS.png" type="image/x-icon">
     <style>
         .multi-step-indicator {
             display: flex;
