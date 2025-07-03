@@ -1,6 +1,8 @@
 <?php
 session_start();
 include '../../../connection.php';
+include '../../../includes/system_logger.php';
+
 
 // Check if user is logged in as super admin
 if (!isset($_SESSION['super_admin_id'])) {
@@ -16,11 +18,14 @@ if (!isset($_GET['id'])) {
 }
 
 $admin_id = $_GET['id'];
+$super_admin_id = $_SESSION['super_admin_id'];
 
 // Delete admin
 $sql = "DELETE FROM admin WHERE ID = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $admin_id);
+
+logDataDelete($conn, 'super admin', $super_admin_id, "admin", $admin_id, "Delete admin");
 
 if ($stmt->execute()) {
     echo json_encode(['success' => true]);

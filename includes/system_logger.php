@@ -102,6 +102,7 @@ function logDataDelete($conn, $user_type, $user_id, $table_name, $record_id, $de
     return logSystemEvent($conn, 'data_delete', $user_type, $user_id, $action, $description, $table_name, $record_id);
 }
 
+
 // Helper function to log user profile updates
 function logProfileUpdate($conn, $user_type, $user_id, $field_name, $old_value, $new_value) {
     $action = 'Profile Update';
@@ -109,6 +110,7 @@ function logProfileUpdate($conn, $user_type, $user_id, $field_name, $old_value, 
     
     return logSystemEvent($conn, 'data_update', $user_type, $user_id, $action, $description, 'user_profile', null, $old_value, $new_value);
 }
+
 
 // Helper function to log application status changes
 function logApplicationStatusChange($conn, $user_type, $user_id, $application_id, $old_status, $new_status, $description = '') {

@@ -26,6 +26,8 @@ set_error_handler('handleError');
 
 session_start();
 
+$super_admin_id = $_SESSION['super_admin_id'];
+
 // Check login
 if (!isset($_SESSION['super_admin_id'])) {
     sendJson(false, 'Unauthorized', 401);
@@ -33,6 +35,8 @@ if (!isset($_SESSION['super_admin_id'])) {
 
 // Include database connection using absolute path
 require_once __DIR__ . '/../../../connection.php';
+include '../../../includes/system_logger.php';
+
 
 // Verify database connection
 if (!isset($conn) || $conn === null) {
@@ -196,4 +200,7 @@ try {
         error_log("Database connection closed");
     }
 }
+
+logDataDelete($conn, 'super admin', $super_admin_id, "user", $user_id, "Delete user");
+
 ?>

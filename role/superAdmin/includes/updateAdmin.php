@@ -1,6 +1,8 @@
 <?php
 session_start();
 include '../../../connection.php';
+include '../../../includes/system_logger.php';
+
 
 // Check if user is logged in as super admin
 if (!isset($_SESSION['super_admin_id'])) {
@@ -20,6 +22,8 @@ if (!$data || !isset($data['id'])) {
 }
 
 $admin_id = $data['id'];
+$super_admin_id = $_SESSION['super_admin_id'];
+
 
 // Start building the SQL query
 $sql = "UPDATE admin SET ";
