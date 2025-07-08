@@ -31,8 +31,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "Ralat: " . $stmt->error;
     }
 
-    $stmt->close();
-    $conn->close();
 }
 ?>
 
