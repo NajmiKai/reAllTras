@@ -2,8 +2,10 @@
 include_once __DIR__ . '/../connection.php';
 
 // Base path configuration
-define('BASE_PATH', 'http://localhost/reAllTras');
+// define('BASE_PATH', 'http://localhost/reAllTras');
 // define('BASE_PATH', 'http://10.13.100.141/reAllTras');
+define('BASE_PATH', 'http://alltras.customs.gov.my/reAllTras');
+
 
 // Upload path configuration
 define('UPLOAD_PATH', 'uploads');

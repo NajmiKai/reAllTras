@@ -153,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                         <div class="col-md-6">
                             <label for="phone" class="form-label">Nombor Telefon</label>
-                            <input type="tel" class="form-control" id="phone" name="phone" 
+                            <input type="tel" class="form-control" id="phone" name="phone" maxlength="11"
                                    value="<?= htmlspecialchars($user_data['phone']) ?>">
                         </div>
                     </div>
@@ -161,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="kp" class="form-label">Nombor Kad Pengenalan</label>
-                            <input type="text" class="form-control" id="kp" name="kp"
+                            <input type="text" class="form-control" id="kp" name="kp" maxlength="12"
                                    value="<?= htmlspecialchars($user_data['kp']) ?>" required>
                             <small class="text-muted">Format: XXXXXX-XX-XXXX. Tidak boleh ditukar jika terdapat permohonan wilayah asal yang aktif.</small>
                         </div>
