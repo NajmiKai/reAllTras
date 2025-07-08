@@ -136,12 +136,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="col-md-6">
                             <label for="nama_first" class="form-label">Nama Pertama</label>
                             <input type="text" class="form-control" id="nama_first" name="nama_first" 
-                                   value="<?= htmlspecialchars($user_data['nama_first']) ?>" required>
+                                   value="<?= htmlspecialchars($user_data['nama_first']) ?>" required  oninput="this.value = this.value.toUpperCase();">
                         </div>
                         <div class="col-md-6">
                             <label for="nama_last" class="form-label">Nama Akhir</label>
                             <input type="text" class="form-control" id="nama_last" name="nama_last" 
-                                   value="<?= htmlspecialchars($user_data['nama_last']) ?>" required>
+                                   value="<?= htmlspecialchars($user_data['nama_last']) ?>" required  oninput="this.value = this.value.toUpperCase();">
                         </div>
                     </div>
 
