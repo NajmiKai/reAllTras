@@ -10,6 +10,14 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <a href="wilayahAsal.php" <?= $current_page === 'wilayahAsal.php' ? 'class="active"' : '' ?>>
         <i class="fas fa-map-marker-alt me-2"></i>Wilayah Asal
     </a>
+    <div class="submenu-container">
+        <a href="wilayahAsal.php" class="submenu-link<?= $current_page === 'wilayahAsal.php' ? ' active' : '' ?>">
+            <i class="fas fa-map-marker-alt me-2"></i>Wilayah Asal Terkini
+        </a>
+        <a href="wilayahAsalList.php" class="submenu-link<?= $current_page === 'wilayahAsalList.php' ? ' active' : '' ?>">
+            <i class="fas fa-list me-2"></i>Semua Pemohonan
+        </a>
+    </div>
     <a href="profile.php" <?= $current_page === 'profile.php' ? 'class="active"' : '' ?>>
         <i class="fas fa-user me-2"></i>Paparan Profil
     </a>
