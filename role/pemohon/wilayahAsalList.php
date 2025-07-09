@@ -99,7 +99,7 @@ while ($row = $list_result->fetch_assoc()) {
                                     </span>
                                 </td>
                                 <td>
-                                    <form method="post" class="d-inline">
+                                    <form method="post" action="wilayahAsalView.php" class="d-inline">
                                         <input type="hidden" name="wilayah_asal_id" value="<?= $row['id'] ?>">
                                         <button type="submit" class="btn btn-primary btn-sm">
                                             <i class="fas fa-eye me-1"></i>Lihat
