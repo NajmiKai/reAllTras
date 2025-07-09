@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $negeri_menetap_ibu = $_POST['negeri_menetap_ibu'];
         $ibu_negeri_bandar_dituju_ibu = $_POST['ibu_negeri_bandar_dituju_ibu'];
 
-        if ($existing_record && ($existing_record['wilayah_asal_from_stage'] === 'BorangWA3' || $existing_record['wilayah_asal_from_stage'] === 'BorangWA5')) {
+        if ($existing_record && ($existing_record['wilayah_asal_from_stage'] === 'BorangWA3' || $existing_record['wilayah_asal_from_stage'] === 'BorangWA5' || $existing_record['wilayah_asal_from_stage'] === 'Hantar')) {
             // Update existing record
             $update_sql = "UPDATE wilayah_asal SET 
                 nama_bapa = ?,
@@ -175,7 +175,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         // Redirect to the next form based on the stage
-        if ($existing_record['wilayah_asal_form_fill'] === 1) {
+        if ($existing_record['wilayah_asal_form_fill'] === 1 && $existing_record['wilayah_asal_from_stage'] === 'Hantar') {
+            
+            header("Location: ../wilayahAsal.php");
+            
+        }
+        else if ($existing_record['wilayah_asal_form_fill'] === 1) {
 
             $update_stage_sql2 = "UPDATE wilayah_asal SET wilayah_asal_from_stage = 'BorangWA5' WHERE id = ?";
             $update_stage_stmt2 = $conn->prepare($update_stage_sql2);

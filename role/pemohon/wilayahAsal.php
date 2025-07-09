@@ -231,7 +231,7 @@ $ulasan = $_SESSION['wilayah_asal_ulasan'] ?? null;
                         <i class="fas fa-user me-2"></i>Maklumat Pegawai
                     </h5>
                     <?php if ($status_permohonan === 'Dikuiri'): ?>
-                    <a href="wilayahAsalDikuiri.php?section=maklumat_pegawai" class="btn btn-sm btn-light">
+                    <a href="borangWA.php" class="btn btn-sm btn-light">
                         <i class="fas fa-edit me-2"></i>Edit
                     </a>
                     <?php endif; ?>
@@ -314,7 +314,7 @@ $ulasan = $_SESSION['wilayah_asal_ulasan'] ?? null;
                         <i class="fas fa-users me-2"></i>Maklumat Ibu Bapa
                     </h5>
                     <?php if ($status_permohonan === 'Dikuiri'): ?>
-                    <a href="wilayahAsalDikuiri.php?section=maklumat_ibubapa" class="btn btn-sm btn-light">
+                    <a href="borangWA2.php" class="btn btn-sm btn-light">
                         <i class="fas fa-edit me-2"></i>Edit
                     </a>
                     <?php endif; ?>
@@ -381,7 +381,7 @@ $ulasan = $_SESSION['wilayah_asal_ulasan'] ?? null;
                         <i class="fas fa-plane me-2"></i>Maklumat Penerbangan
                     </h5>
                     <?php if ($status_permohonan === 'Dikuiri'): ?>
-                    <a href="wilayahAsalDikuiri.php?section=maklumat_pengikut" class="btn btn-sm btn-light">
+                    <a href="borangWA3.php" class="btn btn-sm btn-light">
                         <i class="fas fa-edit me-2"></i>Edit
                     </a>
                     <?php endif; ?>
@@ -503,8 +503,20 @@ $ulasan = $_SESSION['wilayah_asal_ulasan'] ?? null;
             </div>
         </div>
 
+    <?php if ($status_permohonan === 'Dikuiri'): ?>
+        <div class="container my-4 d-flex justify-content-end">
+            <form action="includes/process_Dikuiri_Update.php" method="post">
+                <button type="submit" class="btn btn-success btn-lg">
+                    <i class="fas fa-paper-plane me-2"></i>Hantar Semula Permohonan
+                </button>
+            </form>
+        </div>
+    <?php endif; ?>
+
     </div>
 </div>
+
+
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

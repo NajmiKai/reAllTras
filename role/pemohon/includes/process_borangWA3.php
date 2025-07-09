@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $current_stage = $current_record['wilayah_asal_from_stage'];
 
         // Only proceed with update if stage is BorangWA4
-        if ($current_stage === 'BorangWA4' || $current_stage === 'BorangWA5') {
+        if ($current_stage === 'BorangWA4' || $current_stage === 'BorangWA5' || $current_stage === 'Hantar') {
             // Prepare the SQL statement
             $sql = "UPDATE wilayah_asal SET 
                 jenis_permohonan = ?,
@@ -225,7 +225,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         // Redirect to the next form based on the stage
-        if ($current_record['wilayah_asal_form_fill'] === 1) {
+        if ($current_record['wilayah_asal_form_fill'] === 1 && $current_record['wilayah_asal_from_stage'] === 'Hantar') {
+            
+            header("Location: ../wilayahAsal.php");
+            
+        }
+        else if ($current_record['wilayah_asal_form_fill'] === 1) {
 
             $update_stage_sql2 = "UPDATE wilayah_asal SET wilayah_asal_from_stage = 'BorangWA5' WHERE id = ?";
             $update_stage_stmt2 = $conn->prepare($update_stage_sql2);

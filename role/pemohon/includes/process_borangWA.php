@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $result = $check_stmt->get_result();
         $existing_record = $result->fetch_assoc();
 
-        if ($existing_record && ($existing_record['wilayah_asal_from_stage'] === 'BorangWA2' || $existing_record['wilayah_asal_from_stage'] === 'BorangWA5')) {
+        if ($existing_record && ($existing_record['wilayah_asal_from_stage'] === 'BorangWA2' || $existing_record['wilayah_asal_from_stage'] === 'BorangWA5'|| $existing_record['wilayah_asal_from_stage'] === 'Hantar')) {
             // Update existing record
             $update_sql = "UPDATE wilayah_asal SET 
                 jawatan_gred = ?,
@@ -195,7 +195,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Redirect to the next form based on the stage
         if ($existing_record['wilayah_asal_form_fill'] === 1 && $existing_record['wilayah_asal_from_stage'] === 'Hantar') {
             
-            header("Location: ../wilayahAsalDikuiri.php");
+            header("Location: ../wilayahAsal.php");
             
         }
         else if ($existing_record['wilayah_asal_form_fill'] === 1) {
