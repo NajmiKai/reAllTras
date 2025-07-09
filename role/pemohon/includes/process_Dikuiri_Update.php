@@ -1,9 +1,9 @@
 <?php
-include '../../connection.php';
+session_start();
 include_once '../../../includes/config.php';
-require '../../PHPMailer/src/Exception.php';
-require '../../PHPMailer/src/PHPMailer.php';
-require '../../PHPMailer/src/SMTP.php';
+require '../../../PHPMailer/src/Exception.php';
+require '../../../PHPMailer/src/PHPMailer.php';
+require '../../../PHPMailer/src/SMTP.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -14,14 +14,14 @@ ini_set('display_errors', 1);
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../../loginUser.php");
+    header("Location: ../../../loginUser.php");
     exit();
 }
 
 // Check if wilayah_asal_id exists
 if (!isset($_SESSION['wilayah_asal_id'])) {
     $_SESSION['error'] = "ID Wilayah Asal tidak dijumpai.";
-    header("Location: ../dikuiriWA.php");
+    header("Location: ../dashboard.php");
     exit();
 }
 
@@ -171,14 +171,14 @@ try {
     unset($_SESSION['parent_info']);
 
     $_SESSION['success'] = "Permohonan anda telah berjaya dihantar. Sila tunggu untuk kelulusan.";
-    header("Location: dashboard.php");
+    header("Location: ../dashboard.php");
     exit();
 
 } catch (Exception $e) {
     // Rollback transaction on error
     $conn->rollback();
     $_SESSION['error'] = $e->getMessage();
-    header("Location: wilayahAsal.php");
+    header("Location: ../wilayahAsal.php");
     exit();
 }
 ?> 

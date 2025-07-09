@@ -97,6 +97,18 @@ if (isset($_FILES['dokumen_dikuiri'])) {
 
 if ($success) {
     $_SESSION['success'] = "Dokumen berjaya dimuat naik.";
+    // Check wilayah_asal status for redirect
+    $sql = "SELECT * FROM wilayah_asal WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $wilayah_asal_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($row = $result->fetch_assoc()) {
+        if ($row['wilayah_asal_form_fill'] == 1 && $row['wilayah_asal_from_stage'] === 'Hantar') {
+            header("Location: ../wilayahAsal.php");
+            exit();
+        }
+    }
     header("Location: ../borangWA5.php?id=" . $wilayah_asal_id);
 } else {
     $_SESSION['error'] = implode("<br>", $error_messages);

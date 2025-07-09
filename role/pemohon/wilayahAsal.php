@@ -186,6 +186,24 @@ $ulasan = $_SESSION['wilayah_asal_ulasan'] ?? null;
             font-size: 1.1rem;
             margin-bottom: 0.5rem;
         }
+        .alert-subtitle {
+            font-size: 0.95rem;
+            color: #856404;
+            opacity: 0.85;
+            margin-top: -0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .btn-light {
+            background-color: #e3f0ff !important;
+            color: #0056b3 !important;
+            border: 1px solid #b6d4fe !important;
+            font-weight: 500;
+            transition: background 0.2s, color 0.2s;
+        }
+        .btn-light:hover, .btn-light:focus {
+            background-color: #b6d4fe !important;
+            color: #003366 !important;
+        }
     </style>
 </head>
 <body>
@@ -218,6 +236,9 @@ $ulasan = $_SESSION['wilayah_asal_ulasan'] ?? null;
                 <h5 class="alert-heading">
                     <i class="fas fa-exclamation-circle me-2"></i>Kuiri / Ulasan
                 </h5>
+                <div class="alert-subtitle mb-2 ms-4">
+                    (Tekan di bahagian "Edit" untuk membuat pembetulan. Setelah selesai kuiri, tekan "Hantar Semula Permohonan")
+                </div>
                 <p class="mb-0"><?= nl2br(htmlspecialchars($ulasan)) ?></p>
             </div>
             <?php endif; ?>
@@ -473,7 +494,7 @@ $ulasan = $_SESSION['wilayah_asal_ulasan'] ?? null;
                         <i class="fas fa-file-alt me-2"></i>Dokumen
                     </h5>
                     <?php if ($status_permohonan === 'Dikuiri'): ?>
-                    <a href="wilayahAsalDikuiri.php?section=dokumen" class="btn btn-sm btn-light">
+                    <a href="borangWA4Edit.php" class="btn btn-sm btn-light">
                         <i class="fas fa-edit me-2"></i>Edit
                     </a>
                     <?php endif; ?>
