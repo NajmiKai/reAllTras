@@ -235,7 +235,7 @@ if (isset($_SESSION['wilayah_asal_id'])) {
             <!-- Dokumen Pegawai -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header" style="background-color: #d59e3e; color: white;">
-                    <h5 class="mb-0">Dokumen Pegawai <span class="text-danger">*</span></h5>
+                    <h5 class="mb-0">Dokumen Pegawai <span class="text-danger">*</span><span style="font-size: 0.9em; font-style: italic; color: #666;">(Lampiran II perlu dirujuk dari Cawangan Sumber Manusia)</span></h5>
                 </div>
                 <div class="card-body">
                     <div class="document-item">
@@ -288,7 +288,7 @@ if (isset($_SESSION['wilayah_asal_id'])) {
             <!-- Dokumen Pasangan -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header" style="background-color: #d59e3e; color: white;">
-                    <h5 class="mb-0">Dokumen Pasangan <span style="font-size: 0.9em; font-style: italic; color: #666;">(Perlu dimuat naik yang berkenaan sahaja.)</span></h5>
+                    <h5 class="mb-0">Dokumen Pasangan <span style="font-size: 0.9em; font-style: italic; color: #666;">(Perlu dimuat naik yang berkenaan sahaja. Sekiranya tiada, tidak perlu muat naik)</span></h5>
                 </div>
                 <div class="card-body">
                     <div class="document-item">
@@ -341,7 +341,7 @@ if (isset($_SESSION['wilayah_asal_id'])) {
             <!-- Dokumen Pengikut -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header" style="background-color: #d59e3e; color: white;">
-                    <h5 class="mb-0">Dokumen Pengikut</h5>
+                    <h5 class="mb-0">Dokumen Pengikut <span style="font-size: 0.9em; font-style: italic; color: #666;">(Sila Tambah Pengikut berdasarkan yang diisi di halaman sebelum)</span></h5>
                 </div>
                 <div class="card-body">
                     <div id="pengikut-container">
@@ -398,7 +398,7 @@ if (isset($_SESSION['wilayah_asal_id'])) {
             <!-- Dokumen Sokongan -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header" style="background-color: #d59e3e; color: white;">
-                    <h5 class="mb-0">Dokumen Sokongan</h5>
+                    <h5 class="mb-0">Dokumen Sokongan<span class="text-danger">*</span> <span style="font-size: 0.9em; font-style: italic; color: #666;">(Dokumen yang mengesahkan Wilayah Asal Ibu Bapa (Sijil Kelahiran / Sijil Kematian / dll.) )</span></h5>
                 </div>
                 <div class="card-body">
                     <div id="sokongan-container">

@@ -122,6 +122,9 @@ $user_role = $user_data['bahagian'];
                                         <i class="fas fa-file me-2"></i>
                                         <?php echo htmlspecialchars($doc['file_name']); ?>
                                         <small class="text-muted ms-2">(<?php echo date('d/m/Y H:i', strtotime($doc['upload_date'])); ?>)</small>
+                                        <?php if (!empty($doc['description'])): ?>
+                                            <div class="text-muted small mt-1">Jenis Dokumen: <?php echo nl2br(htmlspecialchars($doc['description'])); ?></div>
+                                        <?php endif; ?>
                                     </div>
                                     <div>
                                         <a href="/reAllTras/<?= str_replace('../../../', '', htmlspecialchars($doc['file_path'])) ?>" target="_blank" class="btn btn-sm btn-primary">
