@@ -223,9 +223,9 @@ $ulasan = $_SESSION['wilayah_asal_ulasan'] ?? null;
         </div>
 
         <div class="d-flex justify-content-end mb-4">
-            <a href="cetak_wilayah_asal.php" target="_blank" class="btn btn-primary">
+            <button onclick="captureWilayahAsal()" class="btn btn-primary">
                 <i class="fas fa-print me-2"></i>Cetak PDF
-            </a>
+            </button>
         </div>
 
         <?php if ($status_permohonan === 'Dikuiri'): ?>
@@ -546,6 +546,33 @@ $ulasan = $_SESSION['wilayah_asal_ulasan'] ?? null;
         e.preventDefault();
         document.getElementById('sidebar').classList.toggle('hidden');
     });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+function captureWilayahAsal() {
+    const element = document.querySelector('.col.p-4');
+    if (!element) {
+        alert('Main content not found!');
+        return;
+    }
+    // Hide the print button before capture
+    const printBtn = element.querySelector('.btn.btn-primary');
+    if (printBtn) printBtn.classList.add('d-none');
+
+    const opt = {
+        margin:       0,
+        filename:     'laporan_wilayah_asal.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: 'pt', format: 'a4', orientation: 'portrait' },
+        pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+    };
+
+    html2pdf().set(opt).from(element).save().then(() => {
+        // Restore the print button after capture
+        if (printBtn) printBtn.classList.remove('d-none');
+    });
+}
 </script>
 </body>
 </html>
