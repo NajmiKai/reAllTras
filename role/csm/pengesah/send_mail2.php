@@ -11,6 +11,7 @@ require '../../../PHPMailer/src/SMTP.php';
 
 session_start();
 include '../../../connection.php';
+include_once '../../../includes/config.php';
 include '../../../includes/system_logger.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

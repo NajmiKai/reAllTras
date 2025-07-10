@@ -19,17 +19,17 @@ $date_to = isset($_GET['date_to']) ? $_GET['date_to'] : '';
 $query = "SELECT sl.*, 
           CASE 
               WHEN sl.user_type = 'admin' THEN a.Name
-              WHEN sl.user_type = 'superAdmin' THEN sa.Name
+              WHEN sl.user_type = 'superadmin' THEN sa.Name
               WHEN sl.user_type = 'user' THEN CONCAT(u.nama_first, ' ', u.nama_last)
           END as user_name,
           CASE 
               WHEN sl.user_type = 'admin' THEN a.ICNo
-              WHEN sl.user_type = 'superAdmin' THEN sa.ICNo
+              WHEN sl.user_type = 'superadmin' THEN sa.ICNo
               WHEN sl.user_type = 'user' THEN u.kp
           END as user_identifier
           FROM system_logs sl
           LEFT JOIN admin a ON sl.user_id = a.ICNo AND sl.user_type = 'admin'
-          LEFT JOIN superAdmin sa ON sl.user_id = sa.ICNo AND sl.user_type = 'superAdmin'
+          LEFT JOIN superadmin sa ON sl.user_id = sa.ICNo AND sl.user_type = 'superadmin'
           LEFT JOIN user u ON sl.user_id = u.kp AND sl.user_type = 'user'
           WHERE 1=1";
 
