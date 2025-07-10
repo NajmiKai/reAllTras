@@ -2,14 +2,15 @@
 session_start();
 include_once '../../includes/config.php';
 
-// Accept wilayah_asal_id via POST and set in session
+// Accept wilayah_asal_id via POST or GET, do not use session
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['wilayah_asal_id'])) {
     $wilayah_asal_id = $_POST['wilayah_asal_id'];
-    header('Location: wilayahAsalView.php');
-    exit();
+} else if (isset($_GET['wilayah_asal_id'])) {
+    $wilayah_asal_id = $_GET['wilayah_asal_id'];
+} else {
+    $wilayah_asal_id = null;
 }
 
-// Get wilayah_asal_id from session
 if (!$wilayah_asal_id) {
     header('Location: wilayahAsalList.php');
     exit();
@@ -74,9 +75,6 @@ while ($row = $doc_result->fetch_assoc()) {
 $status_permohonan = $wilayah_asal_data['status_permohonan'];
 $kedudukan_permohonan = $wilayah_asal_data['kedudukan_permohonan'];
 
-function getUploadPath($file) {
-    return '../../../uploads/' . $file;
-}
 ?>
 <!DOCTYPE html>
 <html lang="ms">

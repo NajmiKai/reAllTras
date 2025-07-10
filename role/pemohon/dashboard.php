@@ -138,8 +138,19 @@ function getUlasan($application_data) {
                     $show_description = true;
                     $description = "Anda belum membuat permohonan!";
                     $action_button = ['text' => 'Buat Permohonan', 'link' => 'borangWA.php'];
+                    $show_action_button = false;
 
                     if ($wilayah_asal_id) {
+
+                        if ($application_data['status_permohonan'] === 'Batal'){
+                            $current_stage = 'Pemohon';
+                            $show_description = true;
+                            $description = "Maaf permohonan anda dibatalkan oleh Super Admin";
+                            if (!empty($application_data['ulasan_superadmin'])) {
+                                $description .= ": " . $application_data['ulasan_superadmin'];
+                            }
+                            $show_action_button = false;
+                        }
                         
                         //Stage UI (Pemohon)
                         if ($application_data['wilayah_asal_from_stage'] !== 'Hantar') {
@@ -150,18 +161,22 @@ function getUlasan($application_data) {
                                 case 'BorangWA2':
                                     $description = "Borang ini belum lengkap! Sila lengkapkan untuk menghantar permohonan";
                                     $action_button = ['text' => 'Lengkapkan Borang', 'link' => 'borangWA2.php'];
+                                    $show_action_button = true;
                                     break;
                                 case 'BorangWA3':
                                     $description = "Borang ini belum lengkap! Sila lengkapkan untuk menghantar permohonan";
                                     $action_button = ['text' => 'Lengkapkan Borang', 'link' => 'borangWA3.php'];
+                                    $show_action_button = true;
                                     break;
                                 case 'BorangWA4':
                                     $description = "Borang ini belum lengkap! Sila lengkapkan untuk menghantar permohonan";
                                     $action_button = ['text' => 'Lengkapkan Borang', 'link' => 'borangWA4.php'];
+                                    $show_action_button = true;
                                     break;
                                 case 'BorangWA5':
                                     $description = "Borang ini belum lengkap! Sila lengkapkan untuk menghantar permohonan";
                                     $action_button = ['text' => 'Lengkapkan Borang', 'link' => 'borangWA5.php'];
+                                    $show_action_button = true;
                                     break;
                             }
                         } 
@@ -182,6 +197,7 @@ function getUlasan($application_data) {
                             $ulasan = getUlasan($application_data);
                             $description = "Ulasan daripada " . $csm_name . " (Cawangan Sumber Manusia): " . $ulasan;
                             $action_button = ['text' => 'Lihat Permohonan', 'link' => 'wilayahAsal.php'];
+                            $show_action_button = true;
 
                         }
 
@@ -193,38 +209,46 @@ function getUlasan($application_data) {
 
                             if($application_data['status_permohonan'] === 'Belum Disemak'){
                                 $current_stage = 'CSM';
-                                $show_description = false;
+                                $description = "Sebarang pindaan tarikh penerbangan hendaklah dimaklumkan kepada Cawangan Kewangan";
+                                $show_description = true;
                             }
                             else if ($application_data['status_permohonan'] === 'Selesai'){
                                 $current_stage = 'CSM';
-                                $show_description = false;
+                                $description = "Sebarang pindaan tarikh penerbangan hendaklah dimaklumkan kepada Cawangan Kewangan";
+                                $show_description = true;
                             }
                             else if ($application_data['status_permohonan'] === 'Tolak'){
                                 $current_stage = 'CSM';
-                                $show_description = false;
+                                $show_description = true;
+                                $description = "Harap Maaf, Permohonan anda ditolak.";
                             }
                             else if ($application_data['status_permohonan'] === 'Lulus'){
                                 $current_stage = 'CSM';
-                                $show_description = false;
+                                $description = "Sebarang pindaan tarikh penerbangan hendaklah dimaklumkan kepada Cawangan Kewangan";
+                                $show_description = true;
                             }
 
                         } else if ($application_data['kedudukan_permohonan'] === 'CSM') {
 
                             if($application_data['status_permohonan'] === 'Belum Disemak'){
                                 $current_stage = 'HQ';
-                                $show_description = false;
+                                $description = "Sebarang pindaan tarikh penerbangan hendaklah dimaklumkan kepada Cawangan Kewangan";
+                                $show_description = true;
                             }
                             else if ($application_data['status_permohonan'] === 'Selesai'){
                                 $current_stage = 'HQ';
-                                $show_description = false;
+                                $description = "Sebarang pindaan tarikh penerbangan hendaklah dimaklumkan kepada Cawangan Kewangan";
+                                $show_description = true;
                             }
                             else if ($application_data['status_permohonan'] === 'Tolak'){
                                 $current_stage = 'HQ';
-                                $show_description = false;
+                                $show_description = true;
+                                $description = "Harap Maaf, Permohonan anda ditolak.";
                             }
                             else if ($application_data['status_permohonan'] === 'Lulus'){
                                 $current_stage = 'HQ';
-                                $show_description = false;
+                                $description = "Sebarang pindaan tarikh penerbangan hendaklah dimaklumkan kepada Cawangan Kewangan";
+                                $show_description = true;
                             }
                             else if ($application_data['status_permohonan'] === 'Dikuiri'){
                                 $current_stage = 'CSM';
@@ -235,11 +259,13 @@ function getUlasan($application_data) {
 
                             if($application_data['status_permohonan'] === 'Belum Disemak'){
                                 $current_stage = 'CSM2';
-                                $show_description = false;
+                                $description = "Sebarang pindaan tarikh penerbangan hendaklah dimaklumkan kepada Cawangan Kewangan";
+                                $show_description = true;
                             }
                             else if ($application_data['status_permohonan'] === 'Selesai'){
                                 $current_stage = 'CSM2';
-                                $show_description = false;
+                                $description = "Sebarang pindaan tarikh penerbangan hendaklah dimaklumkan kepada Cawangan Kewangan";
+                                $show_description = true;
                             }
                             else if ($application_data['status_permohonan'] === 'Tolak'){
                                 $current_stage = 'HQ';
@@ -248,7 +274,8 @@ function getUlasan($application_data) {
                             }
                             else if ($application_data['status_permohonan'] === 'Lulus'){
                                 $current_stage = 'CSM2';
-                                $show_description = false;
+                                $description = "Sebarang pindaan tarikh penerbangan hendaklah dimaklumkan kepada Cawangan Kewangan";
+                                $show_description = true;
                             }
                             else if ($application_data['status_permohonan'] === 'Dikuiri'){
                                 $current_stage = 'HQ';
@@ -258,19 +285,23 @@ function getUlasan($application_data) {
                         } else if ($application_data['kedudukan_permohonan'] === 'CSM2') {
                             if($application_data['status_permohonan'] === 'Belum Disemak'){
                                 $current_stage = 'Kewangan';
-                                $show_description = false;
+                                $description = "Sebarang pindaan tarikh penerbangan hendaklah dimaklumkan kepada Cawangan Kewangan";
+                                $show_description = true;
                             }
                             else if ($application_data['status_permohonan'] === 'Selesai'){
                                 $current_stage = 'Kewangan';
-                                $show_description = false;
+                                $description = "Sebarang pindaan tarikh penerbangan hendaklah dimaklumkan kepada Cawangan Kewangan";
+                                $show_description = true;
                             }
                             else if ($application_data['status_permohonan'] === 'Tolak'){
                                 $current_stage = 'Kewangan';
-                                $show_description = false;
+                                $show_description = true;
+                                $description = "Harap Maaf, Permohonan anda ditolak.";
                             }
                             else if ($application_data['status_permohonan'] === 'Lulus'){
                                 $current_stage = 'Kewangan';
-                                $show_description = false;
+                                $description = "Sebarang pindaan tarikh penerbangan hendaklah dimaklumkan kepada Cawangan Kewangan";
+                                $show_description = true;
                             }
                             else if ($application_data['status_permohonan'] === 'Dikuiri'){
                                 $current_stage = 'CSM2';
@@ -282,18 +313,22 @@ function getUlasan($application_data) {
                                 $show_description = true;
                                 $description = "Permohonan anda sudah selesai! Sila tekan butang dibawah untuk ke halaman Waran Udara";
                                 $action_button = ['text' => 'Muat Turun Waran Udara/E-Ticket', 'link' => 'wilayahAsalSelesai.php'];
+                                $show_action_button = true;
                             }
                             else if($application_data['status_permohonan'] === 'Belum Disemak'){
                                 $current_stage = 'Kewangan';
-                                $show_description = false;
+                                $description = "Sebarang pindaan tarikh penerbangan hendaklah dimaklumkan kepada Cawangan Kewangan";
+                                $show_description = true;
                             }
                             else if ($application_data['status_permohonan'] === 'Tolak'){
                                 $current_stage = 'Kewangan';
-                                $show_description = false;
+                                $show_description = true;
+                                $description = "Harap Maaf, Permohonan anda ditolak.";
                             }
                             else if ($application_data['status_permohonan'] === 'Lulus'){
                                 $current_stage = 'Kewangan';
-                                $show_description = false;
+                                $description = "Sebarang pindaan tarikh penerbangan hendaklah dimaklumkan kepada Cawangan Kewangan";
+                                $show_description = true;
                             }
                             else if ($application_data['status_permohonan'] === 'Dikuiri'){
                                 $current_stage = 'Kewangan';
@@ -308,6 +343,7 @@ function getUlasan($application_data) {
                         $show_description = true;
                         $description = "Anda belum membuat permohonan!";
                         $action_button = ['text' => 'Buat Permohonan', 'link' => 'borangWA.php'];
+                        $show_action_button = true;
 
                     }
                     ?>
@@ -333,7 +369,7 @@ function getUlasan($application_data) {
                             $application_data['status_permohonan'] === 'Dikuiri' && $application_data['kedudukan_permohonan'] === 'Pemohon') 
                                 ? 'alert-warning' 
                                 : (($application_data && isset($application_data['status_permohonan']) && isset($application_data['kedudukan_permohonan']) && 
-                                    $application_data['status_permohonan'] === 'Tolak' && $application_data['kedudukan_permohonan'] === 'HQ') 
+                                    $application_data['status_permohonan'] === 'Tolak' || $application_data['status_permohonan'] === 'Batal')
                                     ? 'alert-danger' 
                                     : 'alert-info') 
                         ?> mt-4">
@@ -341,8 +377,7 @@ function getUlasan($application_data) {
                                 <i class="fas fa-info-circle fa-2x me-3"></i>
                                 <div>
                                     <p class="mb-2"><?= $description ?></p>
-                                    <?php if ($action_button && (!$application_data || !isset($application_data['status_permohonan']) || !isset($application_data['kedudukan_permohonan']) || 
-                                        ($application_data['status_permohonan'] !== 'Tolak' && $application_data['kedudukan_permohonan'] !== 'HQ'))): ?>
+                                    <?php if ($action_button && $show_action_button): ?>
                                         <a href="<?= $action_button['link'] ?>" class="btn btn-primary">
                                             <i class="fas fa-arrow-right me-2"></i><?= $action_button['text'] ?>
                                         </a>
