@@ -133,16 +133,6 @@ if ($wilayah_asal_data) {
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3 class="mb-0">Borang Permohonan Wilayah Asal (Bahagian 1)</h3>
         </div>
-        
-        <?php if (isset($_SESSION['error'])): ?>
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <?php 
-                    echo $_SESSION['error'];
-                    unset($_SESSION['error']);
-                ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        <?php endif; ?>
 
         <!-- Multi-step Indicator -->
         <div class="multi-step-indicator mb-4">

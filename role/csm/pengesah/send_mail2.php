@@ -13,6 +13,7 @@ session_start();
 include '../../../connection.php';
 include_once '../../../includes/config.php';
 include '../../../includes/system_logger.php';
+include '../../../includes/config.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 

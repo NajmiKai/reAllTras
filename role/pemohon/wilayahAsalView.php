@@ -2,8 +2,19 @@
 session_start();
 include_once '../../includes/config.php';
 
-// Get wilayah_asal_id from session
-$wilayah_asal_id = $_SESSION['wilayah_asal_id'] ?? null;
+// Accept wilayah_asal_id via POST or GET, do not use session
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['wilayah_asal_id'])) {
+    $wilayah_asal_id = $_POST['wilayah_asal_id'];
+} else if (isset($_GET['wilayah_asal_id'])) {
+    $wilayah_asal_id = $_GET['wilayah_asal_id'];
+} else {
+    $wilayah_asal_id = null;
+}
+
+if (!$wilayah_asal_id) {
+    header('Location: wilayahAsalList.php');
+    exit();
+}
 
 // Fetch user data from database
 $user_id = $_SESSION['user_id'];
@@ -25,7 +36,7 @@ $user_icNo = $user_data['kp'];
 $user_email = $user_data['email'];
 $user_phoneNo = $user_data['phone'];
 
-// Check if user has wilayah_asal record
+// Fetch wilayah_asal record
 $check_sql = "SELECT * FROM wilayah_asal WHERE id = ?";
 $check_stmt = $conn->prepare($check_sql);
 $check_stmt->bind_param("i", $wilayah_asal_id);
@@ -33,15 +44,8 @@ $check_stmt->execute();
 $wilayah_asal_result = $check_stmt->get_result();
 $wilayah_asal_data = $wilayah_asal_result->fetch_assoc();
 
-// If no wilayah_asal record exists, redirect to borangWA
 if (!$wilayah_asal_data) {
-    header("Location: borangWA.php");
-    exit();
-}
-
-// Check if application is completed and in Kewangan
-if (($wilayah_asal_data['status_permohonan'] === 'Selesai' && $wilayah_asal_data['kedudukan_permohonan'] === 'Kewangan') && !($wilayah_asal_data['wilayah_asal_matang'] == 0)) {
-    header("Location: wilayahAsalSelesai.php");
+    header("Location: wilayahAsalList.php");
     exit();
 }
 
@@ -70,15 +74,13 @@ while ($row = $doc_result->fetch_assoc()) {
 // Get the current status and position
 $status_permohonan = $wilayah_asal_data['status_permohonan'];
 $kedudukan_permohonan = $wilayah_asal_data['kedudukan_permohonan'];
-$ulasan = $_SESSION['wilayah_asal_ulasan'] ?? null;
-
 
 ?>
 <!DOCTYPE html>
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
-    <title>ALLTRAS - Permohonan Wilayah Asal</title>
+    <title>ALLTRAS - Lihat Wilayah Asal</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -172,43 +174,9 @@ $ulasan = $_SESSION['wilayah_asal_ulasan'] ?? null;
             background-color: #cce5ff;
             color: #004085;
         }
-        .alert {
-            border-radius: 10px;
-            border: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .alert-warning {
-            background-color: #fff3cd;
-            border-left: 4px solid #ffc107;
-        }
-        .alert-heading {
-            color: #856404;
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-        }
-        .alert-subtitle {
-            font-size: 0.95rem;
-            color: #856404;
-            opacity: 0.85;
-            margin-top: -0.5rem;
-            margin-bottom: 0.5rem;
-        }
-        .btn-light {
-            background-color: #e3f0ff !important;
-            color: #0056b3 !important;
-            border: 1px solid #b6d4fe !important;
-            font-weight: 500;
-            transition: background 0.2s, color 0.2s;
-        }
-        .btn-light:hover, .btn-light:focus {
-            background-color: #b6d4fe !important;
-            color: #003366 !important;
-        }
     </style>
 </head>
 <body>
-
-
 <div class="main-container">
     <!-- Sidebar -->
     <?php include 'includes/sidebar.php'; ?>
@@ -216,47 +184,30 @@ $ulasan = $_SESSION['wilayah_asal_ulasan'] ?? null;
     <!-- Main Content -->
     <div class="col p-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3 class="mb-0">Wilayah Asal</h3>
-            <div class="d-flex align-items-center">
-                <?php include 'includes/greeting.php'; ?>
-            </div>
+            <h3 class="mb-0">Lihat Wilayah Asal</h3>
+            <?php include 'includes/greeting.php'; ?>
         </div>
 
-        <div class="d-flex justify-content-end mb-4">
-            <button onclick="captureWilayahAsal()" class="btn btn-primary">
-                <i class="fas fa-print me-2"></i>Cetak PDF
-            </button>
+        <!-- Status Permohonan -->
+        <div class="mb-4">
+            <span class="status-badge <?php
+                $badge = 'belum-disemak';
+                if ($status_permohonan === 'Dikuiri') $badge = 'dikuiri';
+                else if ($status_permohonan === 'Lulus') $badge = 'lulus';
+                else if ($status_permohonan === 'Tolak') $badge = 'tolak';
+                else if ($status_permohonan === 'Selesai') $badge = 'selesai';
+                echo $badge;
+            ?>">
+                <?= htmlspecialchars($status_permohonan) ?>
+            </span>
         </div>
-
-        <?php if ($status_permohonan === 'Dikuiri'): ?>
-            <?php
-            if ($ulasan):
-            ?>
-            <div class="alert alert-warning mb-4">
-                <h5 class="alert-heading">
-                    <i class="fas fa-exclamation-circle me-2"></i>Kuiri / Ulasan
-                </h5>
-                <div class="alert-subtitle mb-2 ms-4">
-                    (Tekan di bahagian "Edit" untuk membuat pembetulan. Setelah selesai kuiri, tekan "Hantar Semula Permohonan")
-                </div>
-                <p class="mb-0"><?= nl2br(htmlspecialchars($ulasan)) ?></p>
-            </div>
-            <?php endif; ?>
-        <?php endif; ?>
 
         <!-- Maklumat Pegawai -->
         <div class="section-card">
             <div class="section-header">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
-                        <i class="fas fa-user me-2"></i>Maklumat Pegawai
-                    </h5>
-                    <?php if ($status_permohonan === 'Dikuiri'): ?>
-                    <a href="borangWA.php" class="btn btn-sm btn-light">
-                        <i class="fas fa-edit me-2"></i>Edit
-                    </a>
-                    <?php endif; ?>
-                </div>
+                <h5 class="mb-0">
+                    <i class="fas fa-user me-2"></i>Maklumat Pegawai
+                </h5>
             </div>
             <div class="section-body">
                 <?php if ($wilayah_asal_data): ?>
@@ -330,16 +281,9 @@ $ulasan = $_SESSION['wilayah_asal_ulasan'] ?? null;
         <!-- Maklumat Ibu Bapa -->
         <div class="section-card">
             <div class="section-header">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
-                        <i class="fas fa-users me-2"></i>Maklumat Ibu Bapa
-                    </h5>
-                    <?php if ($status_permohonan === 'Dikuiri'): ?>
-                    <a href="borangWA2.php" class="btn btn-sm btn-light">
-                        <i class="fas fa-edit me-2"></i>Edit
-                    </a>
-                    <?php endif; ?>
-                </div>
+                <h5 class="mb-0">
+                    <i class="fas fa-users me-2"></i>Maklumat Ibu Bapa
+                </h5>
             </div>
             <div class="section-body">
                 <?php if ($wilayah_asal_data): ?>
@@ -397,16 +341,9 @@ $ulasan = $_SESSION['wilayah_asal_ulasan'] ?? null;
         <!-- Maklumat Penerbangan -->
         <div class="section-card">
             <div class="section-header">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
-                        <i class="fas fa-plane me-2"></i>Maklumat Penerbangan
-                    </h5>
-                    <?php if ($status_permohonan === 'Dikuiri'): ?>
-                    <a href="borangWA3.php" class="btn btn-sm btn-light">
-                        <i class="fas fa-edit me-2"></i>Edit
-                    </a>
-                    <?php endif; ?>
-                </div>
+                <h5 class="mb-0">
+                    <i class="fas fa-plane me-2"></i>Maklumat Penerbangan
+                </h5>
             </div>
             <div class="section-body">
                 <?php if ($wilayah_asal_data): ?>
@@ -489,16 +426,9 @@ $ulasan = $_SESSION['wilayah_asal_ulasan'] ?? null;
         <!-- Dokumen -->
         <div class="section-card">
             <div class="section-header">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
-                        <i class="fas fa-file-alt me-2"></i>Dokumen
-                    </h5>
-                    <?php if ($status_permohonan === 'Dikuiri'): ?>
-                    <a href="borangWA4Edit.php" class="btn btn-sm btn-light">
-                        <i class="fas fa-edit me-2"></i>Edit
-                    </a>
-                    <?php endif; ?>
-                </div>
+                <h5 class="mb-0">
+                    <i class="fas fa-file-alt me-2"></i>Dokumen
+                </h5>
             </div>
             <div class="section-body">
                 <?php if ($documents): ?>
@@ -524,21 +454,13 @@ $ulasan = $_SESSION['wilayah_asal_ulasan'] ?? null;
             </div>
         </div>
 
-    <?php if ($status_permohonan === 'Dikuiri'): ?>
-        <div class="container my-4 d-flex justify-content-end">
-            <form action="includes/process_Dikuiri_Update.php" method="post">
-                <button type="submit" class="btn btn-success btn-lg">
-                    <i class="fas fa-paper-plane me-2"></i>Hantar Semula Permohonan
-                </button>
-            </form>
+        <div class="mt-4">
+            <a href="wilayahAsalList.php" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Kembali ke Senarai
+            </a>
         </div>
-    <?php endif; ?>
-
     </div>
 </div>
-
-
-
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -547,32 +469,5 @@ $ulasan = $_SESSION['wilayah_asal_ulasan'] ?? null;
         document.getElementById('sidebar').classList.toggle('hidden');
     });
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script>
-function captureWilayahAsal() {
-    const element = document.querySelector('.col.p-4');
-    if (!element) {
-        alert('Main content not found!');
-        return;
-    }
-    // Hide the print button before capture
-    const printBtn = element.querySelector('.btn.btn-primary');
-    if (printBtn) printBtn.classList.add('d-none');
-
-    const opt = {
-        margin:       0,
-        filename:     'laporan_wilayah_asal.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true },
-        jsPDF:        { unit: 'pt', format: 'a4', orientation: 'portrait' },
-        pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
-    };
-
-    html2pdf().set(opt).from(element).save().then(() => {
-        // Restore the print button after capture
-        if (printBtn) printBtn.classList.remove('d-none');
-    });
-}
-</script>
 </body>
-</html>
+</html> 
