@@ -31,7 +31,7 @@ $stmt->bind_param("i", $admin_id);
 
 
 if ($stmt->execute()) {
-    logDataDelete($conn, 'data_delete', 'superAdmin', $icNo, "admin", $admin_id, "Delete admin");
+    logDataDelete($conn, 'superAdmin', $icNo, "admin", $admin_id, "Delete admin");
     echo json_encode(['success' => true]);
 } else {
     http_response_code(500);
