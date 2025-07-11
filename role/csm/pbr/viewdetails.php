@@ -4,7 +4,7 @@ include '../../../connection.php';
 
     // Check if user is logged in
     if (!isset($_SESSION['admin_id'])) {
-        header("Location: /reAllTras/login.php");
+        header("Location: ../../../login.php");
         exit();
     }
 
@@ -16,7 +16,7 @@ include '../../../connection.php';
         // Session expired
         session_unset();
         session_destroy();
-        header("Location: /reAllTras/login.php?timeout=1");
+        header("Location: ../../../login.php?timeout=1");
         exit();
     }
     // Update last activity time
