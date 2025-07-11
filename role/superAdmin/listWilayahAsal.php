@@ -61,7 +61,7 @@ $display_result = $conn->query($sql);
 
         <?php if (isset($_GET['delete']) && $_GET['delete'] == 'success'): ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert">
-                Rekod berjaya dipadam.
+                Rekod berjaya dibatalkan.
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         <?php endif; ?>

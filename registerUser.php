@@ -123,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="col-md-6">
                 <label class="form-label">Email</label>
-                <input type="email" class="form-control" name="email" placeholder="cth: aAliAbu@customs.gov.my" required>
+                <input type="email" class="form-control" name="email" placeholder="cth: AliAbu@customs.gov.my" required>
             </div>
             <div class="col-md-6">
                 <label class="form-label">Nombor Telefon</label>
