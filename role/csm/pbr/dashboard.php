@@ -78,6 +78,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 $submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'permohonanIbuPejabat.php', 'permohonanDikuiri.php']);
 ?>
 
+
 <!DOCTYPE html>
 <html lang="ms">
 <head>
@@ -141,7 +142,18 @@ $submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'permohonanIbuP
 
     <!-- Main Content -->
     <div class="col p-4">
-        <h3 class="mb-3">Laman Utama</h3>
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+    <!-- Text content on the left -->
+    <div><br><br>
+        <h4 class="page-title font-size-20 d-none d-sm-block mb-1 mt-2">
+            <b>SELAMAT DATANG KE ALLTRAS</b>
+        </h4>
+        <h6 class="mb-0 text-muted"><b>JKDM WILAYAH PERSEKUTUAN KUALA LUMPUR</b></h6>
+    </div>
+        <!-- Logo on the right -->
+        <img src="../../../assets/JKDMLogo.png" alt="JKDM Logo" style="height: 90px; width: auto; margin-top:40px;">
+    </div><br>
+
 
         <div class="greeting-box">
             <?php  
@@ -159,6 +171,7 @@ $submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'permohonanIbuP
             ?>
             <strong>Hi, <?= $greeting ?>!</strong> <?= $admin_name ?>
         </div>
+        
 
         <div class="row g-4 mb-4">
             <div class="col-md-3">

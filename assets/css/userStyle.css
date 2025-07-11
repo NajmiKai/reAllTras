@@ -12,6 +12,10 @@
         z-index: 1030; /* above sidebar */
     }
 
+    .font-size-20 {
+        font-size: 20px;
+    }
+
     .main-container {
         display: flex;
         min-height: 100vh;

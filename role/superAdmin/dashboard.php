@@ -22,6 +22,7 @@ $user_email = $user_data['Email'];
 $user_phoneNo = $user_data['PhoneNo'];
 
 ?>
+
 <!DOCTYPE html>
 <html lang="ms">
 <head>
@@ -41,11 +42,18 @@ $user_phoneNo = $user_data['PhoneNo'];
     <?php include 'includes/sidebar.php'; ?>
 
     <!-- Main Content -->
-    <div class="col p-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3 class="mb-0">Laman Utama</h3>
+    <div class="col p-4"> 
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+        <div>
+            <h4 class="page-title font-size-20 d-none d-sm-block mb-1 "><b>SELAMAT DATANG KE ALLTRAS</b></h4>
+            <h6 class="mb-0 text-muted"><b>JKDM WILAYAH PERSEKUTUAN KUALA LUMPUR</b></h6>
+        </div>
+        
+
+        <div class="mt-3 mt-md-0">
             <?php include 'includes/greeting.php'; ?>
         </div>
+</div>
         
         <!-- Info Cards Section -->
         <div class="row">
