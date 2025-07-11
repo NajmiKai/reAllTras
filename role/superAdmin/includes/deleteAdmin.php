@@ -19,6 +19,8 @@ if (!isset($_GET['id'])) {
 
 $admin_id = $_GET['id'];
 $super_admin_id = (string) $_SESSION['super_admin_id'];
+$_SESSION['super_admin_icNo'] = $icNo;
+
 
 
 // Delete admin
@@ -26,7 +28,8 @@ $sql = "DELETE FROM admin WHERE ID = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $admin_id);
 
-logDataDelete($conn, 'superAdmin', (string)$super_admin_id, "admin", $admin_id, "Delete admin");
+logDataDelete($conn, 'superAdmin', $icNo, "admin", $admin_id, "Delete admin");
+
 
 
 if ($stmt->execute()) {
