@@ -19,7 +19,7 @@ if (!isset($_GET['id'])) {
 
 $admin_id = $_GET['id'];
 $super_admin_id = (string) $_SESSION['super_admin_id'];
-$_SESSION['super_admin_icNo'] = $icNo;
+$icNo =  $_SESSION['super_admin_icNo'];
 
 
 
