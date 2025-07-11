@@ -4,7 +4,7 @@ include_once __DIR__ . '/../connection.php';
 // Base path configuration
 // define('BASE_PATH', 'http://localhost/reAllTras');
 // define('BASE_PATH', 'http://10.13.100.141/reAllTras');
-define('BASE_PATH', 'http://alltras.customs.gov.my/reAllTras');
+define('BASE_PATH', 'http://alltras.customs.gov.my');
 
 
 // Upload path configuration
@@ -27,7 +27,4 @@ function getUploadPath($subPath = '') {
     return rtrim(BASE_PATH, '/') . '/' . UPLOAD_PATH . '/' . ltrim($subPath, '/');
 }
 
-//superadmin credentials
-//yunonajmi@gmail.com
-//Najmi123
 ?>

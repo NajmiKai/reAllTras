@@ -8,6 +8,7 @@ require '../../../PHPMailer/src/SMTP.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
+//save
 // Enable error reporting
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -77,6 +78,9 @@ try {
         }
     }
 
+    $sql = "SELECT * FROM admin WHERE role = 'Penyemak Baki Kewangan'";
+    $result = $conn->query($sql);
+
     // Format dates
     $tarikh_pergi = date('d/m/Y', strtotime($user_data['tarikh_penerbangan_pergi']));
     $tarikh_balik = date('d/m/Y', strtotime($user_data['tarikh_penerbangan_balik']));
@@ -120,7 +124,7 @@ try {
             <p>Mohon pihak tuan/puan untuk menyemak maklumat pemohon dan mengambil tindakan sewajarnya.</p>
             <p>Sila klik pautan/butang di bawah untuk tindakan lanjut dan maklumat permohonan.</p>
 
-            <p><a href='http://localhost/reAllTras/role/csm/pbr/viewdetails.php?kp={$user_data['kp']}'><b><u>PAPAR MAKLUMAT PERMOHONAN</u></b></a></p><br>
+            <p><a href='" . getFullUrl("role/csm/pbr/viewdetailskuiri.php?kp=${$user_data['kp']}") . "'><b><u>PAPAR MAKLUMAT PERMOHONAN</u></b></a></p><br>
 
             <p>Sekian, terima kasih.</p>
             <p>Emel ini dijana secara automatik oleh <i>All Region Travelling System (ALLTRAS)</i></p>

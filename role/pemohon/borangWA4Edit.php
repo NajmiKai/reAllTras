@@ -127,7 +127,7 @@ $user_role = $user_data['bahagian'];
                                         <?php endif; ?>
                                     </div>
                                     <div>
-                                        <a href="/reAllTras/<?= str_replace('../../../', '', htmlspecialchars($doc['file_path'])) ?>" target="_blank" class="btn btn-sm btn-primary">
+                                        <a href="<?= getUploadPath(str_replace('../../../uploads/', '', htmlspecialchars($doc['file_path']))) ?>" target="_blank" class="btn btn-sm btn-primary">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                         <button type="button" class="btn btn-sm btn-danger ms-2 delete-document-btn"
