@@ -16,7 +16,7 @@ endif;
 
 
 if (!isset($_SESSION['admin_id'])) {
-    header("Location: login.php");
+    header("Location: ../../../login.php");
     exit();
 }
 
@@ -28,7 +28,7 @@ if (!isset($_SESSION['admin_id'])) {
      // Session expired
      session_unset();
      session_destroy();
-     header("Location: /reAllTras/login.php?timeout=1");
+     header("Location: ../../../login.php?timeout=1");
      exit();
  }
  // Update last activity time

@@ -10,7 +10,7 @@ use PhpOffice\PhpWord\SimpleType\Jc;
 
 
 if (!isset($_SESSION['admin_id'])) {
-    header("Location: login.php");
+    header("Location: ../../../login.php");
     exit();
 }
 
@@ -18,7 +18,7 @@ $timeout_duration = 900;
 if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY']) > $timeout_duration) {
     session_unset();
     session_destroy();
-    header("Location: /reAllTras/login.php?timeout=1");
+    header("Location: ../../../login.php?timeout=1");
     exit();
 }
 $_SESSION['LAST_ACTIVITY'] = time();
