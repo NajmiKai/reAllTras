@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'connection.php';
+include_once 'includes/config.php';
 include 'includes/system_logger.php';
 
 // Log the logout event if admin was logged in
