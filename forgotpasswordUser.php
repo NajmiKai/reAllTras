@@ -20,12 +20,15 @@ $showSuccess = isset($_GET['status']) && $_GET['status'] === 'sent';
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background: url('background.png') repeat;
-            background-size: 180px;
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('assets/background.jpeg') no-repeat center 80%;
             min-height: 100vh;
+            margin: 0;
             display: flex;
             align-items: center;
             justify-content: center;
+            background-size: cover;
+            padding: 20px;
+            transition: all 0.3s ease-in-out;
         }
 
         .login-wrapper {

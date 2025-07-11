@@ -53,17 +53,17 @@ if (isset($_GET['token'])) {
 ?>
 
 <style>
-        body {
+          body {
             font-family: 'Inter', sans-serif;
-            /* background-size: 180px; */
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('assets/backgroundAdmin.jpeg') no-repeat center 80%;
             min-height: 100vh;
+            margin: 0;
             display: flex;
-            background-image: url('assets/background.jpg');
             align-items: center;
             justify-content: center;
             background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+            padding: 20px;
+            transition: all 0.3s ease-in-out;
         }
 
         .login-wrapper {

@@ -68,17 +68,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="icon" href="assets/ALLTRAS.png" type="image/x-icon">
 
     <style>
-        body {
+       body {
             font-family: 'Inter', sans-serif;
-            background-image: url('assets/backgroundUser.png');
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('assets/background.jpeg') no-repeat center 80%;
             min-height: 100vh;
+            margin: 0;
             display: flex;
             align-items: center;
             justify-content: center;
             background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+            padding: 20px;
+            transition: all 0.3s ease-in-out;
         }
+
 
         .login-wrapper {
             background-color: rgba(255, 255, 255, 0.96);
