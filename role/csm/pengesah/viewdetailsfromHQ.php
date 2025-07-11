@@ -432,8 +432,8 @@ include '../../../connection.php';
                     <label for="status_select" class="form-label">Status Permohonan</label>
                     <select class="form-select" name="status_permohonan" id="status_select" required onchange="toggleUlasan()" <?php if ($isApproved) echo 'disabled'; ?>>
                         <option value="">-- Sila Pilih --</option>
-                        <option value="disokong">Disokong</option>
-                        <option value="tidak disokong">Tidak disokong</option>
+                        <option value="disahkan">Disahkan</option>
+                        <option value="tidak disahkan">Tidak disahkan</option>
                     </select>
                 </div>
                 <div class="col-md-8 mb-3" id="ulasan-section" style="display: none;">
@@ -536,7 +536,7 @@ document.querySelector('.toggle-sidebar').addEventListener('click', function (e)
     function toggleUlasan() {
     const select = document.getElementById('status_select');
     const ulasanDiv = document.getElementById('ulasan-section');
-    if (select.value === 'tidak disokong') {
+    if (select.value === 'tidak disahkan') {
         ulasanDiv.style.display = 'block';
         document.getElementById('ulasan').setAttribute('required', 'required');
     } else {
@@ -550,9 +550,9 @@ document.querySelector('.toggle-sidebar').addEventListener('click', function (e)
             const form = document.getElementById('permohonanForm');
             const status = document.getElementById('status_select').value;
             
-            if (status === 'tidak disokong') {
+            if (status === 'tidak disahkan') {
                 form.action = 'send_mail4.php';
-            } else if (status === 'disokong') {
+            } else if (status === 'disahkan') {
                 form.action = 'send_mail2.php';
             }
             

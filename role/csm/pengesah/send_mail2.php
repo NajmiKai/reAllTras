@@ -30,14 +30,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $current_data = $result_current->fetch_assoc();
         $old_status = $current_data['status'];
 
-        if ($status_permohonan === 'disokong') {
+        if ($status_permohonan === 'disahkan') {
             $status = 'Menunggu pengesahan penyemak baki kewangan';
         } else {
             $status = 'Kembali ke PBR CSM';
         }
 
         $ulasan = null;
-        if ($status_permohonan === 'tidak disokong') {
+        if ($status_permohonan === 'tidak disahkan') {
             $ulasan = $_POST['ulasan'] ?? null;
         }
         
@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         //insert into document_logs
         $original_status_permohonan = $_POST['status_permohonan'] ?? '';
-        $tindakan = ($original_status_permohonan === 'tidak disokong') ? "Dikuiri" : "Sah/Perakuan II";
+        $tindakan = ($original_status_permohonan === 'tidak disahkan') ? "Dikuiri" : "Sah/Perakuan II";
         $ulasan = $_POST['ulasan'] ?? "-";
 
         $log_sql = "INSERT INTO document_logs (tarikh, namaAdmin, peranan, tindakan, catatan, wilayah_asal_id) VALUES (NOW(), ?, ?, ?, ?, ?)";
