@@ -1,5 +1,5 @@
 <?php
-include 'connection.php';
+include_once 'includes/config.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get data from form

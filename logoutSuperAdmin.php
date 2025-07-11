@@ -1,5 +1,6 @@
 <?php
 session_start();
+include_once 'includes/config.php';
 
 // Clear all session variables
 $_SESSION = [];

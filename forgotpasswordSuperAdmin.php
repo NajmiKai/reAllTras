@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'connection.php';
+include_once 'includes/config.php';
 
 $showSuccess = isset($_GET['status']) && $_GET['status'] === 'sent';
 ?>
