@@ -29,7 +29,7 @@ $query = "SELECT sl.*,
           END as user_identifier
           FROM system_logs sl
           LEFT JOIN admin a ON sl.user_id = a.ICNo AND sl.user_type = 'admin'
-          LEFT JOIN superadmin sa ON sl.user_id = sa.ICNo AND sl.user_type = 'superAdmin'
+          LEFT JOIN superadmin sa ON REPLACE(sl.user_id, '-', '') = REPLACE(sa.ICNo, '-', '') AND LOWER(sl.user_type) = 'superAdmin'
           LEFT JOIN user u ON sl.user_id = u.kp AND sl.user_type = 'user'
           WHERE 1=1";
 
