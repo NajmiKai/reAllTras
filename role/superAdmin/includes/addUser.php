@@ -72,6 +72,8 @@ $stmt->bind_param("sssssss",
 
 if ($stmt->execute()) {
     echo json_encode(['success' => true, 'message' => 'Pengguna berjaya ditambah']);
+    logDataCreate($conn, 'superAdmin', $icNo, 'User', $stmt->insert_id, 'Insert new admin');
+
 } else {
     echo json_encode(['success' => false, 'message' => 'Gagal menambah pengguna']);
 }
