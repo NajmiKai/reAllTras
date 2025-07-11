@@ -73,7 +73,6 @@ $display_result = $conn->query($sql);
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>ID</th>
                                 <th>Nama Pemohon</th>
                                 <th>No. KP</th>
                                 <th>Email</th>
@@ -87,7 +86,6 @@ $display_result = $conn->query($sql);
                         <tbody>
                             <?php while($row = $display_result->fetch_assoc()): ?>
                             <tr>
-                                <td><?php echo htmlspecialchars($row['id']); ?></td>
                                 <td><?php echo htmlspecialchars($row['nama_first'] . ' ' . $row['nama_last']); ?></td>
                                 <td><?php echo htmlspecialchars($row['user_kp']); ?></td>
                                 <td><?php echo htmlspecialchars($row['email']); ?></td>
