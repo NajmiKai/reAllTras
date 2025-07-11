@@ -453,8 +453,6 @@ include '../../../connection.php';
                             <th class="fw-bold">Peranan</th>
                             <th class="fw-bold">Tindakan</th>
                             <th class="fw-bold">Catatan</th>
-                            <th class="fw-bold">Catatan</th>
-                            <th class="fw-bold">Tindakan Admin</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -474,12 +472,6 @@ include '../../../connection.php';
                             <td><?= htmlspecialchars($log['peranan']) ?></td>
                             <td><?= htmlspecialchars($log['tindakan']) ?></td>
                             <td><?= nl2br(htmlspecialchars($log['catatan'])) ?></td>
-                            <td>
-                                <div class="btn-group">
-                                    <a href="viewWilayahAsal.php?id=<?php echo $row['id']; ?>" class="btn btn-info btn-sm">
-                                        <i class="fas fa-eye"></i> Lihat
-                                    </a>
-                            </td>
                         </tr>
                             <?php
                                 endwhile;
