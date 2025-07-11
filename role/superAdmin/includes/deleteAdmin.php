@@ -25,7 +25,8 @@ $sql = "DELETE FROM admin WHERE ID = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $admin_id);
 
-logDataDelete($conn, 'super admin', $super_admin_id, "admin", $admin_id, "Delete admin");
+logDataDelete($conn, 'superAdmin', (string)$super_admin_id, "admin", $admin_id, "Delete admin");
+
 
 if ($stmt->execute()) {
     echo json_encode(['success' => true]);
