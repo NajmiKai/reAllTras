@@ -1,6 +1,7 @@
 <?php
 session_start();
 include_once '../../../includes/config.php';
+include '../../../includes/system_logger.php';
 
 // Check if user is super admin
 if (!isset($_SESSION['super_admin_id'])) {
@@ -66,9 +67,14 @@ $stmt->bind_param("ssssss",
     $hashed_password,
     $data['role']
 );
+$icNo = $_SESSION['super_admin_icNo'];
+
+
 
 if ($stmt->execute()) {
     echo json_encode(['success' => true, 'message' => 'Admin berjaya ditambah']);
+    logDataCreate($conn, 'superAdmin', $icNo, 'Admin', $stmt->insert_id, 'Insert new admin');
+
 } else {
     echo json_encode(['success' => false, 'message' => 'Gagal menambah admin']);
 }
