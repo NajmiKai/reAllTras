@@ -171,7 +171,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </a>
     <div class="login-wrapper">
         <div class="login-title">
-            <img src="assets/ALLTRAS.png" alt="ALLTRAS" height="130"><br>
+            <img src="assets/ALLTRAS.png" alt="ALLTRAS" height="120">
+            <img src="assets/JKDMLogo.png" alt="ALLTRAS" height="110"><br>
             ALL REGION TRAVELLING SYSTEM
         </div>
 

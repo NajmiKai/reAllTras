@@ -183,7 +183,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <div class="login-wrapper">
         <div class="login-title">
-            <img src="assets/ALLTRAS.png" alt="ALLTRAS" height="120"><br>
+        <img src="assets/ALLTRAS.png" alt="ALLTRAS" height="120">
+        <img src="assets/JKDMLogo.png" alt="ALLTRAS" height="110"><br>
             ALL REGION TRAVELLING SYSTEM (SUPER ADMIN PANEL)
         </div>
 
