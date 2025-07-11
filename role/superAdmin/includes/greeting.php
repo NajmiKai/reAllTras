@@ -1,6 +1,6 @@
 <?php
 // Get user data from session
-include_once '../../../includes/config.php';
+include_once '../../includes/config.php';
 
 // Fetch user data from database
 $user_id = $_SESSION['super_admin_id'];
