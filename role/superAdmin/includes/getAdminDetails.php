@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../../connection.php';
+include_once '../../../includes/config.php';
 
 // Check if user is logged in as super admin
 if (!isset($_SESSION['super_admin_id'])) {

@@ -5,7 +5,7 @@ ini_set('display_errors', 1);
 header('Content-Type: application/json');
 
 session_start();
-include '../../../connection.php';
+include_once '../../../includes/config.php';
 
 $data = json_decode(file_get_contents("php://input"), true);
 $wilayah_id = $data['wilayah_id'] ?? null;

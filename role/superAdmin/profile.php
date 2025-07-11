@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../connection.php';
+include_once '../../includes/config.php';
 
 // Fetch user data from database
 $super_admin_id = $_SESSION['super_admin_id'];
