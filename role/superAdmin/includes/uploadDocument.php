@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../../connection.php';
+include_once '../../../includes/config.php';
 
 if (!isset($_SESSION['super_admin_id'])) {
     die("Akses tidak sah: super_admin_id tidak ditemui dalam sesi.");

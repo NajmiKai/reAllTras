@@ -1,4 +1,5 @@
 <?php
+include_once '../../../includes/config.php';
 // Enable error logging but disable display
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
