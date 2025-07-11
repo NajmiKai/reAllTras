@@ -97,7 +97,7 @@ $showSuccess = isset($_GET['status']) && $_GET['status'] === 'sent';
             </div>
         <?php endif; ?>
         
-        <p class="text-center">Masukkan emel atau nombor KP anda dan kami akan hantarkan pautan untuk menetapkan semula kata laluan anda.</p>
+        <p class="text-center">Masukkan emel anda dan kami akan hantarkan pautan untuk menetapkan semula kata laluan anda.</p>
 
         <form method="POST" action="send-reset-user.php">
             <div class="mb-3">
