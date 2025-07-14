@@ -174,7 +174,7 @@ $submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'permohonanIbuP
         
 
         <div class="row g-4 mb-4">
-            <div class="col-md-3">
+            <div class="col-6 col-md">
             <a href="wilayahAsalList.php?status=total" class="text-decoration-none text-white">
                 <div class="card-box bg-primary">
                     <i class="fas fa-user-plus"></i>
@@ -182,23 +182,31 @@ $submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'permohonanIbuP
                     <p>Wilayah Asal: <?= $stats['total']['Wilayah Asal'] ?></p>
                 </div></a>
             </div>
-            <div class="col-md-3">
+            <div class="col-6 col-md">
             <a href="wilayahAsalList.php?status=processing" class="text-decoration-none text-white">
-                <div class="card-box bg-success">
+                <div class="card-box bg-warning">
                     <i class="fas fa-spinner"></i>
-                    <h6>Sedang Diproses</h6>
+                    <h6>Tindakan Perlu</h6>
                     <p>Wilayah Asal: <?= $stats['processing']['Wilayah Asal'] ?></p>
                 </div></a>
             </div>
-            <div class="col-md-3">
+            <div class="col-6 col-md">
             <a href="wilayahAsalList.php?status=approved" class="text-decoration-none text-white">
-                <div class="card-box bg-warning">
+                <div class="card-box bg-info">
                     <i class="fas fa-check-circle"></i>
-                    <h6>Berjaya Diproses</h6>
+                    <h6>Status Permohonan</h6>
                     <p>Wilayah Asal: <?= $stats['approved']['Wilayah Asal'] ?></p>
                 </div></a>
             </div>
-            <div class="col-md-3">
+            <div class="col-6 col-md">
+            <a href="wilayahAsalList.php?status=completed" class="text-decoration-none text-white">
+                <div class="card-box bg-success">
+                    <i class="fas fa-check-circle"></i>
+                    <h6>Selesai</h6>
+                    <p>Wilayah Asal: <?= $stats['completed']['Wilayah Asal'] ?></p>
+                </div></a>
+            </div>
+            <div class="col-6 col-md">
             <a href="wilayahAsalList.php?status=rejected" class="text-decoration-none text-white">
                 <div class="card-box bg-danger">
                     <i class="fas fa-times-circle"></i>

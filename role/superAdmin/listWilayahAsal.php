@@ -66,84 +66,237 @@ $display_result = $conn->query($sql);
             </div>
         <?php endif; ?>
 
-        <!-- Permohonan Table -->
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Nama Pemohon</th>
-                                <th>No. KP</th>
-                                <th>Email</th>
-                                <th>Bahagian</th>
-                                <th>Jenis Permohonan</th>
-                                <th>Status</th>
-                                <th>Tarikh Permohonan</th>
-                                <th>Tindakan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php while($row = $display_result->fetch_assoc()): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($row['nama_first'] . ' ' . $row['nama_last']); ?></td>
-                                <td><?php echo htmlspecialchars($row['user_kp']); ?></td>
-                                <td><?php echo htmlspecialchars($row['email']); ?></td>
-                                <td><?php echo htmlspecialchars($row['bahagian']); ?></td>
-                                <td><?php echo htmlspecialchars($row['jenis_permohonan']); ?></td>
-                                <td>
-                                    <?php
-                                        $status_class = 'bg-secondary';
-                                        switch ($row['status_permohonan']) {
-                                            case 'Belum Disemak':
+        <!-- Tab Navigation -->
+        <ul class="nav nav-tabs mb-3" id="permohonanTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="jumlah-tab" data-bs-toggle="tab" data-bs-target="#jumlah" type="button" role="tab" aria-controls="jumlah" aria-selected="true">Jumlah Keseluruhan</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="proses-tab" data-bs-toggle="tab" data-bs-target="#proses" type="button" role="tab" aria-controls="proses" aria-selected="false">Sedang Diproses</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="selesai-tab" data-bs-toggle="tab" data-bs-target="#selesai" type="button" role="tab" aria-controls="selesai" aria-selected="false">Selesai</button>
+            </li>
+        </ul>
+        <div class="tab-content" id="permohonanTabContent">
+            <!-- Jumlah Keseluruhan Tab -->
+            <div class="tab-pane fade show active" id="jumlah" role="tabpanel" aria-labelledby="jumlah-tab">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Nama Pemohon</th>
+                                        <th>No. KP</th>
+                                        <th>Email</th>
+                                        <th>Bahagian</th>
+                                        <th>Jenis Permohonan</th>
+                                        <th>Status</th>
+                                        <th>Tarikh Permohonan</th>
+                                        <th>Tindakan</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php 
+                                    $display_result->data_seek(0); // Reset pointer
+                                    while($row = $display_result->fetch_assoc()): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($row['nama_first'] . ' ' . $row['nama_last']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['user_kp']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['email']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['bahagian']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['jenis_permohonan']); ?></td>
+                                        <td>
+                                            <?php
                                                 $status_class = 'bg-secondary';
-                                                break;
-                                            case 'Selesai':
+                                                switch ($row['status_permohonan']) {
+                                                    case 'Belum Disemak':
+                                                        $status_class = 'bg-secondary';
+                                                        break;
+                                                    case 'Selesai':
+                                                        $status_class = 'bg-success';
+                                                        break;
+                                                    case 'Dikuiri':
+                                                        $status_class = 'bg-warning';
+                                                        break;
+                                                    case 'Tolak':
+                                                        $status_class = 'bg-danger';
+                                                        break;
+                                                    case 'Batal':
+                                                        $status_class = 'bg-danger';
+                                                        break;
+                                                    case 'Lulus':
+                                                        $status_class = 'bg-primary';
+                                                        break;
+                                                    default:
+                                                        $status_class = 'bg-secondary';
+                                                }
+                                            ?>
+                                            <span class="badge <?php echo $status_class; ?>">
+                                                <?php echo htmlspecialchars($row['status_permohonan']); ?>
+                                            </span>
+                                        </td>
+                                        <td><?php echo date('d/m/Y', strtotime($row['created_at'])); ?></td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <a href="viewWilayahAsal.php?id=<?php echo $row['id']; ?>" class="btn btn-info btn-sm">
+                                                    <i class="fas fa-eye"></i> Lihat
+                                                </a>
+                                                <button type="button" class="btn btn-danger btn-sm" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#batalModal" 
+                                                        data-id="<?php echo $row['id']; ?>">
+                                                    <i class="fas fa-trash"></i> Batal
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <?php endwhile; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Sedang Diproses Tab -->
+            <div class="tab-pane fade" id="proses" role="tabpanel" aria-labelledby="proses-tab">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Nama Pemohon</th>
+                                        <th>No. KP</th>
+                                        <th>Email</th>
+                                        <th>Bahagian</th>
+                                        <th>Jenis Permohonan</th>
+                                        <th>Status</th>
+                                        <th>Tarikh Permohonan</th>
+                                        <th>Tindakan</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php 
+                                    $display_result->data_seek(0); // Reset pointer
+                                    while($row = $display_result->fetch_assoc()): 
+                                        if (in_array($row['status_permohonan'], ['Belum Disemak', 'Dikuiri', 'Lulus'])): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($row['nama_first'] . ' ' . $row['nama_last']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['user_kp']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['email']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['bahagian']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['jenis_permohonan']); ?></td>
+                                        <td>
+                                            <?php
+                                                $status_class = 'bg-secondary';
+                                                switch ($row['status_permohonan']) {
+                                                    case 'Belum Disemak':
+                                                        $status_class = 'bg-secondary';
+                                                        break;
+                                                    case 'Selesai':
+                                                        $status_class = 'bg-success';
+                                                        break;
+                                                    case 'Dikuiri':
+                                                        $status_class = 'bg-warning';
+                                                        break;
+                                                    case 'Tolak':
+                                                        $status_class = 'bg-danger';
+                                                        break;
+                                                    case 'Batal':
+                                                        $status_class = 'bg-danger';
+                                                        break;
+                                                    case 'Lulus':
+                                                        $status_class = 'bg-primary';
+                                                        break;
+                                                    default:
+                                                        $status_class = 'bg-secondary';
+                                                }
+                                            ?>
+                                            <span class="badge <?php echo $status_class; ?>">
+                                                <?php echo htmlspecialchars($row['status_permohonan']); ?>
+                                            </span>
+                                        </td>
+                                        <td><?php echo date('d/m/Y', strtotime($row['created_at'])); ?></td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <a href="viewWilayahAsal.php?id=<?php echo $row['id']; ?>" class="btn btn-info btn-sm">
+                                                    <i class="fas fa-eye"></i> Lihat
+                                                </a>
+                                                <button type="button" class="btn btn-danger btn-sm" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#batalModal" 
+                                                        data-id="<?php echo $row['id']; ?>">
+                                                    <i class="fas fa-trash"></i> Batal
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <?php endif; endwhile; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Selesai Tab -->
+            <div class="tab-pane fade" id="selesai" role="tabpanel" aria-labelledby="selesai-tab">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Nama Pemohon</th>
+                                        <th>No. KP</th>
+                                        <th>Email</th>
+                                        <th>Bahagian</th>
+                                        <th>Jenis Permohonan</th>
+                                        <th>Status</th>
+                                        <th>Tarikh Permohonan</th>
+                                        <th>Tindakan</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php 
+                                    $display_result->data_seek(0); // Reset pointer
+                                    while($row = $display_result->fetch_assoc()): 
+                                        if ($row['status_permohonan'] === 'Selesai'): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($row['nama_first'] . ' ' . $row['nama_last']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['user_kp']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['email']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['bahagian']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['jenis_permohonan']); ?></td>
+                                        <td>
+                                            <?php
                                                 $status_class = 'bg-success';
-                                                break;
-                                            case 'Dikuiri':
-                                                $status_class = 'bg-warning';
-                                                break;
-                                            case 'Tolak':
-                                                $status_class = 'bg-danger';
-                                                break;
-                                            case 'Batal':
-                                                $status_class = 'bg-danger';
-                                                break;
-                                            case 'Lulus':
-                                                $status_class = 'bg-primary';
-                                                break;
-                                            default:
-                                                $status_class = 'bg-secondary';
-                                        }
-                                    ?>
-                                    <span class="badge <?php echo $status_class; ?>">
-                                        <?php echo htmlspecialchars($row['status_permohonan']); ?>
-                                    </span>
-                                </td>
-                                <td><?php echo date('d/m/Y', strtotime($row['created_at'])); ?></td>
-                                <td>
-                                    <div class="btn-group">
-                                        <a href="viewWilayahAsal.php?id=<?php echo $row['id']; ?>" class="btn btn-info btn-sm">
-                                            <i class="fas fa-eye"></i> Lihat
-                                        </a>
-                                        <!-- <a href="deleteWilayahAsal.php?id=<?php echo $row['id']; ?>" 
-                                        class="btn btn-danger btn-sm"
-                                        onclick="return confirm('Anda pasti ingin padam rekod ini?');">
-                                            <i class="fas fa-trash"></i> Batal
-                                        </a> -->
-                                        <button type="button" class="btn btn-danger btn-sm" 
-                                                data-bs-toggle="modal" 
-                                                data-bs-target="#batalModal" 
-                                                data-id="<?php echo $row['id']; ?>">
-                                            <i class="fas fa-trash"></i> Batal
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <?php endwhile; ?>
-                        </tbody>
-                    </table>
+                                            ?>
+                                            <span class="badge <?php echo $status_class; ?>">
+                                                <?php echo htmlspecialchars($row['status_permohonan']); ?>
+                                            </span>
+                                        </td>
+                                        <td><?php echo date('d/m/Y', strtotime($row['created_at'])); ?></td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <a href="viewWilayahAsal.php?id=<?php echo $row['id']; ?>" class="btn btn-info btn-sm">
+                                                    <i class="fas fa-eye"></i> Lihat
+                                                </a>
+                                                <button type="button" class="btn btn-danger btn-sm" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#batalModal" 
+                                                        data-id="<?php echo $row['id']; ?>">
+                                                    <i class="fas fa-trash"></i> Batal
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <?php endif; endwhile; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
