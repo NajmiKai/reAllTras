@@ -36,16 +36,14 @@ $admin_phoneNo = $_SESSION['admin_phoneNo'];
 function countByStatus($conn, $table, $admin_id, $status = 'total') {
     if ($status === 'total') {
         // Count all rows for this admin_id without status filter
-        $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE pbr_csm1_id = ? OR pbr_csm2_id = ? OR status = 'Menunggu pengesahan PBR CSM' OR status = 'Menunggu pengesahan PBR2 CSM' OR status = 'Kembali ke PBR CSM'";
+        $query = "SELECT COUNT(*) AS jumlah FROM $table";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("ii", $admin_id, $admin_id);
     } elseif ($status === 'Sedang diproses') {
         $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE status = 'Menunggu pengesahan PBR CSM' OR status = 'Menunggu pengesahan PBR2 CSM'";
         $stmt = $conn->prepare($query);
     } elseif ($status === 'Berjaya diproses') {
-        $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE pbr_csm1_id = ? OR pbr_csm2_id = ? ";
+        $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE pbr_csm1_id IS NOT NULL OR pbr_csm2_id IS NOT NULL ";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("ii", $admin_id, $admin_id);
     } elseif ($status === 'Dikuiri') {
         $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE status = 'Kembali ke PBR CSM'";
         $stmt = $conn->prepare($query);
@@ -196,14 +194,6 @@ $submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'permohonanIbuP
                     <i class="fas fa-check-circle"></i>
                     <h6>Status Permohonan</h6>
                     <p>Wilayah Asal: <?= $stats['approved']['Wilayah Asal'] ?></p>
-                </div></a>
-            </div>
-            <div class="col-6 col-md">
-            <a href="wilayahAsalList.php?status=completed" class="text-decoration-none text-white">
-                <div class="card-box bg-success">
-                    <i class="fas fa-check-circle"></i>
-                    <h6>Selesai</h6>
-                    <p>Wilayah Asal: <?= $stats['completed']['Wilayah Asal'] ?></p>
                 </div></a>
             </div>
             <div class="col-6 col-md">

@@ -28,18 +28,23 @@ $admin_icNo = $_SESSION['admin_icNo'];
 $admin_email = $_SESSION['admin_email'];
 $admin_phoneNo = $_SESSION['admin_phoneNo'];
 $status = $_GET['status'] ?? 'total';
+$approved_status = $_GET['approved_status'] ?? 'dalam_proses'; // New parameter for approved sub-status
 
-function getStatusFilter($status, $admin_id) {
+function getStatusFilter($status, $admin_id, $approved_status = 'dalam_proses') {
     switch ($status) {
         case 'processing':
             return "status IN ('Menunggu pengesahan PBR CSM', 'Menunggu pengesahan PBR2 CSM')";
         case 'approved':
-            return "(pbr_csm1_id = $admin_id OR pbr_csm2_id = $admin_id)";
+            if ($approved_status === 'selesai') {
+                return "status_permohonan = 'Selesai'";
+            } else {
+                return "(pbr_csm1_id IS NOT NULL OR pbr_csm2_id IS NOT NULL) AND status_permohonan != 'Selesai'";
+            }
         case 'rejected':
             return "status = 'Kembali ke PBR CSM'";
         case 'total':
         default:
-            return "(pbr_csm1_id = $admin_id OR pbr_csm2_id = $admin_id OR status IN ('Menunggu pengesahan PBR CSM', 'Menunggu pengesahan PBR2 CSM', 'Kembali ke PBR CSM'))";
+            return "1=1"; // No condition - show all records
     }
 }
 
@@ -55,8 +60,12 @@ if ($status === 'total') {
     $status2 = ucfirst($status); // fallback
 }
 
+// Get all approved records for tab filtering
+$approved_filter = "(pbr_csm1_id IS NOT NULL OR pbr_csm2_id IS NOT NULL)";
+$approved_query = "SELECT * FROM wilayah_asal JOIN user ON user.kp = wilayah_asal.user_kp WHERE $approved_filter ORDER BY wilayah_asal.id DESC";
+$approved_result = $conn->query($approved_query);
 
-$filter = getStatusFilter($status, $admin_id);
+$filter = getStatusFilter($status, $admin_id, $approved_status);
 $query = "SELECT * FROM wilayah_asal JOIN user ON user.kp = wilayah_asal.user_kp WHERE $filter ORDER BY wilayah_asal.id DESC";
 $result = $conn->query($query);
 ?>
@@ -125,51 +134,171 @@ $result = $conn->query($query);
     <br><br>
     <h3>Senarai Permohonan - <?= ucfirst($status2) ?></h3>
     <a href="dashboard.php" class="btn btn-secondary btn-sm mb-3">← Kembali ke Dashboard</a>
-    <div class="card shadow-sm">
-        <div class="card-body">
-        <table class="table table-hover" id="myTable">
-            <thead class="table-dark">
-                <tr>
-                    <th>Nama</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>K/P</th>
-                    <th>Bahagian</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-            <?php if ($result && $result->num_rows > 0): ?>
-                <?php while ($user = $result->fetch_assoc()): ?>
+    
+    <?php if ($status === 'approved'): ?>
+        <!-- Tab Navigation for Approved Status -->
+        <ul class="nav nav-tabs mb-3" id="approvedTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link <?= $approved_status === 'dalam_proses' ? 'active' : '' ?>" href="?status=approved&approved_status=dalam_proses">Dalam Proses</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link <?= $approved_status === 'selesai' ? 'active' : '' ?>" href="?status=approved&approved_status=selesai">Selesai</a>
+            </li>
+        </ul>
+        
+        <div class="tab-content" id="approvedTabContent">
+            <!-- Dalam Proses Tab -->
+            <div class="tab-pane fade <?= $approved_status === 'dalam_proses' ? 'show active' : '' ?>" 
+                 id="dalam-proses" 
+                 role="tabpanel" 
+                 aria-labelledby="dalam-proses-tab">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <table class="table table-hover" id="myTable">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Nama</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>K/P</th>
+                                    <th>Bahagian</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <?php 
+                            $approved_result->data_seek(0);
+                            if ($approved_result && $approved_result->num_rows > 0): ?>
+                                <?php while ($user = $approved_result->fetch_assoc()): ?>
+                                    <?php if ($user['status'] !== 'Selesai'): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($user['nama_first'] . ' ' . $user['nama_last']); ?></td>
+                                        <td><?php echo htmlspecialchars($user['email']); ?></td>
+                                        <td><?php echo htmlspecialchars($user['phone']); ?></td>
+                                        <td><?php echo htmlspecialchars($user['kp']); ?></td>
+                                        <td><?php echo htmlspecialchars($user['bahagian']); ?></td>                              
+                                        <td><?php echo htmlspecialchars($user['status']); ?></td>
+
+                                        <?php if($user['status'] == 'Menunggu pengesahan PBR2 CSM'){ ?>
+                                            <td><a href="viewdetailsfromHQ.php?kp=<?= $user['kp'] ?>" class="btn btn-info btn-sm">Lihat</a></td>
+                                        <?php } elseif ($user['status'] == 'Kembali ke PBR CSM'){ ?>
+                                            <td><a href="viewdetailskuiri.php?kp=<?= $user['kp'] ?>" class="btn btn-info btn-sm">Lihat</a></td>
+                                        <?php }else{ ?>
+                                            <td><a href="viewdetails.php?kp=<?= $user['kp'] ?>" class="btn btn-info btn-sm">Lihat</a></td>
+                                        <?php } ?>
+                                    </tr>
+                                    <?php endif; ?>
+                                <?php endwhile; ?>
+                            <?php else: ?>
+                                <tr><td colspan="7" class="text-center">Tiada permohonan dalam proses dijumpai.</td></tr>
+                            <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Selesai Tab -->
+            <div class="tab-pane fade <?= $approved_status === 'selesai' ? 'show active' : '' ?>" 
+                 id="selesai" 
+                 role="tabpanel" 
+                 aria-labelledby="selesai-tab">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <table class="table table-hover" id="myTable">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Nama</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>K/P</th>
+                                    <th>Bahagian</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <?php 
+                            $approved_result->data_seek(0);
+                            if ($approved_result && $approved_result->num_rows > 0): ?>
+                                <?php while ($user = $approved_result->fetch_assoc()): ?>
+                                    <?php if ($user['status_permohonan'] === 'Selesai'): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($user['nama_first'] . ' ' . $user['nama_last']); ?></td>
+                                        <td><?php echo htmlspecialchars($user['email']); ?></td>
+                                        <td><?php echo htmlspecialchars($user['phone']); ?></td>
+                                        <td><?php echo htmlspecialchars($user['kp']); ?></td>
+                                        <td><?php echo htmlspecialchars($user['bahagian']); ?></td>                              
+                                        <td><?php echo htmlspecialchars($user['status']); ?></td>
+
+                                        <?php if($user['status'] == 'Menunggu pengesahan PBR2 CSM'){ ?>
+                                            <td><a href="viewdetailsfromHQ.php?kp=<?= $user['kp'] ?>" class="btn btn-info btn-sm">Lihat</a></td>
+                                        <?php } elseif ($user['status'] == 'Kembali ke PBR CSM'){ ?>
+                                            <td><a href="viewdetailskuiri.php?kp=<?= $user['kp'] ?>" class="btn btn-info btn-sm">Lihat</a></td>
+                                        <?php }else{ ?>
+                                            <td><a href="viewdetails.php?kp=<?= $user['kp'] ?>" class="btn btn-info btn-sm">Lihat</a></td>
+                                        <?php } ?>
+                                    </tr>
+                                    <?php endif; ?>
+                                <?php endwhile; ?>
+                            <?php else: ?>
+                                <tr><td colspan="7" class="text-center">Tiada permohonan selesai dijumpai.</td></tr>
+                            <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php else: ?>
+        <!-- Regular table for non-approved statuses -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+            <table class="table table-hover" id="myTable">
+                <thead class="table-dark">
                     <tr>
-                                <td><?php echo htmlspecialchars($user['nama_first'] . ' ' . $user['nama_last']); ?></td>
-                                <td><?php echo htmlspecialchars($user['email']); ?></td>
-                                <td><?php echo htmlspecialchars($user['phone']); ?></td>
-                                <td><?php echo htmlspecialchars($user['kp']); ?></td>
-                                <td><?php echo htmlspecialchars($user['bahagian']); ?></td>                              
-                                <td><?php echo htmlspecialchars($user['status']); ?></td>
-
-                                <?php if($user['status'] == 'Menunggu pengesahan PBR2 CSM'){ ?>
-                                    <td><a href="viewdetailsfromHQ.php?kp=<?= $user['kp'] ?>" class="btn btn-info btn-sm">Lihat</a></td>
-                                <?php } elseif ($user['status'] == 'Kembali ke PBR CSM'){ ?>
-                                    <td><a href="viewdetailskuiri.php?kp=<?= $user['kp'] ?>" class="btn btn-info btn-sm">Lihat</a></td>
-                                <?php }else{ ?>
-                                    <td><a href="viewdetails.php?kp=<?= $user['kp'] ?>" class="btn btn-info btn-sm">Lihat</a></td>
-                                <?php } ?>
-                            </tr>
-
-
-
+                        <th>Nama</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>K/P</th>
+                        <th>Bahagian</th>
+                        <th>Status</th>
+                        <th>Action</th>
                     </tr>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <tr><td colspan="4" class="text-center">Tiada permohonan dijumpai.</td></tr>
-            <?php endif; ?>
-        </tbody>
-        </table>
-    </div>
-    </div>
+                </thead>
+                <tbody>
+                <?php if ($result && $result->num_rows > 0): ?>
+                    <?php while ($user = $result->fetch_assoc()): ?>
+                        <tr>
+                                    <td><?php echo htmlspecialchars($user['nama_first'] . ' ' . $user['nama_last']); ?></td>
+                                    <td><?php echo htmlspecialchars($user['email']); ?></td>
+                                    <td><?php echo htmlspecialchars($user['phone']); ?></td>
+                                    <td><?php echo htmlspecialchars($user['kp']); ?></td>
+                                    <td><?php echo htmlspecialchars($user['bahagian']); ?></td>                              
+                                    <td><?php echo htmlspecialchars($user['status']); ?></td>
+
+                                    <?php if($user['status'] == 'Menunggu pengesahan PBR2 CSM'){ ?>
+                                        <td><a href="viewdetailsfromHQ.php?kp=<?= $user['kp'] ?>" class="btn btn-info btn-sm">Lihat</a></td>
+                                    <?php } elseif ($user['status'] == 'Kembali ke PBR CSM'){ ?>
+                                        <td><a href="viewdetailskuiri.php?kp=<?= $user['kp'] ?>" class="btn btn-info btn-sm">Lihat</a></td>
+                                    <?php }else{ ?>
+                                        <td><a href="viewdetails.php?kp=<?= $user['kp'] ?>" class="btn btn-info btn-sm">Lihat</a></td>
+                                    <?php } ?>
+                                </tr>
+
+
+
+                        </tr>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <tr><td colspan="7" class="text-center">Tiada permohonan dijumpai.</td></tr>
+                <?php endif; ?>
+                </tbody>
+                </table>
+            </div>
+            </div>
+    <?php endif; ?>
 </body>
 </html>
 
