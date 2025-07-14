@@ -38,7 +38,8 @@ function getStatusFilter($status, $admin_id, $approved_status = 'dalam_proses') 
             if ($approved_status === 'selesai') {
                 return "status_permohonan = 'Selesai'";
             } else {
-                return "(pbr_csm1_id IS NOT NULL OR pbr_csm2_id IS NOT NULL) AND status_permohonan != 'Selesai'";
+                // return "(pbr_csm1_id IS NOT NULL OR pbr_csm2_id IS NOT NULL) AND status_permohonan != 'Selesai'";
+                return "status_permohonan != 'Selesai'";
             }
         case 'rejected':
             return "status = 'Kembali ke PBR CSM'";
