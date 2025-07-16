@@ -511,7 +511,7 @@ $submenuOpen = in_array($currentPage, ['wilayahAsal.php', 'wilayahAsal2.php', 'w
                 <div class="row">
                     <div class="col-12">
                         <div class="alert alert-info mt-3 text-center">
-                            Permohonan telah diluluskan dan tidak boleh dikemaskini lagi.
+                        Permohonan ini telah disemak atau tidak memerlukan tindakan daripada pihak anda pada masa ini.
                         </div>
                     </div>
                 </div>

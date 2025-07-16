@@ -35,10 +35,10 @@ function countByStatus($conn, $table, $admin_id, $status = 'total') {
         // Count all rows for this admin_id without status filter
         $query = "SELECT COUNT(*) AS jumlah FROM $table";
         $stmt = $conn->prepare($query);
-    } elseif ($status === 'Sedang diproses') {
+    } elseif ($status === 'Tindakan Perlu') {
         $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE status = 'Menunggu pengesahan penyemak1 HQ' OR status = 'Menunggu pengesahan penyemak2 HQ'";
         $stmt = $conn->prepare($query);
-    } elseif ($status === 'Berjaya diproses') {
+    } elseif ($status === 'Status Permohonan') {
         $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE status NOT IN ('Menunggu pengesahan penyemak1 HQ', 'Menunggu pengesahan penyemak2 HQ') ";
         $stmt = $conn->prepare($query);
     } elseif ($status === 'Dikuiri') {
