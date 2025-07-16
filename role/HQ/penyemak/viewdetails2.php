@@ -1,6 +1,7 @@
 <?php
 session_start();
 include '../../../connection.php';
+$currentPage = basename($_SERVER['PHP_SELF']);
 $submenuOpen = in_array($currentPage, ['wilayahAsal.php', 'wilayahAsal2.php', 'wilayahAsalDikuiri.php']);
 $redirect_back = $_SERVER['HTTP_REFERER'] ?? 'dashboard.php';
 

@@ -2,6 +2,7 @@
 session_start();
 include '../../../connection.php';
 $redirect_back = $_SERVER['HTTP_REFERER'] ?? 'dashboard.php';
+$currentPage = basename($_SERVER['PHP_SELF']);
 $submenuOpen = in_array($currentPage, ['wilayahAsal.php', 'wilayahAsal2.php', 'wilayahAsalDikuiri.php']);
 
     if (!isset($_SESSION['admin_id'])) {

@@ -1,6 +1,7 @@
 <?php
 session_start();
 include '../../../connection.php';
+$currentPage = basename($_SERVER['PHP_SELF']);
 $submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'permohonanIbuPejabat.php', 'permohonanDikuiri.php']);
 
 if (!isset($_SESSION['admin_id'])) {
