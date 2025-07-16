@@ -182,7 +182,7 @@ $submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'permohonanIbuP
             </div>
             <div class="col-6 col-md">
             <a href="wilayahAsalList.php?status=processing" class="text-decoration-none text-white">
-                <div class="card-box bg-warning">
+                <div class="card-box bg-success">
                     <i class="fas fa-spinner"></i>
                     <h6>Tindakan Perlu</h6>
                     <p>Wilayah Asal: <?= $stats['processing']['Wilayah Asal'] ?></p>
@@ -190,7 +190,7 @@ $submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'permohonanIbuP
             </div>
             <div class="col-6 col-md">
             <a href="wilayahAsalList.php?status=approved" class="text-decoration-none text-white">
-                <div class="card-box bg-info">
+                <div class="card-box bg-warning">
                     <i class="fas fa-check-circle"></i>
                     <h6>Status Permohonan</h6>
                     <p>Wilayah Asal: <?= $stats['approved']['Wilayah Asal'] ?></p>
