@@ -44,7 +44,8 @@ $display_result = $conn->query($sql);
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="../../assets/css/userStyle.css">
-    <link rel="icon" href="../../../assets/ALLTRAS.png" type="image/x-icon">
+    <link rel="icon" href="../../assets/ALLTRAS.png" type="image/x-icon">
+    
 </head>
 <body>
 
@@ -107,7 +108,8 @@ $display_result = $conn->query($sql);
                                         <td><?php echo htmlspecialchars($row['email']); ?></td>
                                         <td><?php echo htmlspecialchars($row['bahagian']); ?></td>
                                         <td><?php echo htmlspecialchars($row['jenis_permohonan']); ?></td>
-                                        <td>
+                                        <td><?php echo htmlspecialchars($row['status']); ?></td>
+                                        <!-- <td>
                                             <?php
                                                 $status_class = 'bg-secondary';
                                                 switch ($row['status_permohonan']) {
@@ -136,7 +138,7 @@ $display_result = $conn->query($sql);
                                             <span class="badge <?php echo $status_class; ?>">
                                                 <?php echo htmlspecialchars($row['status_permohonan']); ?>
                                             </span>
-                                        </td>
+                                        </td> -->
                                         <td><?php echo date('d/m/Y', strtotime($row['created_at'])); ?></td>
                                         <td>
                                             <div class="btn-group">
@@ -188,7 +190,8 @@ $display_result = $conn->query($sql);
                                         <td><?php echo htmlspecialchars($row['email']); ?></td>
                                         <td><?php echo htmlspecialchars($row['bahagian']); ?></td>
                                         <td><?php echo htmlspecialchars($row['jenis_permohonan']); ?></td>
-                                        <td>
+                                        <td><?php echo htmlspecialchars($row['status']); ?></td>
+                                        <!-- <td>
                                             <?php
                                                 $status_class = 'bg-secondary';
                                                 switch ($row['status_permohonan']) {
@@ -217,7 +220,7 @@ $display_result = $conn->query($sql);
                                             <span class="badge <?php echo $status_class; ?>">
                                                 <?php echo htmlspecialchars($row['status_permohonan']); ?>
                                             </span>
-                                        </td>
+                                        </td> -->
                                         <td><?php echo date('d/m/Y', strtotime($row['created_at'])); ?></td>
                                         <td>
                                             <div class="btn-group">
@@ -269,14 +272,15 @@ $display_result = $conn->query($sql);
                                         <td><?php echo htmlspecialchars($row['email']); ?></td>
                                         <td><?php echo htmlspecialchars($row['bahagian']); ?></td>
                                         <td><?php echo htmlspecialchars($row['jenis_permohonan']); ?></td>
-                                        <td>
+                                        <td><?php echo htmlspecialchars($row['status']); ?></td>
+                                        <!-- <td>
                                             <?php
                                                 $status_class = 'bg-success';
                                             ?>
                                             <span class="badge <?php echo $status_class; ?>">
                                                 <?php echo htmlspecialchars($row['status_permohonan']); ?>
                                             </span>
-                                        </td>
+                                        </td> -->
                                         <td><?php echo date('d/m/Y', strtotime($row['created_at'])); ?></td>
                                         <td>
                                             <div class="btn-group">
