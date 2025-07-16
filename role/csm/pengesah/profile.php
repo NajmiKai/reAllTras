@@ -23,7 +23,6 @@ if (!isset($_SESSION['admin_id'])) {
 
 $currentPage = basename($_SERVER['PHP_SELF']);
 $submenuOpen = in_array($currentPage, ['perrmohonanPengguna.php', 'permohonanIbuPejabat.php']);
-$submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'perrmohonanIbuPejabat.php']);
 
 
 $admin_id = $_SESSION['admin_id'];

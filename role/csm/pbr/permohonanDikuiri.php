@@ -1,6 +1,8 @@
 <?php
 session_start();
 include '../../../connection.php';
+$submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'permohonanIbuPejabat.php', 'permohonanDikuiri.php']);
+
 
 if (isset($_SESSION['status'])): ?>
     <script>

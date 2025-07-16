@@ -1,6 +1,7 @@
 <?php
 session_start();
 include '../../../connection.php';
+$submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'permohonanIbuPejabat.php', 'permohonanDikuiri.php']);
 
 if (!isset($_SESSION['admin_id'])) {
     header("Location: ../../../login.php");
@@ -29,13 +30,13 @@ $admin_email = $_SESSION['admin_email'];
 $admin_phoneNo = $_SESSION['admin_phoneNo'];
 $status = $_GET['status'] ?? 'total';
 $approved_status = $_GET['approved_status'] ?? 'dalam_proses'; 
-function getStatusFilter($status, $admin_id, $approved_status = 'dalam_proses') {
+function getStatusFilter($status, $approved_status = 'dalam_proses') {
     switch ($status) {
         case 'processing':
             return "status IN ('Menunggu pengesahan PBR CSM', 'Menunggu pengesahan PBR2 CSM')";
         case 'approved':
-            $selesai = "status_permohonan = 'Selesai'";
-            $not_selesai = "(pbr_csm1_id IS NOT NULL OR pbr_csm2_id IS NOT NULL) AND status_permohonan != 'Selesai'";
+            $selesai = "status NOT IN ('Menunggu pengesahan PBR CSM', 'Menunggu pengesahan PBR2 CSM') AND status_permohonan = 'Selesai'";
+            $not_selesai = "status NOT IN ('Menunggu pengesahan PBR CSM', 'Menunggu pengesahan PBR2 CSM') AND status_permohonan != 'Selesai'";
                 return ($approved_status === 'selesai') ? $selesai : $not_selesai; 
         case 'rejected':
             return "status = 'Kembali ke PBR CSM'";
@@ -48,16 +49,16 @@ function getStatusFilter($status, $admin_id, $approved_status = 'dalam_proses') 
 if ($status === 'total') {
     $status2 = 'Jumlah';
 } elseif ($status === 'processing') {
-    $status2 = 'Sedang diproses';
+    $status2 = 'Tindakan Perlu';
 } elseif ($status === 'approved') {
-    $status2 = 'Berjaya diproses';
+    $status2 = 'Status Permohonan';
 } elseif ($status === 'rejected') {
     $status2 = 'Dikuiri';
 } else {
     $status2 = ucfirst($status); // fallback
 }
 
-$filter = getStatusFilter($status, $admin_id, $approved_status);
+$filter = getStatusFilter($status, $approved_status);
 $query = "SELECT * FROM wilayah_asal JOIN user ON user.kp = wilayah_asal.user_kp WHERE $filter ORDER BY wilayah_asal.id DESC";
 $result = $conn->query($query);
 ?>
@@ -163,7 +164,7 @@ $result = $conn->query($query);
                             $result->data_seek(0);
                             if ($result && $result->num_rows > 0): ?>
                                 <?php while ($user = $result->fetch_assoc()): ?>
-                                    <?php if ($approved_status === 'dalam_proses' && $user['status_permohonan'] !== 'Selesai' && (!empty($user['pbr_csm1_id']) || !empty($user['pbr_csm2_id']))): ?>
+                                    <?php if ($approved_status === 'dalam_proses'): ?>
                                     <tr>
                                         <td><?php echo htmlspecialchars($user['nama_first'] . ' ' . $user['nama_last']); ?></td>
                                         <td><?php echo htmlspecialchars($user['email']); ?></td>
@@ -215,7 +216,7 @@ $result = $conn->query($query);
                             $result->data_seek(0);
                             if ($result && $result->num_rows > 0): ?>
                                 <?php while ($user = $result->fetch_assoc()): ?>
-                                    <?php if ($approved_status === 'selesai' && $user['status_permohonan'] === 'Selesai'): ?>
+                                    <?php if ($approved_status === 'selesai'): ?>
                                     <tr>
                                         <td><?php echo htmlspecialchars($user['nama_first'] . ' ' . $user['nama_last']); ?></td>
                                         <td><?php echo htmlspecialchars($user['email']); ?></td>
@@ -243,6 +244,7 @@ $result = $conn->query($query);
                 </div>
             </div>
         </div>
+        
     <?php else: ?>
         <!-- Regular table for non-approved statuses -->
         <div class="card shadow-sm">

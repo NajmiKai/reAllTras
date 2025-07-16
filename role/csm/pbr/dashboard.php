@@ -38,11 +38,11 @@ function countByStatus($conn, $table, $admin_id, $status = 'total') {
         // Count all rows for this admin_id without status filter
         $query = "SELECT COUNT(*) AS jumlah FROM $table";
         $stmt = $conn->prepare($query);
-    } elseif ($status === 'Sedang diproses') {
+    } elseif ($status === 'Tindakan Perlu') {
         $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE status = 'Menunggu pengesahan PBR CSM' OR status = 'Menunggu pengesahan PBR2 CSM'";
         $stmt = $conn->prepare($query);
-    } elseif ($status === 'Berjaya diproses') {
-        $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE pbr_csm1_id IS NOT NULL OR pbr_csm2_id IS NOT NULL ";
+    } elseif ($status === 'Status Permohonan') {
+        $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE status NOT IN ('Menunggu pengesahan PBR CSM', 'Menunggu pengesahan PBR2 CSM')";
         $stmt = $conn->prepare($query);
     } elseif ($status === 'Dikuiri') {
         $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE status = 'Kembali ke PBR CSM'";
@@ -68,8 +68,8 @@ $stats = [
 
 // Fill the counts for Wilayah Asal
 $stats['total']['Wilayah Asal'] = countByStatus($conn, 'wilayah_asal', $admin_id, 'total');
-$stats['processing']['Wilayah Asal'] = countByStatus($conn, 'wilayah_asal', $admin_id, 'Sedang diproses');
-$stats['approved']['Wilayah Asal'] = countByStatus($conn, 'wilayah_asal', $admin_id, 'Berjaya diproses');
+$stats['processing']['Wilayah Asal'] = countByStatus($conn, 'wilayah_asal', $admin_id, 'Tindakan Perlu');
+$stats['approved']['Wilayah Asal'] = countByStatus($conn, 'wilayah_asal', $admin_id, 'Status Permohonan');
 $stats['rejected']['Wilayah Asal'] = countByStatus($conn, 'wilayah_asal', $admin_id, 'Dikuiri');
 
 $currentPage = basename($_SERVER['PHP_SELF']);

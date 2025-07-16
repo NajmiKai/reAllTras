@@ -1,6 +1,9 @@
 <?php
 session_start();
 include '../../../connection.php';
+$redirect_back = $_SERVER['HTTP_REFERER'] ?? 'dashboard.php';
+$submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'permohonanIbuPejabat.php', 'permohonanDikuiri.php']);
+
 
     // Check if user is logged in
     if (!isset($_SESSION['admin_id'])) {
@@ -60,13 +63,13 @@ include '../../../connection.php';
 
         $isApproved = false; // Assume false initially
 
-        $sql = "SELECT pbr_csm1_id FROM wilayah_asal WHERE id = ?";
+        $sql = "SELECT status, pbr_csm1_id FROM wilayah_asal WHERE id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("i", $wilayah_asal_id);
         $stmt->execute();
-        $stmt->bind_result($pbr_csm1_id);
+        $stmt->bind_result($status, $pbr_csm1_id);
         if ($stmt->fetch()) {
-            if ($pbr_csm1_id === $admin_id || $pbr_csm1_id !== null) { 
+            if ($status !== 'Menunggu pengesahan PBR CSM' || $pbr_csm1_id !== null) {
                 $isApproved = true;
             }
         }
@@ -490,12 +493,12 @@ include '../../../connection.php';
                     
           
             <input type="hidden" name="wilayah_asal_id" value="<?= $wilayah_asal_id ?>">
-            <input type="hidden" name="redirect_source" value="permohonanPengguna.php">
+            <input type="hidden" name="redirect_source" value="<?= htmlspecialchars($redirect_back) ?>">
 
             <div class="d-flex justify-content-between mt-5">
-                <a href="permohonanPengguna.php" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left me-2"></i>Kembali
-                </a>
+            <a href="<?= htmlspecialchars($redirect_back) ?>" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Kembali
+            </a>
                 <button type="submit" class="btn btn-success" <?php if ($isApproved) echo 'disabled'; ?>>
                     <i class="fas fa-check me-2"></i>Hantar Permohonan
                 </button>

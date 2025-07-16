@@ -1,6 +1,8 @@
 <?php
 session_start();
 include '../../../connection.php';
+$redirect_back = $_SERVER['HTTP_REFERER'] ?? 'dashboard.php';
+$submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'permohonanIbuPejabat.php', 'permohonanDikuiri.php']);
 
     if (!isset($_SESSION['admin_id'])) {
         header("Location: ../../../login.php");
@@ -70,16 +72,16 @@ include '../../../connection.php';
 
         $isApproved = false; // Assume false initially
 
-        // $sql = "SELECT pbr_csm1_id FROM wilayah_asal WHERE id = ?";
-        // $stmt = $conn->prepare($sql);
-        // $stmt->bind_param("i", $wilayah_asal_id);
-        // $stmt->execute();
-        // $stmt->bind_result($pbr_csm1_id);
-        // if ($stmt->fetch()) {
-        //     if ($pbr_csm1_id === $admin_id || $pbr_csm1_id !== null) { 
-        //         $isApproved = true;
-        //     }
-        // }
+        $sql = "SELECT status FROM wilayah_asal WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $wilayah_asal_id);
+        $stmt->execute();
+        $stmt->bind_result($status);
+        if ($stmt->fetch()) {
+            if ($status !== 'Kembali ke PBR CSM') {
+                $isApproved = true;
+            }
+        }
         $stmt->close();
         } 
     }
@@ -503,9 +505,10 @@ include '../../../connection.php';
 
             </div>
             <input type="hidden" name="wilayah_asal_id" value="<?= $wilayah_asal_id ?>">
+            <input type="hidden" name="redirect_source" value="<?= htmlspecialchars($redirect_back) ?>">
 
             <div class="d-flex justify-content-between mt-5">
-                <a href="permohonanDikuiri.php" class="btn btn-secondary">
+                <a href="<?= htmlspecialchars($redirect_back) ?>" class="btn btn-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Kembali
                 </a>
                 <button type="submit" class="btn btn-success" <?php if ($isApproved) echo 'disabled'; ?>

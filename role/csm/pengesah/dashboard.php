@@ -32,16 +32,14 @@ $admin_phoneNo = $_SESSION['admin_phoneNo'];
 function countByStatus($conn, $table, $admin_id, $status = 'total') {
     if ($status === 'total') {
         // Count all rows for this admin_id without status filter
-        $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE pengesah_csm1_id = ? OR pengesah_csm2_id = ? OR status = 'Menunggu pengesahan pengesah CSM' OR status = 'Menunggu pengesahan pengesah2 CSM'";
+        $query = "SELECT COUNT(*) AS jumlah FROM $table";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("ii", $admin_id, $admin_id);
-    } elseif ($status === 'Sedang diproses') {
-        $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE status = 'Menunggu pengesahan pengesah CSM' OR status = 'Menunggu pengesahan pengesah2 CSM'";
+    } elseif ($status === 'Tindakan Perlu') {
+        $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE status IN ('Menunggu pengesahan pengesah CSM', 'Menunggu pengesahan pengesah2 CSM')";
         $stmt = $conn->prepare($query);
-    } elseif ($status === 'Berjaya diproses') {
-        $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE pengesah_csm1_id = ? OR pengesah_csm2_id = ? ";
+    } elseif ($status === 'Status Permohonan') {
+        $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE status NOT IN ('Menunggu pengesahan pengesah CSM', 'Menunggu pengesahan pengesah2 CSM')";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("ii", $admin_id, $admin_id);
     } else {
         return 0;
     }
@@ -63,8 +61,8 @@ $stats = [
 
 // Fill the counts for Wilayah Asal
 $stats['total']['Wilayah Asal'] = countByStatus($conn, 'wilayah_asal', $admin_id, 'total');
-$stats['processing']['Wilayah Asal'] = countByStatus($conn, 'wilayah_asal', $admin_id, 'Sedang diproses');
-$stats['approved']['Wilayah Asal'] = countByStatus($conn, 'wilayah_asal', $admin_id, 'Berjaya diproses');
+$stats['processing']['Wilayah Asal'] = countByStatus($conn, 'wilayah_asal', $admin_id, 'Tindakan Perlu');
+$stats['approved']['Wilayah Asal'] = countByStatus($conn, 'wilayah_asal', $admin_id, 'Status Permohonan');
 $stats['rejected']['Wilayah Asal'] = 0;
 
 
@@ -176,7 +174,7 @@ $submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'permohonanIbuP
             <a href="wilayahAsalList.php?status=processing" class="text-decoration-none text-white">
                 <div class="card-box bg-success">
                     <i class="fas fa-spinner"></i>
-                    <h6>Sedang Diproses</h6>
+                    <h6>Tindakan Perlu</h6>
                     <p>Wilayah Asal: <?= $stats['processing']['Wilayah Asal'] ?></p>
                 </div></a>
             </div>
@@ -184,7 +182,7 @@ $submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'permohonanIbuP
             <a href="wilayahAsalList.php?status=approved" class="text-decoration-none text-white">
                 <div class="card-box bg-warning">
                     <i class="fas fa-check-circle"></i>
-                    <h6>Berjaya Diproses</h6>
+                    <h6>Status Permohonan</h6>
                     <p>Wilayah Asal: <?= $stats['approved']['Wilayah Asal'] ?></p>
                 </div></a>
             </div>
