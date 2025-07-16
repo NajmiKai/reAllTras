@@ -33,16 +33,14 @@ $admin_phoneNo = $_SESSION['admin_phoneNo'];
 function countByStatus($conn, $table, $admin_id, $status = 'total') {
     if ($status === 'total') {
         // Count all rows for this admin_id without status filter
-        $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE pegSulit_csm_id = ? OR status = 'Menunggu pengesahan pegawai sulit CSM'";
+        $query = "SELECT COUNT(*) AS jumlah FROM $table";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("i", $admin_id);
     } elseif ($status === 'Sedang diproses') {
         $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE status = 'Menunggu pengesahan pegawai sulit CSM'";
         $stmt = $conn->prepare($query);
     } elseif ($status === 'Berjaya diproses') {
-        $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE pegSulit_csm_id = ? ";
+        $query = "SELECT COUNT(*) AS jumlah FROM $table WHERE pegSulit_csm_id IS NOT NULL ";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("i", $admin_id);
     } else {
         return 0;
     }

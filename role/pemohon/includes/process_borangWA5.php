@@ -97,13 +97,12 @@ try {
         $mail->Port = 587;
 
         $mail->setFrom($mail->Username, 'ALLTRAS');
-        $mail->addAddress($user_data['email']);
-        
         // Add all PBR CSM admins as CC recipients
         foreach ($csm_emails as $csm) {
-            $mail->addCC($csm['email'], $csm['name']);
+            $mail->addAddress($csm['email'], $csm['name']);
         }
 
+        $mail->addCC($user_data['email']);
         $mail->isHTML(true);
         $mail->Subject = 'Permohonan Tambang Ziarah Wilayah (TZW) : Tindakan Semakan Permohonan';
         $mail->Body = "

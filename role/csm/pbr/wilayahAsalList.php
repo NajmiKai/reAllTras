@@ -28,19 +28,15 @@ $admin_icNo = $_SESSION['admin_icNo'];
 $admin_email = $_SESSION['admin_email'];
 $admin_phoneNo = $_SESSION['admin_phoneNo'];
 $status = $_GET['status'] ?? 'total';
-$approved_status = $_GET['approved_status'] ?? 'dalam_proses'; // New parameter for approved sub-status
-
+$approved_status = $_GET['approved_status'] ?? 'dalam_proses'; 
 function getStatusFilter($status, $admin_id, $approved_status = 'dalam_proses') {
     switch ($status) {
         case 'processing':
             return "status IN ('Menunggu pengesahan PBR CSM', 'Menunggu pengesahan PBR2 CSM')";
         case 'approved':
-            if ($approved_status === 'selesai') {
-                return "status_permohonan = 'Selesai'";
-            } else {
-                // return "(pbr_csm1_id IS NOT NULL OR pbr_csm2_id IS NOT NULL) AND status_permohonan != 'Selesai'";
-                return "status_permohonan != 'Selesai'";
-            }
+            $selesai = "status_permohonan = 'Selesai'";
+            $not_selesai = "(pbr_csm1_id IS NOT NULL OR pbr_csm2_id IS NOT NULL) AND status_permohonan != 'Selesai'";
+                return ($approved_status === 'selesai') ? $selesai : $not_selesai; 
         case 'rejected':
             return "status = 'Kembali ke PBR CSM'";
         case 'total':
@@ -60,11 +56,6 @@ if ($status === 'total') {
 } else {
     $status2 = ucfirst($status); // fallback
 }
-
-// Get all approved records for tab filtering
-$approved_filter = "(pbr_csm1_id IS NOT NULL OR pbr_csm2_id IS NOT NULL)";
-$approved_query = "SELECT * FROM wilayah_asal JOIN user ON user.kp = wilayah_asal.user_kp WHERE $approved_filter ORDER BY wilayah_asal.id DESC";
-$approved_result = $conn->query($approved_query);
 
 $filter = getStatusFilter($status, $admin_id, $approved_status);
 $query = "SELECT * FROM wilayah_asal JOIN user ON user.kp = wilayah_asal.user_kp WHERE $filter ORDER BY wilayah_asal.id DESC";
@@ -169,10 +160,10 @@ $result = $conn->query($query);
                             </thead>
                             <tbody>
                             <?php 
-                            $approved_result->data_seek(0);
-                            if ($approved_result && $approved_result->num_rows > 0): ?>
-                                <?php while ($user = $approved_result->fetch_assoc()): ?>
-                                    <?php if ($user['status'] !== 'Selesai'): ?>
+                            $result->data_seek(0);
+                            if ($result && $result->num_rows > 0): ?>
+                                <?php while ($user = $result->fetch_assoc()): ?>
+                                    <?php if ($approved_status === 'dalam_proses' && $user['status_permohonan'] !== 'Selesai' && (!empty($user['pbr_csm1_id']) || !empty($user['pbr_csm2_id']))): ?>
                                     <tr>
                                         <td><?php echo htmlspecialchars($user['nama_first'] . ' ' . $user['nama_last']); ?></td>
                                         <td><?php echo htmlspecialchars($user['email']); ?></td>
@@ -221,10 +212,10 @@ $result = $conn->query($query);
                             </thead>
                             <tbody>
                             <?php 
-                            $approved_result->data_seek(0);
-                            if ($approved_result && $approved_result->num_rows > 0): ?>
-                                <?php while ($user = $approved_result->fetch_assoc()): ?>
-                                    <?php if ($user['status_permohonan'] === 'Selesai'): ?>
+                            $result->data_seek(0);
+                            if ($result && $result->num_rows > 0): ?>
+                                <?php while ($user = $result->fetch_assoc()): ?>
+                                    <?php if ($approved_status === 'selesai' && $user['status_permohonan'] === 'Selesai'): ?>
                                     <tr>
                                         <td><?php echo htmlspecialchars($user['nama_first'] . ' ' . $user['nama_last']); ?></td>
                                         <td><?php echo htmlspecialchars($user['email']); ?></td>
