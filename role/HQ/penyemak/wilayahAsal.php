@@ -1,6 +1,7 @@
 <?php
 session_start();
 include '../../../connection.php';
+$submenuOpen = in_array($currentPage, ['wilayahAsal.php', 'wilayahAsal2.php', 'wilayahAsalDikuiri.php']);
 
 if (isset($_SESSION['status'])): ?>
     <script>

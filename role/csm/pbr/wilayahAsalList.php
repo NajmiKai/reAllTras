@@ -30,6 +30,7 @@ $admin_email = $_SESSION['admin_email'];
 $admin_phoneNo = $_SESSION['admin_phoneNo'];
 $status = $_GET['status'] ?? 'total';
 $approved_status = $_GET['approved_status'] ?? 'dalam_proses'; 
+
 function getStatusFilter($status, $approved_status = 'dalam_proses') {
     switch ($status) {
         case 'processing':
@@ -279,10 +280,6 @@ $result = $conn->query($query);
                                     <?php }else{ ?>
                                         <td><a href="viewdetails.php?kp=<?= $user['kp'] ?>" class="btn btn-info btn-sm">Lihat</a></td>
                                     <?php } ?>
-                                </tr>
-
-
-
                         </tr>
                     <?php endwhile; ?>
                 <?php else: ?>

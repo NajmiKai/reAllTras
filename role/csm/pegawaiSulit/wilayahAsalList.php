@@ -114,8 +114,6 @@ $result = $conn->query($query);
     <br><br>
     <h3>Senarai Permohonan - <?= ucfirst($status2) ?></h3>
     <a href="dashboard.php" class="btn btn-secondary btn-sm mb-3">← Kembali ke Dashboard</a>
-
-
     
     <?php if ($status === 'approved'): ?>
         <!-- Tab Navigation for Approved Status -->
@@ -249,10 +247,7 @@ $result = $conn->query($query);
                                 <td><?php echo htmlspecialchars($user['bahagian']); ?></td>                              
                                 <td><?php echo htmlspecialchars($user['status']); ?></td>
                                 <td><a href="viewdetails.php?kp=<?= $user['kp'] ?>" class="btn btn-info btn-sm">Lihat</a></td> 
-                            </tr>
-
-
-
+                    
                     </tr>
                 <?php endwhile; ?>
             <?php else: ?>

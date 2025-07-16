@@ -3,7 +3,6 @@ session_start();
 include '../../../connection.php';
 $redirect_back = $_SERVER['HTTP_REFERER'] ?? 'dashboard.php';
 
-
     if (!isset($_SESSION['admin_id'])) {
         header("Location: ../../../login.php");
         exit();
@@ -471,7 +470,6 @@ $redirect_back = $_SERVER['HTTP_REFERER'] ?? 'dashboard.php';
         
             <input type="hidden" name="wilayah_asal_id" value="<?= $wilayah_asal_id ?>">
             <input type="hidden" name="redirect_source" value="<?= htmlspecialchars($redirect_back) ?>">
-
 
             <div class="d-flex justify-content-between mt-5">
             <a href="<?= htmlspecialchars($redirect_back) ?>" class="btn btn-secondary">

@@ -1,6 +1,7 @@
 <?php
 session_start();
 include '../../../connection.php';
+$submenuOpen = in_array($currentPage, ['wilayahAsal.php', 'wilayahAsal2.php', 'wilayahAsalDikuiri.php']);
 
 if (!isset($_SESSION['admin_id'])) {
     header("Location: ../../../login.php");
@@ -28,27 +29,30 @@ $admin_icNo = $_SESSION['admin_icNo'];
 $admin_email = $_SESSION['admin_email'];
 $admin_phoneNo = $_SESSION['admin_phoneNo'];
 $status = $_GET['status'] ?? 'total';
+$approved_status = $_GET['approved_status'] ?? 'dalam_proses'; 
 
-function getStatusFilter($status, $admin_id) {
+function getStatusFilter($status, $approved_status = 'dalam_proses') {
     switch ($status) {
         case 'processing':
             return "status IN ('Menunggu pengesahan penyemak1 HQ', 'Menunggu pengesahan penyemak2 HQ')";
         case 'approved':
-            return "(penyemak_HQ1_id = $admin_id OR penyemak_HQ2_id = $admin_id) AND status != 'Kembali ke penyemak HQ'";
+            $selesai = "status NOT IN ('Menunggu pengesahan penyemak1 HQ', 'Menunggu pengesahan penyemak2 HQ') AND status_permohonan = 'Selesai'";
+            $not_selesai = "status NOT IN ('Menunggu pengesahan penyemak1 HQ', 'Menunggu pengesahan penyemak2 HQ') AND status_permohonan != 'Selesai'";
+                return ($approved_status === 'selesai') ? $selesai : $not_selesai; 
         case 'rejected':
             return "status = 'Kembali ke penyemak HQ'";
         case 'total':
         default:
-            return "(penyemak_HQ1_id = $admin_id OR penyemak_HQ2_id = $admin_id OR status IN ('Menunggu pengesahan penyemak1 HQ', 'Menunggu pengesahan penyemak2 HQ'))";
+            return "1=1"; // No condition - show all records
     }
 }
 
 if ($status === 'total') {
     $status2 = 'Jumlah';
 } elseif ($status === 'processing') {
-    $status2 = 'Sedang diproses';
+    $status2 = 'Tindakan Perlu';
 } elseif ($status === 'approved') {
-    $status2 = 'Berjaya diproses';
+    $status2 = 'Status Permohonan';
 } elseif ($status === 'rejected') {
     $status2 = 'Dikuiri';
 } else {
@@ -56,7 +60,7 @@ if ($status === 'total') {
 }
 
 
-$filter = getStatusFilter($status, $admin_id);
+$filter = getStatusFilter($status, $approved_status);
 $query = "SELECT * FROM wilayah_asal JOIN user ON user.kp = wilayah_asal.user_kp WHERE $filter ORDER BY wilayah_asal.id DESC";
 $result = $conn->query($query);
 ?>
@@ -126,6 +130,135 @@ $result = $conn->query($query);
     <br><br>
     <h3>Senarai Permohonan - <?= ucfirst($status2) ?></h3>
     <a href="dashboard.php" class="btn btn-secondary btn-sm mb-3">← Kembali ke Dashboard</a>
+
+    <?php if ($status === 'approved'): ?>
+        <!-- Tab Navigation for Approved Status -->
+        <ul class="nav nav-tabs mb-3" id="approvedTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link <?= $approved_status === 'dalam_proses' ? 'active' : '' ?>" href="?status=approved&approved_status=dalam_proses">Dalam Proses</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link <?= $approved_status === 'selesai' ? 'active' : '' ?>" href="?status=approved&approved_status=selesai">Selesai</a>
+            </li>
+        </ul>
+        
+        <div class="tab-content" id="approvedTabContent">
+            <!-- Dalam Proses Tab -->
+            <div class="tab-pane fade <?= $approved_status === 'dalam_proses' ? 'show active' : '' ?>" 
+                 id="dalam-proses" 
+                 role="tabpanel" 
+                 aria-labelledby="dalam-proses-tab">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <table class="table table-hover" id="myTable">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Nama</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>K/P</th>
+                                    <th>Bahagian</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <?php 
+                            $result->data_seek(0);
+                            if ($result && $result->num_rows > 0): ?>
+                                <?php while ($user = $result->fetch_assoc()): ?>
+                                    <?php if ($approved_status === 'dalam_proses'): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($user['nama_first'] . ' ' . $user['nama_last']); ?></td>
+                                        <td><?php echo htmlspecialchars($user['email']); ?></td>
+                                        <td><?php echo htmlspecialchars($user['phone']); ?></td>
+                                        <td><?php echo htmlspecialchars($user['kp']); ?></td>
+                                        <td><?php echo htmlspecialchars($user['bahagian']); ?></td>                              
+                                        <td><?php echo htmlspecialchars($user['status']); ?></td>
+
+                                        <?php if($user['status'] == 'Menunggu pengesahan penyemak2 HQ'){ ?>
+                                        <td><a href="viewdetails2.php?kp=<?= $user['kp'] ?>" class="btn btn-info btn-sm">Lihat</a>
+                                            <div style="margin-top: 10px;">
+                                                <a class="btn btn-success btn-sm" href="#" onclick="openAndPrint('<?= $user['kp'] ?>'); return false;">Cetak Memo</a>
+                                            </div> 
+                                         </td>
+                                        <?php } elseif ($user['status'] == 'Kembali ke penyemak HQ'){ ?>
+                                            <td><a href="viewdetailsdikuiri.php?kp=<?= $user['kp'] ?>" class="btn btn-info btn-sm">Lihat</a></td>
+                                        <?php }else{ ?>
+                                            <td><a href="viewdetails.php?kp=<?= $user['kp'] ?>" class="btn btn-info btn-sm">Lihat</a></td>
+                                        <?php } ?>
+
+                                    </tr>
+                                    <?php endif; ?>
+                                <?php endwhile; ?>
+                            <?php else: ?>
+                                <tr><td colspan="7" class="text-center">Tiada permohonan dalam proses dijumpai.</td></tr>
+                            <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Selesai Tab -->
+            <div class="tab-pane fade <?= $approved_status === 'selesai' ? 'show active' : '' ?>" 
+                 id="selesai" 
+                 role="tabpanel" 
+                 aria-labelledby="selesai-tab">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <table class="table table-hover" id="myTable">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Nama</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>K/P</th>
+                                    <th>Bahagian</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <?php 
+                            $result->data_seek(0);
+                            if ($result && $result->num_rows > 0): ?>
+                                <?php while ($user = $result->fetch_assoc()): ?>
+                                    <?php if ($approved_status === 'selesai'): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($user['nama_first'] . ' ' . $user['nama_last']); ?></td>
+                                        <td><?php echo htmlspecialchars($user['email']); ?></td>
+                                        <td><?php echo htmlspecialchars($user['phone']); ?></td>
+                                        <td><?php echo htmlspecialchars($user['kp']); ?></td>
+                                        <td><?php echo htmlspecialchars($user['bahagian']); ?></td>                              
+                                        <td><?php echo htmlspecialchars($user['status']); ?></td>
+
+                                        <?php if($user['status'] == 'Menunggu pengesahan penyemak2 HQ'){ ?>
+                                        <td><a href="viewdetails2.php?kp=<?= $user['kp'] ?>" class="btn btn-info btn-sm">Lihat</a>
+                                            <div style="margin-top: 10px;">
+                                                <a class="btn btn-success btn-sm" href="#" onclick="openAndPrint('<?= $user['kp'] ?>'); return false;">Cetak Memo</a>
+                                            </div> 
+                                        </td>
+                                        <?php } elseif ($user['status'] == 'Kembali ke penyemak HQ'){ ?>
+                                            <td><a href="viewdetailsdikuiri.php?kp=<?= $user['kp'] ?>" class="btn btn-info btn-sm">Lihat</a></td>
+                                        <?php }else{ ?>
+                                            <td><a href="viewdetails.php?kp=<?= $user['kp'] ?>" class="btn btn-info btn-sm">Lihat</a></td>
+                                        <?php } ?>
+
+                                    </tr>
+                                    <?php endif; ?>
+                                <?php endwhile; ?>
+                            <?php else: ?>
+                                <tr><td colspan="7" class="text-center">Tiada permohonan selesai dijumpai.</td></tr>
+                            <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    <?php else: ?>
     <div class="card shadow-sm">
         <div class="card-body">
         <table class="table table-hover" id="myTable">
@@ -154,9 +287,7 @@ $result = $conn->query($query);
                                 <?php if($user['status'] == 'Menunggu pengesahan penyemak2 HQ'){ ?>
                                     <td><a href="viewdetails2.php?kp=<?= $user['kp'] ?>" class="btn btn-info btn-sm">Lihat</a>
                                         <div style="margin-top: 10px;">
-                                            <!-- <button type="button" onclick="openAndPrint('<?= $user['kp'] ?>')">
-                                                Cetak Memo Kelulusan
-                                            </button> -->
+                                        
                                             <a class="btn btn-success btn-sm" href="#" onclick="openAndPrint('<?= $user['kp'] ?>'); return false;">Cetak Memo</a>
                                             
                                         </div> 
@@ -166,10 +297,6 @@ $result = $conn->query($query);
                                 <?php }else{ ?>
                                     <td><a href="viewdetails.php?kp=<?= $user['kp'] ?>" class="btn btn-info btn-sm">Lihat</a></td>
                                 <?php } ?>
-                            </tr>
-
-
-
                     </tr>
                 <?php endwhile; ?>
             <?php else: ?>
@@ -179,6 +306,7 @@ $result = $conn->query($query);
         </table>
     </div>
     </div>
+    <?php endif; ?>
 </body>
 </html>
 

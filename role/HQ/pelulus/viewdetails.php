@@ -1,6 +1,7 @@
 <?php
 session_start();
 include '../../../connection.php';
+$redirect_back = $_SERVER['HTTP_REFERER'] ?? 'dashboard.php';
 
     if (!isset($_SESSION['admin_id'])) {
         header("Location: ../../../login.php");
@@ -58,13 +59,13 @@ include '../../../connection.php';
 
         $isApproved = false; // Assume false initially
 
-        $sql = "SELECT pelulus_HQ_id FROM wilayah_asal WHERE id = ?";
+        $sql = "SELECT status, pelulus_HQ_id FROM wilayah_asal WHERE id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("i", $wilayah_asal_id);
         $stmt->execute();
-        $stmt->bind_result($pelulus_HQ_id);
+        $stmt->bind_result($status, $pelulus_HQ_id);
         if ($stmt->fetch()) {
-                if ($pelulus_HQ_id === $admin_id || $pelulus_HQ_id !== null) { 
+            if ($status !== 'Menunggu pengesahan pelulus HQ' || $pelulus_HQ_id !== null) {
                 $isApproved = true;
             }
         }
@@ -504,9 +505,10 @@ include '../../../connection.php';
                     </div>
        
             <input type="hidden" name="wilayah_asal_id" value="<?= $wilayah_asal_id ?>">
+            <input type="hidden" name="redirect_source" value="<?= htmlspecialchars($redirect_back) ?>">
 
             <div class="d-flex justify-content-between mt-5">
-                <a href="wilayahAsal.php" class="btn btn-secondary">
+                <a href="<?= htmlspecialchars($redirect_back) ?>" class="btn btn-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Kembali
                 </a>
                 <button type="submit" class="btn btn-success" <?php if ($isApproved) echo 'disabled'; ?>
