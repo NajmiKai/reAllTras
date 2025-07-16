@@ -78,9 +78,6 @@ try {
         }
     }
 
-    $sql = "SELECT * FROM admin WHERE role = 'Penyemak Baki Kewangan'";
-    $result = $conn->query($sql);
-
     // Format dates
     $tarikh_pergi = date('d/m/Y', strtotime($user_data['tarikh_penerbangan_pergi']));
     $tarikh_balik = date('d/m/Y', strtotime($user_data['tarikh_penerbangan_balik']));
@@ -97,7 +94,7 @@ try {
         $mail->Port = 587;
 
         $mail->setFrom($mail->Username, 'ALLTRAS');
-        // Add all PBR CSM admins as CC recipients
+       
         foreach ($csm_emails as $csm) {
             $mail->addAddress($csm['email'], $csm['name']);
         }

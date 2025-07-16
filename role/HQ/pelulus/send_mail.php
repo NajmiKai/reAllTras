@@ -122,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <p><b>No.Kad Pengenalan :</b> $kp</p>
                         <p><b>Bahagian/Cawangan :</b> $bahagian</p><br>
         
-                        <p>Permohonan Tambang Ziarah Wilayah (TZW) oleh pegawai telah <b>DILULUSKAN</b>. Mohon pihak tuan/puan untuk mengeluarkan surat kelulusan bagi tindakan selanjutnya./p>
+                        <p>Permohonan Tambang Ziarah Wilayah (TZW) oleh pegawai telah <b>DILULUSKAN</b>. Mohon pihak tuan/puan untuk mengeluarkan surat kelulusan bagi tindakan selanjutnya.</p>
         
                         <p>Sila klik pautan/butang di bawah untuk tindakan lanjut dan maklumat permohonan.</p>
         
