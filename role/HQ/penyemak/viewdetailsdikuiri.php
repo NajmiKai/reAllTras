@@ -465,7 +465,7 @@ $submenuOpen = in_array($currentPage, ['wilayahAsal.php', 'wilayahAsal2.php', 'w
                                     </thead>
                                     <tbody>
                                         <?php
-                                        $log_sql = "SELECT * FROM document_logs WHERE wilayah_asal_id = ? ORDER BY tarikh DESC";
+                                        $log_sql = "SELECT * FROM document_logs WHERE wilayah_asal_id = ? ORDER BY tarikh, id";
                                         $log_stmt = $conn->prepare($log_sql);
                                         $log_stmt->bind_param("i", $wilayah_asal_id);
                                         $log_stmt->execute();
