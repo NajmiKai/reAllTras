@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $old_status = $current_data['status'];
 
         if ($status_permohonan === 'disahkan') {
-            $status = 'Menunggu Pengesahan Pelulus HQ';
+            $status = 'Menunggu pengesahan pelulus HQ';
         } else {
             $status = 'Kembali ke penyemak HQ';
         }
