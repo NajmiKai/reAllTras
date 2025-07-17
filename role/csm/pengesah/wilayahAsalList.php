@@ -33,6 +33,26 @@ $admin_phoneNo = $_SESSION['admin_phoneNo'];
 $status = $_GET['status'] ?? 'total';
 $approved_status = $_GET['approved_status'] ?? 'dalam_proses'; 
 
+// Function to count approved applications
+function getApprovedCounts($conn) {
+    $counts = array();
+    // Count Selesai
+    $query_selesai = "SELECT COUNT(*) as count FROM wilayah_asal JOIN user ON user.kp = wilayah_asal.user_kp 
+                      WHERE status NOT IN ('Menunggu pengesahan pengesah CSM', 'Menunggu pengesahan pengesah2 CSM') 
+                      AND status_permohonan = 'Selesai'";
+    $result_selesai = $conn->query($query_selesai);
+    $counts['selesai'] = $result_selesai->fetch_assoc()['count'];
+    
+
+    // Count Dalam Proses (not selesai)
+    $query_dalam_proses = "SELECT COUNT(*) as count FROM wilayah_asal JOIN user ON user.kp = wilayah_asal.user_kp 
+                          WHERE status NOT IN ('Menunggu pengesahan pengesah CSM', 'Menunggu pengesahan pengesah2 CSM') 
+                          AND status_permohonan != 'Selesai'";
+    $result_dalam_proses = $conn->query($query_dalam_proses);
+    $counts['dalam_proses'] = $result_dalam_proses->fetch_assoc()['count'];
+    
+    return $counts;
+}
 
 function getStatusFilter($status, $approved_status = 'dalam_proses') {
     switch ($status) {
@@ -66,6 +86,8 @@ if ($status === 'total') {
 $filter = getStatusFilter($status, $approved_status);
 $query = "SELECT * FROM wilayah_asal JOIN user ON user.kp = wilayah_asal.user_kp WHERE $filter ORDER BY wilayah_asal.id DESC";
 $result = $conn->query($query);
+
+$approved_counts = getApprovedCounts($conn);
 ?>
 
 <!DOCTYPE html>
@@ -135,10 +157,14 @@ $result = $conn->query($query);
         <!-- Tab Navigation for Approved Status -->
         <ul class="nav nav-tabs mb-3" id="approvedTab" role="tablist">
             <li class="nav-item" role="presentation">
-                <a class="nav-link <?= $approved_status === 'dalam_proses' ? 'active' : '' ?>" href="?status=approved&approved_status=dalam_proses">Dalam Proses</a>
+                <a class="nav-link <?= $approved_status === 'dalam_proses' ? 'active' : '' ?>" href="?status=approved&approved_status=dalam_proses">
+                Dalam Proses <span class="badge bg-primary text-white rounded-pill ms-1"><?= $approved_counts['dalam_proses'] ?></span>
+                </a>
             </li>
             <li class="nav-item" role="presentation">
-                <a class="nav-link <?= $approved_status === 'selesai' ? 'active' : '' ?>" href="?status=approved&approved_status=selesai">Selesai</a>
+                <a class="nav-link <?= $approved_status === 'selesai' ? 'active' : '' ?>" href="?status=approved&approved_status=selesai">
+                Selesai <span class="badge bg-success text-white rounded-pill ms-1"><?= $approved_counts['selesai'] ?></span>   
+                </a>
             </li>
         </ul>
         

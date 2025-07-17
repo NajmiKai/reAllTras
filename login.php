@@ -251,7 +251,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </form>
     </div>
 
-    <a href="loginSuperAdmin.php" class="super-admin-link">Super Admin Login</a><br>
+    <!-- <a href="loginSuperAdmin.php" class="super-admin-link">Super Admin Login</a><br> -->
     <a href="loginUser.php" class="admin-login-btn">User Login</a>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
