@@ -429,7 +429,7 @@ $redirect_back = $_SERVER['HTTP_REFERER'] ?? 'dashboard.php';
                     <!-- </div> -->
 
                     <!-- <div class="col-md-6 mb-3"> -->
-                        <label for="formUpload" class="form-label">Muat Naik Borang (Memo Kelulusan)</label>
+                        <label for="formUpload" class="form-label">Muat Naik (Surat Kelulusan)</label>
                         <input class="form-control" type="file"  name="dokumen[]" accept=".pdf, image/*" required <?php if ($isApproved) echo 'disabled'; ?>>
                     </div>
                     

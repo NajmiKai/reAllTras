@@ -287,9 +287,9 @@ if ($wilayah_asal_data) {
                                 <label class="form-check-label" for="pernah_guna_tidak">Tidak</label>
                             </div>
                         </div>
-                        <div class="col-md-6" id="tarikh_terakhir_container" style="display: <?= (!empty($wilayah_asal_data['tarikh_terakhir_kemudahan'])) ? 'block' : 'none' ?>;">
+                        <div class="col-md-6" id="tarikh_terakhir_container">
                             <label class="form-label">Tarikh Terakhir Menggunakan Kemudahan</label>
-                            <input type="date" class="form-control" name="tarikh_terakhir_kemudahan" id="tarikh_terakhir_kemudahan" value="<?= htmlspecialchars($wilayah_asal_data['tarikh_terakhir_kemudahan'] ?? '') ?>" onchange="validateLastUsageDate(this)">
+                            <input type="date" class="form-control" name="tarikh_terakhir_kemudahan" id="tarikh_terakhir_kemudahan" value="<?= htmlspecialchars($wilayah_asal_data['tarikh_terakhir_kemudahan'] ?? '') ?>">
                             <div class="invalid-feedback" id="tarikh_terakhir_error">
                                 Kuota Kemudahan sudah digunakan untuk tahun ini
                             </div>
@@ -398,16 +398,16 @@ if ($wilayah_asal_data) {
     // Toggle tarikh terakhir field
     function toggleTarikhTerakhir() {
         const pernahGunaYa = document.getElementById('pernah_guna_ya').checked;
-        const tarikhTerakhirContainer = document.getElementById('tarikh_terakhir_container');
-        const tarikhTerakhirInput = document.querySelector('input[name="tarikh_terakhir_kemudahan"]');
-        
+        const tarikhTerakhirInput = document.getElementById('tarikh_terakhir_kemudahan');
         if (pernahGunaYa) {
-            tarikhTerakhirContainer.style.display = 'block';
+            tarikhTerakhirInput.disabled = false;
             tarikhTerakhirInput.required = true;
         } else {
-            tarikhTerakhirContainer.style.display = 'none';
+            tarikhTerakhirInput.disabled = true;
             tarikhTerakhirInput.required = false;
             tarikhTerakhirInput.value = '';
+            document.getElementById('tarikh_terakhir_error').style.display = 'none';
+            tarikhTerakhirInput.setCustomValidity('');
         }
     }
 

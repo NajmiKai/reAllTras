@@ -425,7 +425,7 @@ WP Kuala Lumpur<br>
     <col style="width: 40%;">
   </colgroup>
   <tr>
-    <td>Ruj.Kami</td>
+    <td></td>
     <td>:<span style="display:inline-block; width:150px;"></span></td>
   </tr>
 </table>
