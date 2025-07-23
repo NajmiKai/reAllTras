@@ -275,7 +275,7 @@ if (isset($_GET['kp'])) {
     // === 3. Second "Ruj. Kami" Table (50%) ===
     $tableMiniRef = $section->addTable('NoBorder');
     $tableMiniRef->addRow();
-    $tableMiniRef->addCell(2000)->addText("Ruj. Kami");
+    $tableMiniRef->addCell(2000)->addText("");
     $tableMiniRef->addCell(8000)->addText(":                                 (      )");
 
     $section->addTextBreak(1);
