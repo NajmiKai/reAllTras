@@ -204,6 +204,30 @@ $ulasan = $_SESSION['wilayah_asal_ulasan'] ?? null;
             background-color: #b6d4fe !important;
             color: #003366 !important;
         }
+
+        @media print {
+    body, html {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+    .container, .container-fluid, .row, .col, .col-12, .col-md-6, .col-md-12, .main-container, .p-4 {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        float: none !important;
+    }
+    /* Remove box shadows, borders, etc. if needed */
+    .section-card, .section-header, .section-body {
+        box-shadow: none !important;
+        border: none !important;
+    }
+
+    .btn, nav, .sidebar, .no-print {
+        display: none !important;
+    }
+}
     </style>
 </head>
 <body>
@@ -223,9 +247,9 @@ $ulasan = $_SESSION['wilayah_asal_ulasan'] ?? null;
         </div>
 
         <div class="d-flex justify-content-end mb-4">
-            <button onclick="captureWilayahAsal()" class="btn btn-primary">
-                <i class="fas fa-print me-2"></i>Cetak PDF
-            </button>
+            <button type="button" class="btn-print" onclick="openAndPrint('<?= htmlspecialchars($wilayah_asal_id) ?>')">
+                Cetak PDF
+            </button><br><br>
         </div>
 
         <?php if ($status_permohonan === 'Dikuiri'): ?>
@@ -549,30 +573,13 @@ $ulasan = $_SESSION['wilayah_asal_ulasan'] ?? null;
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
-function captureWilayahAsal() {
-    const element = document.querySelector('.col.p-4');
-    if (!element) {
-        alert('Main content not found!');
-        return;
-    }
-    // Hide the print button before capture
-    const printBtn = element.querySelector('.btn.btn-primary');
-    if (printBtn) printBtn.classList.add('d-none');
+function openAndPrint(wilayah_asal_id) {
+        const printWindow = window.open('borang_permohonan.php?wilayah_asal_id=' + encodeURIComponent(wilayah_asal_id));
 
-    const opt = {
-        margin:       0,
-        filename:     'laporan_wilayah_asal.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true },
-        jsPDF:        { unit: 'pt', format: 'a4', orientation: 'portrait' },
-        pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
-    };
-
-    html2pdf().set(opt).from(element).save().then(() => {
-        // Restore the print button after capture
-        if (printBtn) printBtn.classList.remove('d-none');
-    });
-}
+        printWindow.onload = function() {
+            printWindow.print();
+        };
+    }  
 </script>
 </body>
 </html>

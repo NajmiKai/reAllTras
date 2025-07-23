@@ -423,7 +423,7 @@ $redirect_back = $_SERVER['HTTP_REFERER'] ?? 'dashboard.php';
                 </div>
                 <div class="card-body row">
                     <div class="col-md-6 mb-3"><br>
-                        <button type="button" onclick="openAndPrint('<?= htmlspecialchars($application_data['user_kp']) ?>')">
+                        <button type="button" class="btn btn-success btn-sm" onclick="openAndPrint('<?= htmlspecialchars($application_data['user_kp']) ?>')">
                             Cetak Borang
                         </button><br><br>
                     <!-- </div> -->
@@ -510,9 +510,7 @@ $redirect_back = $_SERVER['HTTP_REFERER'] ?? 'dashboard.php';
 </div>
 </div> 
 </div>
-            </div>
-
-
+    </div>
             </div>
 
 <script>

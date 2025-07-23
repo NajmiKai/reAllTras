@@ -274,9 +274,12 @@ WP Kuala Lumpur<br>
 <strong>(u.p: <span style="display:inline-block; width:200px;"></span></strong>
 </p>
 
+<?php
+    $currentYear = date("Y");
+?>
 <div class="section">
   <p>Tuan/Puan,</p>
-  <p style="margin-bottom: 0px; margin-top: 0px;"><strong>KELULUSAN KEMUDAHAN TAMBANG ZIARAH WILAYAH TAHUN 2025</strong></p>
+  <p style="margin-bottom: 0px; margin-top: 0px;"><strong>KELULUSAN KEMUDAHAN TAMBANG ZIARAH WILAYAH TAHUN <?php echo $currentYear; ?></strong></p>
 
   <table style="text-align: left;">
   <colgroup>
@@ -347,9 +350,6 @@ WP Kuala Lumpur<br>
     </tr>
     <tr>
 
-    <?php
-    $currentYear = date("Y");
-    ?>
       <td><strong>Tempoh penggunaan</strong></td>
       <td>:</td>
       <td>01 Januari <?php echo $currentYear; ?> hingga 31 Disember <?php echo $currentYear; ?></td>

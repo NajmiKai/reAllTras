@@ -143,10 +143,10 @@ if ($result->num_rows > 0) {
                                 <td><?php echo htmlspecialchars($user['kp']); ?></td>
                                 <td><?php echo htmlspecialchars($user['bahagian']); ?></td>                              
                                 <td><?php echo htmlspecialchars($user['status']); ?></td>
-                                <td><a class="button" href="viewdetails2.php?kp=<?= $user['kp'] ?>">View Details</a>
+                                <td><a class="btn btn-info" href="viewdetails2.php?kp=<?= $user['kp'] ?>">Lihat</a>
                                         <div style="margin-top: 10px;">
-                                            <button type="button" onclick="openAndPrint('<?= $user['kp'] ?>')">
-                                                Cetak Memo Kelulusan
+                                            <button type="button" class="btn btn-success" onclick="openAndPrint('<?= $user['kp'] ?>')">
+                                                Cetak Memo
                                             </button>
                                         </div> 
                                 </td>

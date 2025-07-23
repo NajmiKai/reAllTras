@@ -188,6 +188,12 @@ $kedudukan_permohonan = $wilayah_asal_data['kedudukan_permohonan'];
             <?php include 'includes/greeting.php'; ?>
         </div>
 
+        <div class="d-flex justify-content-end mb-4">
+            <button type="button" class="btn-print" onclick="openAndPrint('<?= htmlspecialchars($wilayah_asal_id) ?>')">
+                Cetak PDF
+            </button><br><br>
+        </div>
+
         <!-- Status Permohonan -->
         <div class="mb-4">
             <span class="status-badge <?php
@@ -468,6 +474,14 @@ $kedudukan_permohonan = $wilayah_asal_data['kedudukan_permohonan'];
         e.preventDefault();
         document.getElementById('sidebar').classList.toggle('hidden');
     });
+
+    function openAndPrint(wilayah_asal_id) {
+        const printWindow = window.open('borang_permohonan.php?wilayah_asal_id=' + encodeURIComponent(wilayah_asal_id));
+
+        printWindow.onload = function() {
+            printWindow.print();
+        };
+    }  
 </script>
 </body>
 </html> 

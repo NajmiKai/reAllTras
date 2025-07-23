@@ -196,6 +196,12 @@ $ulasan = $data['ulasan_pbr_csm1'];
             </a>
         </div>
 
+        <div class="d-flex justify-content-end mb-4">
+            <button type="button" class="btn-print" onclick="openAndPrint('<?= htmlspecialchars($wilayah_id) ?>')">
+                Cetak PDF
+            </button><br><br>
+        </div>
+
         <?php if ($status_permohonan === 'Dikuiri'): ?>
             <?php if ($ulasan): ?>
             <div class="alert alert-warning mb-4">
@@ -586,6 +592,14 @@ const uploadModal = document.getElementById('uploadModal');
     document.getElementById('wilayah_asal_id_input').value = wilayahId;
     document.getElementById('document_id_input').value = documentId;
   });
+
+  function openAndPrint(wilayah_asal_id) {
+        const printWindow = window.open('borang_permohonan.php?wilayah_asal_id=' + encodeURIComponent(wilayah_asal_id));
+
+        printWindow.onload = function() {
+            printWindow.print();
+        };
+    }  
 
 </script>
 </body>
