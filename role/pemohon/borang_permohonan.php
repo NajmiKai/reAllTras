@@ -49,7 +49,7 @@ $filename = "Borang Permohonan Tambang Ziarah Wilayah " .$currentYear . " " . $f
         }
         td {
             border: 1px solid black;
-            padding: 8px;
+            padding: 6px;
             vertical-align: top;
             font-size: 14px;
         }
@@ -83,7 +83,7 @@ $filename = "Borang Permohonan Tambang Ziarah Wilayah " .$currentYear . " " . $f
 
             }
             td {
-                padding: 8px !important;
+                padding: 6px !important;
                 font-size: 14px;
             }
 
@@ -307,9 +307,7 @@ $filename = "Borang Permohonan Tambang Ziarah Wilayah " .$currentYear . " " . $f
 
 
 
-
-    <br><br>
-    <div style="page-break-before: always;"></div>
+    <div style="page-break-before: always;"></div> <br><br>
 
     <table border="0" width="100%" cellpadding="5" cellspacing="0">
     <tr>
@@ -464,7 +462,7 @@ $filename = "Borang Permohonan Tambang Ziarah Wilayah " .$currentYear . " " . $f
         </td></tr>
 
 
-    <div style="page-break-before: always;"></div><br><br><br>
+    <div style="page-break-before: always;"></div><br><br>
     <table border="0" width="100%" cellpadding="5" cellspacing="0">
     <tr>
         <td colspan="4" class="section-title">PENGESAHAN PEGAWAI</td>
