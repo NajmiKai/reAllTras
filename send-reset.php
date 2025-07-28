@@ -45,8 +45,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->SMTPSecure = 'tls';
             $mail->Port = 587;
 
-            $mail->setFrom($mail->Username);
-            $mail->addAddress($email, $nama);
+            $mail->setFrom($mail->Username, 'ALLTRAS');
+            $mail->addAddress($email);
 
             $mail->isHTML(true);
             $mail->Subject = 'Pautan Reset Kata Laluan';
