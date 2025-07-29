@@ -100,8 +100,8 @@ $showSuccess = isset($_GET['status']) && $_GET['status'] === 'sent';
 
         <form method="POST" action="send-reset.php">
             <div class="mb-3">
-                <label for="email" class="form-label">Alamat Emel</label>
-                <input type="email" class="form-control" name="email" id="email" placeholder="Emel" required>
+                <label for="email" class="form-label">Emel</label>
+                <input type="email" class="form-control" name="email" id="email" placeholder="Masukkan Emel" required>
             </div>
 
             <button type="submit" class="btn btn-primary btn-login">Hantar Pautan Reset</button>
