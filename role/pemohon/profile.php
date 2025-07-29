@@ -26,50 +26,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $phone = $_POST['phone'];
     $bahagian = $_POST['bahagian'];
-    $new_kp = $_POST['kp'];
-    $old_kp = $user_data['kp'];
+    // $new_kp = $_POST['kp'];
+    // $old_kp = $user_data['kp'];
     
-    // Check if KP is being changed
-    if ($new_kp !== $old_kp) {
-        // Check if the new KP already exists in the database
-        $check_kp_sql = "SELECT id FROM user WHERE kp = ? AND id != ?";
-        $check_kp_stmt = $conn->prepare($check_kp_sql);
-        $check_kp_stmt->bind_param("si", $new_kp, $user_id);
-        $check_kp_stmt->execute();
-        $check_kp_result = $check_kp_stmt->get_result();
+    // // Check if KP is being changed
+    // if ($new_kp !== $old_kp) {
+    //     // Check if the new KP already exists in the database
+    //     $check_kp_sql = "SELECT id FROM user WHERE kp = ? AND id != ?";
+    //     $check_kp_stmt = $conn->prepare($check_kp_sql);
+    //     $check_kp_stmt->bind_param("si", $new_kp, $user_id);
+    //     $check_kp_stmt->execute();
+    //     $check_kp_result = $check_kp_stmt->get_result();
         
-        if ($check_kp_result->num_rows > 0) {
-            $error_message = "Nombor Kad Pengenalan ini sudah digunakan oleh pengguna lain.";
-        } else {
-            // Check if there are any wilayah_asal records
-            $check_wilayah_sql = "SELECT id FROM wilayah_asal WHERE user_kp = ?";
-            $check_wilayah_stmt = $conn->prepare($check_wilayah_sql);
-            $check_wilayah_stmt->bind_param("s", $old_kp);
-            $check_wilayah_stmt->execute();
-            $check_wilayah_result = $check_wilayah_stmt->get_result();
+    //     if ($check_kp_result->num_rows > 0) {
+    //         $error_message = "Nombor Kad Pengenalan ini sudah digunakan oleh pengguna lain.";
+    //     } else {
+    //         // Check if there are any wilayah_asal records
+    //         $check_wilayah_sql = "SELECT id FROM wilayah_asal WHERE user_kp = ?";
+    //         $check_wilayah_stmt = $conn->prepare($check_wilayah_sql);
+    //         $check_wilayah_stmt->bind_param("s", $old_kp);
+    //         $check_wilayah_stmt->execute();
+    //         $check_wilayah_result = $check_wilayah_stmt->get_result();
             
-            if ($check_wilayah_result->num_rows > 0) {
-                $error_message = "Tidak boleh menukar nombor Kad Pengenalan kerana terdapat permohonan wilayah asal yang aktif.";
-            } else {
-                // Safe to update KP
-                $update_sql = "UPDATE user SET nama_first = ?, nama_last = ?, email = ?, phone = ?, bahagian = ?, kp = ? WHERE id = ?";
-                $update_stmt = $conn->prepare($update_sql);
-                $update_stmt->bind_param("ssssssi", $nama_first, $nama_last, $email, $phone, $bahagian, $new_kp, $user_id);
+    //         if ($check_wilayah_result->num_rows > 0) {
+    //             $error_message = "Tidak boleh menukar nombor Kad Pengenalan kerana terdapat permohonan wilayah asal yang aktif.";
+    //         } else {
+    //             // Safe to update KP
+    //             $update_sql = "UPDATE user SET nama_first = ?, nama_last = ?, email = ?, phone = ?, bahagian = ?, kp = ? WHERE id = ?";
+    //             $update_stmt = $conn->prepare($update_sql);
+    //             $update_stmt->bind_param("ssssssi", $nama_first, $nama_last, $email, $phone, $bahagian, $new_kp, $user_id);
                 
-                if ($update_stmt->execute()) {
-                    $success_message = "Profil berjaya dikemaskini!";
-                    // Refresh user data
-                    $stmt = $conn->prepare($sql);
-                    $stmt->bind_param("i", $user_id);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    $user_data = $result->fetch_assoc();
-                } else {
-                    $error_message = "Ralat semasa mengemaskini profil. Sila cuba lagi.";
-                }
-            }
-        }
-    } else {
+    //             if ($update_stmt->execute()) {
+    //                 $success_message = "Profil berjaya dikemaskini!";
+    //                 // Refresh user data
+    //                 $stmt = $conn->prepare($sql);
+    //                 $stmt->bind_param("i", $user_id);
+    //                 $stmt->execute();
+    //                 $result = $stmt->get_result();
+    //                 $user_data = $result->fetch_assoc();
+    //             } else {
+    //                 $error_message = "Ralat semasa mengemaskini profil. Sila cuba lagi.";
+    //             }
+    //         }
+    //     }
+    // } else {
         // KP not changed, update other fields only
         $update_sql = "UPDATE user SET nama_first = ?, nama_last = ?, email = ?, phone = ?, bahagian = ? WHERE id = ?";
         $update_stmt = $conn->prepare($update_sql);
@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error_message = "Ralat semasa mengemaskini profil. Sila cuba lagi.";
         }
     }
-}
+// }
 ?>
 <!DOCTYPE html>
 <html lang="ms">
@@ -162,8 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="col-md-6">
                             <label for="kp" class="form-label">Nombor Kad Pengenalan</label>
                             <input type="text" class="form-control" id="kp" name="kp" maxlength="12"
-                                   value="<?= htmlspecialchars($user_data['kp']) ?>" required>
-                            <small class="text-muted">Format: XXXXXX-XX-XXXX. Tidak boleh ditukar jika terdapat permohonan wilayah asal yang aktif.</small>
+                                   value="<?= htmlspecialchars($user_data['kp']) ?>" disabled>
                         </div>
                         <div class="col-md-6">
                             <label for="bahagian" class="form-label">Bahagian</label>
