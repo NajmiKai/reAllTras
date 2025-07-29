@@ -192,7 +192,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="mb-3">
                 <label for="password" class="form-label">Kata Laluan</label>
                 <div class="input-group">
-                    <input type="password" class="form-control" name="password" id="password" placeholder="Kata Laluan" required>
+                    <input type="password" class="form-control" name="password" id="password" placeholder="Masukkan Kata Laluan" required>
                     <span class="input-group-text p-0" style="height: 50px;">
                         <span class="d-flex align-items-center justify-content-center px-3" style="height: 100%; width: 100%; cursor: pointer;" onclick="togglePassword()">
                             <i class="fa-solid fa-eye" id="toggleIcon"></i>

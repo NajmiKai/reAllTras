@@ -197,13 +197,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
        <form id="loginForm" method="POST" action="">
             <div class="mb-3">
                 <label class="form-label">Emel</label>
-                <input type="text" class="form-control" name="email" id="email" placeholder="Emel" required>
+                <input type="text" class="form-control" name="email" id="email" placeholder="Masukkan Emel" required>
             </div>
 
             <div class="mb-3">
             <label for="password" class="form-label">Kata Laluan</label>
             <div class="input-group">
-                <input type="password" class="form-control" name="password" id="password" placeholder="Kata Laluan" required>
+                <input type="password" class="form-control" name="password" id="password" placeholder="Masukkan Kata Laluan" required>
                 <span class="input-group-text p-0" style="height: 50px;">
                     <span class="d-flex align-items-center justify-content-center px-3" style="height: 100%; width: 100%; cursor: pointer;" onclick="togglePassword()">
                         <i class="fa-solid fa-eye" id="toggleIcon"></i>
