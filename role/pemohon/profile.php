@@ -165,9 +165,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                    value="<?= htmlspecialchars($user_data['kp']) ?>" disabled>
                         </div>
                         <div class="col-md-6">
-                            <label for="bahagian" class="form-label">Bahagian</label>
+                            <label for="bahagian" class="form-label">Cawangan</label>
                             <select class="form-select select2" id="bahagian" name="bahagian" required>
-                                <option value="">Pilih Bahagian</option>
+                                <option value="">Pilih Cawangan</option>
                                 <?php
                                 // Fetch all bahagian from organisasi table
                                 $bahagian_query = "SELECT id, nama_cawangan FROM organisasi ORDER BY nama_cawangan ASC";
