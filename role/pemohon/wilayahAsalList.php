@@ -74,8 +74,8 @@ while ($row = $list_result->fetch_assoc()) {
                     <table class="table table-bordered align-middle">
                         <thead class="table-light">
                             <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Tarikh Pengesahan Pemohon</th>
+                                <th scope="col">Bil.</th>
+                                <th scope="col">Tarikh Permohonan</th>
                                 <th scope="col">Status Permohonan</th>
                                 <th scope="col">Tindakan</th>
                             </tr>
