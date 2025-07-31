@@ -143,7 +143,7 @@ if ($result->num_rows > 0) {
                                 <td><?php echo htmlspecialchars($user['kp']); ?></td>
                                 <td><?php echo htmlspecialchars($user['bahagian']); ?></td>                              
                                 <td><?php echo htmlspecialchars($user['status']); ?></td>
-                                <td><a class="button" href="viewdetails.php?kp=<?= $user['kp'] ?>">View Details</a></td>
+                                <td><a class="button" href="viewdetails.php?kp=<?= $user['kp'] ?>">Lihat</a></td>
                             </tr>
                         <?php endforeach; ?>
                             <?php else: ?>

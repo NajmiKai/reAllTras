@@ -133,7 +133,7 @@ if ($result->num_rows > 0) {
                                 <td><?php echo htmlspecialchars($user['status']); ?></td>
                                 <?php if($user['status'] == 'Upload borang pengesahan'){ ?>
                                     <td>
-                                        <a class="button" href="viewdetails2.php?kp=<?= $user['kp'] ?>">View Details</a>
+                                        <a class="button" href="viewdetails2.php?kp=<?= $user['kp'] ?>">Lihat</a>
                                         <div style="margin-top: 10px;">
                                             <button type="button" onclick="window.print()">
                                                 Cetak Memo Kelulusan
