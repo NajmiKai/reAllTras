@@ -568,15 +568,10 @@ if ($wilayah_asal_data) {
             return;
         }
 
-        if (!reportDateEl || !reportDateEl.value) {
-            input.reportValidity();
-            return;
-        }
-
         const lastUsageDate = new Date(input.value);
-        const reportDate = new Date(reportDateEl.value);
-        if (lastUsageDate.getFullYear() === reportDate.getFullYear()) {
-            const msg = ' Kuota Kemudahan sudah digunakan untuk tahun ini.';
+        const currentYear = new Date().getFullYear();
+        if (lastUsageDate.getFullYear() === currentYear) {
+            const msg = ' Kuota Kemudahan tahun ini telah digunakan';
             input.setCustomValidity(msg);
             errorEl.textContent = msg;
             errorEl.style.display = 'block';
