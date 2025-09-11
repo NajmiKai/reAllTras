@@ -33,6 +33,7 @@ $wilayah_asal_id = $_SESSION['wilayah_asal_id'] ?? null;
 $existing_data = null;
 $followers_data = [];
 $partner_has_different_dates = false; // Initialize the variable
+$partner_not_applicable = false; // Initialize the variable
 
 if ($wilayah_asal_id) {
     // Get main data
@@ -48,6 +49,9 @@ if ($wilayah_asal_id) {
         $partner_has_different_dates = $existing_data['tarikh_penerbangan_pergi_pasangan'] && 
             ($existing_data['tarikh_penerbangan_pergi_pasangan'] !== $existing_data['tarikh_penerbangan_pergi'] ||
              $existing_data['tarikh_penerbangan_balik_pasangan'] !== $existing_data['tarikh_penerbangan_balik']);
+
+        // Check if partner flight is not applicable (no partner dates provided)
+        $partner_not_applicable = empty($existing_data['tarikh_penerbangan_pergi_pasangan']) && empty($existing_data['tarikh_penerbangan_balik_pasangan']);
 
         // Get followers data
         $followers_sql = "SELECT * FROM wilayah_asal_pengikut WHERE wilayah_asal_id = ?";
@@ -256,7 +260,7 @@ foreach ($followers_data as $follower) {
                             <input type="text" class="form-control" name="end_point" required value="<?= $existing_data ? $existing_data['end_point'] : '' ?>">
                         </div>
                         <div class="col-12 mb-3">
-                            <label class="form-label fw-bold">Tarikh Penerbangan Pasangan Lain? <span style="font-size: 0.9em; font-style: italic; color: #666;">(Untuk pegawai yang tidak berkenaan, Tanda Tidak)</span></label>
+                            <label class="form-label fw-bold">Tarikh Penerbangan Pasangan Lain?</label>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="partner_flight_type" id="partner_same" value="same" <?= !$partner_has_different_dates ? 'checked' : '' ?> onchange="togglePartnerDates('same')">
                                 <label class="form-check-label" for="partner_same">
@@ -267,6 +271,12 @@ foreach ($followers_data as $follower) {
                                 <input class="form-check-input" type="radio" name="partner_flight_type" id="partner_different" value="different" <?= $partner_has_different_dates ? 'checked' : '' ?> onchange="togglePartnerDates('different')">
                                 <label class="form-check-label" for="partner_different">
                                     Tarikh Penerbangan Lain
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="partner_flight_type" id="partner_na" value="na" <?= $partner_not_applicable ? 'checked' : '' ?> onchange="togglePartnerDates('na')">
+                                <label class="form-check-label" for="partner_na">
+                                    Tidak berkenaan
                                 </label>
                             </div>
                         </div>
@@ -334,10 +344,17 @@ foreach ($followers_data as $follower) {
         const mainPergi = document.querySelector('input[name="tarikh_penerbangan_pergi"]').value;
         const mainBalik = document.querySelector('input[name="tarikh_penerbangan_balik"]').value;
         
-        // Sync partner dates if same is selected
-        if (document.querySelector('input[name="partner_flight_type"]:checked').value === 'same') {
-            document.querySelector('input[name="tarikh_penerbangan_pergi_pasangan"]').value = mainPergi;
-            document.querySelector('input[name="tarikh_penerbangan_balik_pasangan"]').value = mainBalik;
+        // Sync partner dates if same is selected and applicable
+        const partnerType = document.querySelector('input[name="partner_flight_type"]:checked')?.value;
+        if (partnerType === 'same') {
+            const pergiPasangan = document.querySelector('input[name="tarikh_penerbangan_pergi_pasangan"]');
+            const balikPasangan = document.querySelector('input[name="tarikh_penerbangan_balik_pasangan"]');
+            if (pergiPasangan && balikPasangan) {
+                pergiPasangan.disabled = false;
+                balikPasangan.disabled = false;
+                pergiPasangan.value = mainPergi;
+                balikPasangan.value = mainBalik;
+            }
         }
 
         // Sync follower dates for all followers with same flight dates
@@ -510,18 +527,36 @@ foreach ($followers_data as $follower) {
             });
             partnerDateInputs.forEach(input => {
                 input.required = true;
+                input.disabled = false;
             });
-        } else {
+        } else if (type === 'same') {
+            partnerDates.forEach(element => {
+                element.style.display = 'none';
+            });
+            partnerDateInputs.forEach(input => {
+                input.required = false;
+                input.disabled = false;
+            });
+        } else if (type === 'na') {
             partnerDates.forEach(element => {
                 element.style.display = 'none';
             });
             partnerDateInputs.forEach(input => {
                 input.required = false;
                 input.value = '';
+                input.disabled = true;
             });
         }
         syncDates(); // Sync dates after toggling
     }
+
+    // Enforce initial partner state on page load
+    document.addEventListener('DOMContentLoaded', function () {
+        const checked = document.querySelector('input[name="partner_flight_type"]:checked');
+        if (checked) {
+            togglePartnerDates(checked.value);
+        }
+    });
 
     function removeFollower(index) {
         const followerDiv = document.getElementById(`follower-${index}`);

@@ -279,20 +279,18 @@ if ($wilayah_asal_data) {
                         <div class="col-md-6">
                             <label class="form-label">Pernah Menggunakan Kemudahan Ini?</label>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="pernah_guna" value="ya" id="pernah_guna_ya" onchange="toggleTarikhTerakhir()" <?= (!empty($wilayah_asal_data['tarikh_terakhir_kemudahan'])) ? 'checked' : '' ?>>
+                                <input class="form-check-input" type="radio" name="pernah_guna" value="ya" id="pernah_guna_ya" onchange="toggleTarikhTerakhir()" <?= (!isset($wilayah_asal_data['tarikh_terakhir_kemudahan']) || !empty($wilayah_asal_data['tarikh_terakhir_kemudahan'])) ? 'checked' : '' ?>>
                                 <label class="form-check-label" for="pernah_guna_ya">Ya</label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="pernah_guna" value="tidak" id="pernah_guna_tidak" onchange="toggleTarikhTerakhir()" <?= (empty($wilayah_asal_data['tarikh_terakhir_kemudahan'])) ? 'checked' : '' ?>>
+                                <input class="form-check-input" type="radio" name="pernah_guna" value="tidak" id="pernah_guna_tidak" onchange="toggleTarikhTerakhir()" <?= (isset($wilayah_asal_data['tarikh_terakhir_kemudahan']) && empty($wilayah_asal_data['tarikh_terakhir_kemudahan'])) ? 'checked' : '' ?> >
                                 <label class="form-check-label" for="pernah_guna_tidak">Tidak</label>
                             </div>
                         </div>
                         <div class="col-md-6" id="tarikh_terakhir_container">
                             <label class="form-label">Tarikh Terakhir Menggunakan Kemudahan</label>
                             <input type="date" class="form-control" name="tarikh_terakhir_kemudahan" id="tarikh_terakhir_kemudahan" value="<?= htmlspecialchars($wilayah_asal_data['tarikh_terakhir_kemudahan'] ?? '') ?>">
-                            <div class="invalid-feedback" id="tarikh_terakhir_error">
-                                Kuota Kemudahan sudah digunakan untuk tahun ini
-                            </div>
+                            <div class="invalid-feedback" id="tarikh_terakhir_error"> Kuota Kemudahan tahun ini telah digunakan</div>
                         </div>
                     </div>
                 </div>
@@ -399,15 +397,27 @@ if ($wilayah_asal_data) {
     function toggleTarikhTerakhir() {
         const pernahGunaYa = document.getElementById('pernah_guna_ya').checked;
         const tarikhTerakhirInput = document.getElementById('tarikh_terakhir_kemudahan');
-        if (pernahGunaYa) {
-            tarikhTerakhirInput.disabled = false;
-            tarikhTerakhirInput.required = true;
-        } else {
-            tarikhTerakhirInput.disabled = true;
-            tarikhTerakhirInput.required = false;
+        const errorEl = document.getElementById('tarikh_terakhir_error');
+
+        // Enabled only when "Ya" is selected
+        tarikhTerakhirInput.disabled = !pernahGunaYa;
+        tarikhTerakhirInput.required = pernahGunaYa;
+
+        if (!pernahGunaYa) {
             tarikhTerakhirInput.value = '';
-            document.getElementById('tarikh_terakhir_error').style.display = 'none';
+            errorEl.style.display = 'none';
             tarikhTerakhirInput.setCustomValidity('');
+        } else {
+            // If enabled and empty, set custom required message immediately
+            if (!tarikhTerakhirInput.value) {
+                const msgRequired = 'Sila isi tarikh terakhir menggunakan kemudahan ini';
+                tarikhTerakhirInput.setCustomValidity(msgRequired);
+                errorEl.textContent = msgRequired;
+                errorEl.style.display = 'block';
+            } else {
+                errorEl.style.display = 'none';
+                tarikhTerakhirInput.setCustomValidity('');
+            }
         }
     }
 
@@ -431,10 +441,44 @@ if ($wilayah_asal_data) {
             togglePartnerDetails();
         }
 
-        // Check if there's existing facility usage data
-        const pernahGuna = document.getElementById('pernah_guna_ya').checked;
-        if (pernahGuna) {
-            toggleTarikhTerakhir();
+        // Apply initial state
+        toggleTarikhTerakhir();
+
+        // Attach change listeners for validation and state
+        const lastUsageInput = document.getElementById('tarikh_terakhir_kemudahan');
+        if (lastUsageInput) {
+            lastUsageInput.addEventListener('change', function() {
+                validateLastUsageDate(lastUsageInput);
+            });
+            lastUsageInput.addEventListener('input', function() {
+                // Clear message while typing and revalidate
+                validateLastUsageDate(lastUsageInput);
+            });
+            // On invalid, set our message so browser shows it
+            lastUsageInput.addEventListener('invalid', function() {
+                validateLastUsageDate(lastUsageInput);
+            });
+        }
+
+        // Revalidate when radio changes
+        const radioYa = document.getElementById('pernah_guna_ya');
+        const radioTidak = document.getElementById('pernah_guna_tidak');
+        if (radioYa) radioYa.addEventListener('change', function() {
+            const input = document.getElementById('tarikh_terakhir_kemudahan');
+            if (input) validateLastUsageDate(input);
+        });
+        if (radioTidak) radioTidak.addEventListener('change', function() {
+            const input = document.getElementById('tarikh_terakhir_kemudahan');
+            if (input) validateLastUsageDate(input);
+        });
+        const reportDateInput = document.getElementById('tarikh_lapor_diri');
+        if (reportDateInput) {
+            reportDateInput.addEventListener('change', function() {
+                const lastUsage = document.getElementById('tarikh_terakhir_kemudahan');
+                if (!lastUsage.disabled && lastUsage.value) {
+                    validateLastUsageDate(lastUsage);
+                }
+            });
         }
     });
 
@@ -502,29 +546,42 @@ if ($wilayah_asal_data) {
     }
 
     function validateLastUsageDate(input) {
-        const selectedDate = new Date(input.value);
-        const currentDate = new Date();
-        
-        // Check if the selected date is in 2024
-        const is2024 = selectedDate.getFullYear() === 2024;
-        
-        // If date is in 2024, allow application in 2025 regardless of the 6-month rule
-        if (is2024) {
-            input.setCustomValidity('');
-            document.getElementById('tarikh_terakhir_error').style.display = 'none';
-            
-            // Update the report date validation
-            const tarikhLaporDiri = document.getElementById('tarikh_lapor_diri');
-            if (tarikhLaporDiri) {
-                tarikhLaporDiri.removeAttribute('required');
-                tarikhLaporDiri.setCustomValidity('');
-            }
-        } else {
-            input.setCustomValidity('Kuota Kemudahan sudah digunakan untuk tahun ini');
-            document.getElementById('tarikh_terakhir_error').style.display = 'block';
+        const errorEl = document.getElementById('tarikh_terakhir_error');
+        const reportDateEl = document.getElementById('tarikh_lapor_diri');
+
+        // Reset
+        input.setCustomValidity('');
+        errorEl.style.display = 'none';
+
+        if (input.disabled) {
+            input.reportValidity();
+            return;
         }
-        
-        // Update the validation state
+
+        // If empty while required (Ya), show custom required message
+        if (!input.value) {
+            // const msgRequired = 'silaaaa isi tarikh terakhir menggunakan kemudahan ini';
+            // input.setCustomValidity(msgRequired);
+            // errorEl.textContent = msgRequired;
+            errorEl.style.display = 'block';
+            input.reportValidity();
+            return;
+        }
+
+        if (!reportDateEl || !reportDateEl.value) {
+            input.reportValidity();
+            return;
+        }
+
+        const lastUsageDate = new Date(input.value);
+        const reportDate = new Date(reportDateEl.value);
+        if (lastUsageDate.getFullYear() === reportDate.getFullYear()) {
+            const msg = ' Kuota Kemudahan sudah digunakan untuk tahun ini.';
+            input.setCustomValidity(msg);
+            errorEl.textContent = msg;
+            errorEl.style.display = 'block';
+        }
+
         input.reportValidity();
     }
 
@@ -533,7 +590,10 @@ if ($wilayah_asal_data) {
         const tarikhTerakhir = document.getElementById('tarikh_terakhir_kemudahan');
         const tarikhLaporDiri = document.getElementById('tarikh_lapor_diri');
         
-        if (tarikhTerakhir && tarikhTerakhir.value) {
+        // Ensure state is correct
+        toggleTarikhTerakhir();
+
+        if (tarikhTerakhir && !tarikhTerakhir.disabled) {
             validateLastUsageDate(tarikhTerakhir);
             if (!tarikhTerakhir.validity.valid) {
                 event.preventDefault();
