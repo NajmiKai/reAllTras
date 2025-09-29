@@ -270,7 +270,7 @@ if ($wilayah_asal_data) {
                 <div class="card-body">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label">Tarikh Lapor Diri</label>
+                            <label class="form-label">Tarikh Bertukar Ke Wilayah Berkhidmat</label>
                             <input type="date" class="form-control" name="tarikh_lapor_diri" id="tarikh_lapor_diri" value="<?= htmlspecialchars($wilayah_asal_data['tarikh_lapor_diri'] ?? '') ?>" required onchange="validateReportDate(this)">
                             <div class="invalid-feedback" id="tarikh_lapor_diri_error">
                                 Tarikh lapor diri mestilah sekurang-kurangnya 6 bulan lepas.
