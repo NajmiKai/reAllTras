@@ -1,19 +1,20 @@
 <?php
-include_once '../../includes/config.php';
+include_once '../../../includes/config.php';
 
-// Fetch wilayah_asal id
-$wilayah_asal_id = $_GET['wilayah_asal_id'] ?? $_POST['wilayah_asal_id'] ?? null;
+// Fetch wilayah_asal and user data by KP
+$kp = $_GET['kp'] ?? $_POST['kp'] ?? null;
 $data = null;
 
 $sql = "SELECT w.*, u.id AS user_id, u.nama_first, u.nama_last, u.kp AS user_kp, u.bahagian, u.email, u.phone
         FROM wilayah_asal w 
         LEFT JOIN user u ON w.user_kp = u.kp 
-        WHERE w.id = ? LIMIT 1";
+        WHERE w.user_kp = ? LIMIT 1";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $wilayah_asal_id);
+$stmt->bind_param("s", $kp);
 $stmt->execute();
 $result = $stmt->get_result();
 $data = $result->fetch_assoc();
+$wilayah_id = $data['id'] ?? null;
 
 
 $fullName = $data['nama_first'] . ' ' . $data['nama_last'];
