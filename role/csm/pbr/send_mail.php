@@ -182,7 +182,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
                         <p><b>Nama Pegawai :</b> $nama</p>
                         <p><b>No.Kad Pengenalan :</b> $kp</p>
-                        <p><b>Bahagian/Cawangan :</b> $bahagian</p><br>
+                        <p><b>Bahagian/Cawangan :</b> $bahagian</p>
+                        <p><b>Jabatan :</b> JKDM WILAYAH PERSEKUTUAN KUALA LUMPUR</p><br>
         
                         <p>Permohonan Tambang Ziarah Wilayah (TZW) oleh pegawai telah disemak dan dikemukakan untuk tindakan selanjutnya oleh Unit Sulit Cawangan Sumber Manusia.</p>
         

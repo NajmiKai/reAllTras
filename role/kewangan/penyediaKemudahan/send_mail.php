@@ -162,7 +162,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
                         <p><b>Nama Pegawai :</b> $nama</p>
                         <p><b>No.Kad Pengenalan :</b> $kp</p>
-                        <p><b>Bahagian/Cawangan :</b> $bahagian</p><br>
+                        <p><b>Bahagian/Cawangan :</b> $bahagian</p>
+                        <p><b>Jabatan :</b> JKDM WILAYAH PERSEKUTUAN KUALA LUMPUR</p><br>
         
                         <p>Dimaklumkan bahawa permohonan Kemudahan Tambang Ziarah Wilayah(TZW) tuan/puan telah <b>DILULUSKAN</b> dan <b>SELESAI DIPROSES</b>. <i>Booking Number</i> telah dimuat naik ke dalam ALLTRAS untuk tindakan dan rujukan tuan/puan selanjutnya.</p>
                         <p>Sila klik pautan/butang di bawah untuk tindakan lanjut dan maklumat permohonan.</p>

@@ -100,6 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <p><b>Nama Pegawai:</b> $nama<br>
                <b>No. Kad Pengenalan:</b> $kp<br>
                <b>Bahagian/Cawangan:</b> $bahagian</p>
+               <p><b>Jabatan :</b> JKDM WILAYAH PERSEKUTUAN KUALA LUMPUR</p><br>
             <p>Permohonan ini telah <strong>DIBATALKAN</strong> atas sebab-sebab tertentu.</p>
             <p>Maklumat ini dimaklumkan untuk tindakan dan rujukan pihak tuan/puan.</p>
             <br><p>Sekian, terima kasih.</p>

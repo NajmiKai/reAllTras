@@ -141,7 +141,8 @@ try {
 
             <p><b>Nama Pegawai :</b> {$user_data['nama_first']} {$user_data['nama_last']}</p>
             <p><b>No.Kad Pengenalan :</b> {$user_data['kp']}</p>
-            <p><b>Bahagian/Cawangan :</b> {$user_data['bahagian']}</p><br>
+            <p><b>Bahagian/Cawangan :</b> {$user_data['bahagian']}</p>
+            <p><b>Jabatan :</b> JKDM WILAYAH PERSEKUTUAN KUALA LUMPUR</p><br>
             <p><b>Destinasi Ziarah :</b> {$user_data['end_point']}</p><br>
             <p><b>Maklumat Perjalanan :</b><br>
             Tarikh Penerbangan Pergi: {$tarikh_pergi}<br>
