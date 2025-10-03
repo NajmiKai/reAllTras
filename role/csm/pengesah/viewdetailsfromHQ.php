@@ -181,6 +181,12 @@ $submenuOpen = in_array($currentPage, ['permohonanPengguna.php', 'permohonanIbuP
             </div>
         </div>
 
+        <div class="d-flex justify-content-end mb-4">
+            <button type="button" class="btn-print" onclick="openAndPrint('<?= htmlspecialchars($application_data['kp']) ?>')">
+                Cetak PDF
+            </button><br><br>
+        </div>
+
         <form action="send_mail2.php" method="POST" enctype="multipart/form-data" id="permohonanForm" onsubmit="return handleFormSubmit()">            
             <!-- Maklumat Pegawai -->
             <div class="card shadow-sm mb-4">
@@ -564,6 +570,15 @@ document.querySelector('.toggle-sidebar').addEventListener('click', function (e)
             
             return true;
         }
+
+        function openAndPrint(kp) {
+        const printWindow = window.open('borang_permohonan.php?kp=' + encodeURIComponent(kp));
+
+        printWindow.onload = function() {
+            printWindow.print();
+        };
+    }
+
 </script>
 </body>
 </html>
